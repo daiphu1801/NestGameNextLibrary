@@ -199,13 +199,30 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
           />
         </div>
 
-        {/* Control Hints Bar */}
-        <div className="flex items-center justify-center gap-6 px-4 py-3 bg-[#111] border-t border-white/10">
-          <ControlHint keys="↑↓←→" label={t('docs.controls.movement') || 'Di chuyển'} />
-          <ControlHint keys="Z" label={t('docs.controls.aButton') || 'Nút A'} color="text-cyan-400" />
-          <ControlHint keys="X" label={t('docs.controls.bButton') || 'Nút B'} color="text-cyan-400" />
-          <ControlHint keys="Enter" label="Start" color="text-green-400" />
-          <ControlHint keys="ESC" label={t('modal.back') || 'Quay lại'} color="text-rose-400" />
+        {/* Control Hints Bar - 2 Players */}
+        <div className="flex flex-col gap-2 px-4 py-3 bg-[#111] border-t border-white/10">
+          {/* Player 1 Controls */}
+          <div className="flex items-center justify-center gap-4">
+            <span className="text-xs font-bold text-blue-400 min-w-[70px]">Player 1:</span>
+            <ControlHint keys="W A S D" label={t('docs.controls.movement') || 'Di chuyển'} />
+            <ControlHint keys="J" label="A" color="text-cyan-400" />
+            <ControlHint keys="K" label="B" color="text-cyan-400" />
+            <ControlHint keys="Enter" label="Start" color="text-green-400" />
+            <ControlHint keys="Shift" label="Select" color="text-yellow-400" />
+          </div>
+          {/* Player 2 Controls */}
+          <div className="flex items-center justify-center gap-4">
+            <span className="text-xs font-bold text-red-400 min-w-[70px]">Player 2:</span>
+            <ControlHint keys="↑ ↓ ← →" label={t('docs.controls.movement') || 'Di chuyển'} />
+            <ControlHint keys="1" label="A" color="text-cyan-400" />
+            <ControlHint keys="2" label="B" color="text-cyan-400" />
+            <ControlHint keys="3" label="Start" color="text-green-400" />
+            <ControlHint keys="4" label="Select" color="text-yellow-400" />
+          </div>
+          {/* Exit Hint */}
+          <div className="flex items-center justify-center">
+            <ControlHint keys="ESC" label={t('modal.back') || 'Quay lại'} color="text-rose-400" />
+          </div>
         </div>
       </div>
     </div>

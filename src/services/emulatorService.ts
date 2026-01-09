@@ -56,10 +56,33 @@ class EmulatorService {
 
       container.appendChild(canvas);
 
-      // Launch emulator with canvas
+      // Launch emulator with canvas and custom keyboard controls
+      // Player 1: WASD + J (A) + K (B) + Enter (Start) + Shift (Select)
+      // Player 2: Arrow keys + 1 (A) + 2 (B) + 3 (Start) + 4 (Select)
       this.currentEmulator = await Nostalgist.nes({
         rom: romUrl,
         element: canvas,
+        retroarchConfig: {
+          // Player 1 Controls (WASD + JK)
+          input_player1_up: 'w',
+          input_player1_down: 's',
+          input_player1_left: 'a',
+          input_player1_right: 'd',
+          input_player1_a: 'j',
+          input_player1_b: 'k',
+          input_player1_start: 'enter',
+          input_player1_select: 'shift',
+
+          // Player 2 Controls (Arrow keys + 1/2)
+          input_player2_up: 'up',
+          input_player2_down: 'down',
+          input_player2_left: 'left',
+          input_player2_right: 'right',
+          input_player2_a: 'num1',
+          input_player2_b: 'num2',
+          input_player2_start: 'num3',
+          input_player2_select: 'num4',
+        },
       });
 
       this.isLoading = false;
