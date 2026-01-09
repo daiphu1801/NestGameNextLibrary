@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   ...siteMetadata,
 };
 
+import { Footer } from '@/components/layout/Footer';
+
+// ... (imports)
+
 export default function RootLayout({
   children,
 }: {
@@ -27,7 +31,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LanguageProvider>
-            <QueryProvider>{children}</QueryProvider>
+            <QueryProvider>
+              <div className="flex min-h-screen flex-col relative">
+                <div className="flex-1">
+                  {children}
+                </div>
+                <Footer />
+              </div>
+            </QueryProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>
