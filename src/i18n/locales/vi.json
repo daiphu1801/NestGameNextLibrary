@@ -1,0 +1,168 @@
+{
+  "app": {
+    "title": "NES Game Library",
+    "subtitle": "Thư viện Game NES Kinh Điển",
+    "description": "Chơi trực tiếp trên trình duyệt!"
+  },
+  "header": {
+    "searchPlaceholder": "Tìm kiếm game...",
+    "gamesFound": "Tìm thấy",
+    "games": "games",
+    "search": "Tìm",
+    "play": "Chơi Ngay"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "library": "Thư viện",
+    "favorites": "Yêu thích",
+    "docs": "Hướng dẫn"
+  },
+  "categories": {
+    "all": "Tất cả",
+    "platformer": "Platform",
+    "rpg": "RPG",
+    "sports": "Thể thao",
+    "fighting": "Đối kháng",
+    "puzzle": "Puzzle",
+    "racing": "Đua xe",
+    "shooter": "Shooter",
+    "strategy": "Chiến thuật",
+    "adventure": "Phiêu lưu",
+    "action": "Hành động",
+    "arcade": "Arcade",
+    "simulation": "Mô phỏng",
+    "other": "Khác"
+  },
+  "featured": {
+    "title": "Games Hot 🔥",
+    "subtitle": "Những tựa game được yêu thích nhất tuần này"
+  },
+  "library": {
+    "title": "Thư viện Games",
+    "subtitle": "Duyệt và chọn game để chơi"
+  },
+  "welcome": {
+    "title": "Chơi Game Kinh Điển.",
+    "titlePart1": "Chơi Game",
+    "titlePart2": "Kinh Điển",
+    "subtitle": "Không Cần Giả Lập.",
+    "badge": "Hơn {count}+ Game Online",
+    "description": "Tuyển tập những tựa game NES huyền thoại. Trải nghiệm lịch sử game ngay trên trình duyệt với tính năng lưu game và chơi ngay.",
+    "free": "Miễn Phí",
+    "noInstall": "Tải Nhanh",
+    "saveState": "Lưu Đám Mây",
+    "startPlaying": "Bắt Đầu Chơi",
+    "browseLibrary": "Xem Thư Viện"
+  },
+  "game": {
+    "playNow": "Chơi ngay",
+    "loading": "Đang tải",
+    "library": "Thư Viện Game",
+    "waitMessage": "Vui lòng chờ trong giây lát",
+    "loadError": "Không thể tải game",
+    "tryAgain": "Vui lòng thử lại",
+    "selectRom": "Chọn file ROM",
+    "runServerHint": "Để tự động tải game, hãy chạy local server:",
+    "orSelectManually": "Hoặc chọn file ROM thủ công:"
+  },
+  "stats": {
+    "games": "GAMES",
+    "users": "USERS",
+    "free": "FREE"
+  },
+  "features": {
+    "freeDesc": "Không cần thanh toán, chơi ngay lập tức",
+    "instantDesc": "Không cần tải xuống, chạy trực tiếp trên trình duyệt",
+    "saveDesc": "Lưu tiến trình và tiếp tục bất cứ lúc nào"
+  },
+  "modal": {
+    "playing": "Đang chơi...",
+    "pressEscToBack": "Nhấn ESC để quay lại",
+    "escHint": "Nhấn ESC để quay lại",
+    "fullscreen": "Toàn màn hình",
+    "close": "Đóng",
+    "back": "Quay lại",
+    "pleaseWait": "Vui lòng đợi",
+    "loadFailed": "Không thể tải game",
+    "tryAgain": "Thử lại"
+  },
+  "controls": {
+    "move": "Di chuyển",
+    "buttonA": "Button A",
+    "buttonB": "Button B",
+    "start": "Start",
+    "select": "Select",
+    "back": "Quay lại"
+  },
+  "footer": {
+    "poweredBy": "Powered by",
+    "gamesCount": "Games",
+    "playOnBrowser": "Chơi trên trình duyệt",
+    "free100": "Miễn phí 100%"
+  },
+  "search": {
+    "hot": "Hot",
+    "noResults": "Không tìm thấy game nào",
+    "tryOther": "Thử tìm kiếm với từ khóa khác",
+    "clearSearch": "Xóa tìm kiếm"
+  },
+  "sort": {
+    "label": "Sắp xếp:",
+    "nameAsc": "Tên A-Z",
+    "nameDesc": "Tên Z-A",
+    "ratingDesc": "Đánh giá cao",
+    "yearDesc": "Mới nhất",
+    "yearAsc": "Cũ nhất"
+  },
+  "pagination": {
+    "showing": "Hiển thị",
+    "of": "trong",
+    "games": "games",
+    "previous": "Trang trước",
+    "next": "Trang sau",
+    "itemsPerPage": "Hiển thị:",
+    "page": "Trang"
+  },
+  "loadMore": "Xem thêm games",
+  "docs": {
+    "title": "Hướng Dẫn",
+    "subtitle": "Tìm hiểu cách sử dụng NestGame",
+    "gettingStarted": {
+      "title": "Bắt Đầu",
+      "welcome": "Chào mừng đến với NestGame - giả lập NES trên trình duyệt! Đây là cách bắt đầu:",
+      "step1": "Duyệt thư viện game trên trang chủ",
+      "step2": "Click vào game bất kỳ để mở",
+      "step3": "Nhấn \"Play\" để bắt đầu chơi",
+      "step4": "Sử dụng bàn phím hoặc tay cầm để điều khiển game"
+    },
+    "controls": {
+      "title": "Phím Điều Khiển",
+      "movement": "Di chuyển",
+      "actions": "Hành động",
+      "up": "Lên",
+      "down": "Xuống",
+      "left": "Trái",
+      "right": "Phải",
+      "aButton": "Nút A",
+      "bButton": "Nút B",
+      "start": "Start",
+      "select": "Select"
+    },
+    "saveStates": {
+      "title": "Lưu Trạng Thái",
+      "description": "NestGame hỗ trợ lưu trạng thái để bạn có thể lưu tiến trình bất cứ lúc nào:",
+      "save": "Lưu: Nhấn F5 để lưu trạng thái game hiện tại",
+      "load": "Tải: Nhấn F8 để tải trạng thái đã lưu",
+      "quick": "Lưu nhanh: Trạng thái được tự động lưu vào trình duyệt"
+    },
+    "gamepad": {
+      "title": "Hỗ Trợ Tay Cầm",
+      "description": "NestGame hỗ trợ hầu hết các tay cầm USB và Bluetooth:",
+      "xbox": "Tay cầm Xbox (có dây và không dây)",
+      "playstation": "Tay cầm PlayStation (DualShock, DualSense)",
+      "switch": "Nintendo Switch Pro Controller",
+      "generic": "Tay cầm USB thông dụng",
+      "note": "Chỉ cần kết nối tay cầm và nó sẽ được tự động nhận diện."
+    }
+  }
+}

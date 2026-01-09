@@ -1,0 +1,168 @@
+{
+  "app": {
+    "title": "NES Game Library",
+    "subtitle": "Classic NES Games Collection",
+    "description": "Play directly in your browser!"
+  },
+  "header": {
+    "searchPlaceholder": "Search games...",
+    "gamesFound": "Found",
+    "games": "games",
+    "search": "Search",
+    "play": "Play Now"
+  },
+  "nav": {
+    "home": "Home",
+    "library": "Library",
+    "favorites": "Favorites",
+    "docs": "Docs"
+  },
+  "categories": {
+    "all": "All",
+    "platformer": "Platform",
+    "rpg": "RPG",
+    "sports": "Sports",
+    "fighting": "Fighting",
+    "puzzle": "Puzzle",
+    "racing": "Racing",
+    "shooter": "Shooter",
+    "strategy": "Strategy",
+    "adventure": "Adventure",
+    "action": "Action",
+    "arcade": "Arcade",
+    "simulation": "Simulation",
+    "other": "Other"
+  },
+  "featured": {
+    "title": "Hot Games",
+    "subtitle": "Most popular games this week"
+  },
+  "library": {
+    "title": "Game Library",
+    "subtitle": "Browse and select a game to play"
+  },
+  "welcome": {
+    "title": "Play the Classics.",
+    "titlePart1": "Play Classic",
+    "titlePart2": "NES Games",
+    "subtitle": "No Console Required.",
+    "badge": "{count}+ Games Available Online",
+    "description": "A curated collection of legendary NES titles. Experience gaming history directly in your browser with save states and instant play.",
+    "free": "Free to Play",
+    "noInstall": "Instant Load",
+    "saveState": "Cloud Saves",
+    "startPlaying": "Start Playing",
+    "browseLibrary": "Browse Library"
+  },
+  "game": {
+    "playNow": "Play now",
+    "loading": "Loading",
+    "library": "Game Library",
+    "waitMessage": "Please wait a moment",
+    "loadError": "Failed to load game",
+    "tryAgain": "Please try again",
+    "selectRom": "Select ROM file",
+    "runServerHint": "To auto-load games, run local server:",
+    "orSelectManually": "Or select ROM file manually:"
+  },
+  "stats": {
+    "games": "GAMES",
+    "users": "USERS",
+    "free": "FREE"
+  },
+  "features": {
+    "freeDesc": "No payment required, play instantly",
+    "instantDesc": "No downloads, runs in your browser",
+    "saveDesc": "Save your progress and continue anytime"
+  },
+  "modal": {
+    "playing": "Now playing...",
+    "pressEscToBack": "Press ESC to go back",
+    "escHint": "Press ESC to go back",
+    "fullscreen": "Fullscreen",
+    "close": "Close",
+    "back": "Back",
+    "pleaseWait": "Please wait",
+    "loadFailed": "Failed to load game",
+    "tryAgain": "Try Again"
+  },
+  "controls": {
+    "move": "Move",
+    "buttonA": "Button A",
+    "buttonB": "Button B",
+    "start": "Start",
+    "select": "Select",
+    "back": "Back"
+  },
+  "footer": {
+    "poweredBy": "Powered by",
+    "gamesCount": "Games",
+    "playOnBrowser": "Play on browser",
+    "free100": "100% Free"
+  },
+  "search": {
+    "hot": "Hot",
+    "noResults": "No games found",
+    "tryOther": "Try searching with different keywords",
+    "clearSearch": "Clear search"
+  },
+  "sort": {
+    "label": "Sort by:",
+    "nameAsc": "Name A-Z",
+    "nameDesc": "Name Z-A",
+    "ratingDesc": "Highest rated",
+    "yearDesc": "Newest first",
+    "yearAsc": "Oldest first"
+  },
+  "pagination": {
+    "showing": "Showing",
+    "of": "of",
+    "games": "games",
+    "previous": "Previous",
+    "next": "Next",
+    "itemsPerPage": "Show:",
+    "page": "Page"
+  },
+  "loadMore": "Load more games",
+  "docs": {
+    "title": "Documentation",
+    "subtitle": "Learn how to use NestGame",
+    "gettingStarted": {
+      "title": "Getting Started",
+      "welcome": "Welcome to NestGame - your browser-based NES emulator! Here's how to get started:",
+      "step1": "Browse the game library on the homepage",
+      "step2": "Click on any game to open it",
+      "step3": "Press \"Play\" to start playing",
+      "step4": "Use your keyboard or gamepad to control the game"
+    },
+    "controls": {
+      "title": "Keyboard Controls",
+      "movement": "Movement",
+      "actions": "Actions",
+      "up": "Up",
+      "down": "Down",
+      "left": "Left",
+      "right": "Right",
+      "aButton": "A Button",
+      "bButton": "B Button",
+      "start": "Start",
+      "select": "Select"
+    },
+    "saveStates": {
+      "title": "Save States",
+      "description": "NestGame supports save states so you can save your progress at any time:",
+      "save": "Save State: Press F5 to save your current game state",
+      "load": "Load State: Press F8 to load your saved state",
+      "quick": "Quick Save: States are automatically saved to your browser"
+    },
+    "gamepad": {
+      "title": "Gamepad Support",
+      "description": "NestGame supports most USB and Bluetooth gamepads:",
+      "xbox": "Xbox controllers (wired and wireless)",
+      "playstation": "PlayStation controllers (DualShock, DualSense)",
+      "switch": "Nintendo Switch Pro Controller",
+      "generic": "Generic USB gamepads",
+      "note": "Simply connect your gamepad and it will be automatically detected."
+    }
+  }
+}
