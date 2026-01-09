@@ -11,6 +11,7 @@ import { Flame, Star, Play, ArrowLeft, Sparkles, Trophy } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { imageService } from '@/services/imageService';
 
 export default function FavoritesPage() {
     const { setGames, allGames, isLoading } = useGameStore();
@@ -196,7 +197,25 @@ export default function FavoritesPage() {
 // Special Hot Game Card Component
 function HotGameCard({ game, rank, onClick }: { game: Game; rank: number; onClick: () => void }) {
     const [imageUrl, setImageUrl] = useState(game.image || game.thumbnail || '/placeholder.png');
+    const [fallbackUrls] = useState(() =>
+        imageService.generateFallbackUrls(game.name, game.image)
+    );
+    const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
     const [hasError, setHasError] = useState(false);
+
+    const handleImageError = () => {
+        if (hasError) return;
+
+        const nextUrl = imageService.getNextFallbackUrl(fallbackUrls, currentFallbackIndex);
+
+        if (nextUrl) {
+            setImageUrl(nextUrl);
+            setCurrentFallbackIndex(currentFallbackIndex + 1);
+            imageService.markAsFailed(fallbackUrls[currentFallbackIndex]);
+        } else {
+            setHasError(true);
+        }
+    };
 
     return (
         <div
@@ -216,7 +235,7 @@ function HotGameCard({ game, rank, onClick }: { game: Game; rank: number; onClic
                         alt={game.name}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
-                        onError={() => setHasError(true)}
+                        onError={handleImageError}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 ) : (
