@@ -12,6 +12,46 @@ interface EmulatorOptions {
 class EmulatorService {
   private currentEmulator: any = null;
   private isLoading = false;
+  private _isOfflineMode = false;
+
+  /**
+   * Get the ROM URL - tries local API first, falls back to R2
+   */
+  private async getRomUrl(gamePath: string): Promise<string> {
+    const cleanPath = gamePath.startsWith('/') ? gamePath.slice(1) : gamePath;
+    const localApiUrl = `/api/roms/${encodeURIComponent(cleanPath)}`;
+
+    try {
+      // Try to fetch from local API first
+      const response = await fetch(localApiUrl, { method: 'HEAD' });
+
+      if (response.ok) {
+        console.log('✅ ROM found locally:', cleanPath);
+        this._isOfflineMode = true;
+        return localApiUrl;
+      }
+    } catch (error) {
+      console.log('⚠️ Local ROM check failed, trying online...');
+    }
+
+    // Fallback to R2 cloud URL
+    if (!env.r2Url) {
+      throw new Error('No R2 URL configured and ROM not found locally');
+    }
+
+    const baseUrl = env.r2Url.endsWith('/') ? env.r2Url : `${env.r2Url}/`;
+    const r2Url = `${baseUrl}${cleanPath}`;
+    console.log('🌐 Loading ROM from cloud:', r2Url);
+    this._isOfflineMode = false;
+    return r2Url;
+  }
+
+  /**
+   * Check if currently running in offline mode
+   */
+  get isOfflineMode(): boolean {
+    return this._isOfflineMode;
+  }
 
   async loadGame(gamePath: string, container: HTMLElement): Promise<void> {
     // Skip if already loading
@@ -31,13 +71,10 @@ class EmulatorService {
       // Dynamic import Nostalgist
       const { Nostalgist } = await import('nostalgist');
 
-      // Construct ROM URL - ensure proper slash between base URL and path
-      const baseUrl = env.r2Url.endsWith('/') ? env.r2Url : `${env.r2Url}/`;
-      const cleanPath = gamePath.startsWith('/') ? gamePath.slice(1) : gamePath;
-      const romUrl = `${baseUrl}${cleanPath}`;
+      // Get ROM URL (tries local first, then R2)
+      const romUrl = await this.getRomUrl(gamePath);
       console.log('Loading ROM from:', romUrl);
 
-      // Clear container and create canvas
       // Clear container and create canvas
       container.innerHTML = '';
       const canvas = document.createElement('canvas');
@@ -71,7 +108,7 @@ class EmulatorService {
           input_player1_a: 'j',
           input_player1_b: 'k',
           input_player1_start: 'enter',
-          input_player1_select: 'shift',
+          input_player1_select: 'rshift',
 
           // Player 2 Controls (Arrow keys + 1/2)
           input_player2_up: 'up',
