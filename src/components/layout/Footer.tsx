@@ -105,19 +105,47 @@ export function Footer() {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="py-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
-                    {/* Copyright */}
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono-tech">
-                        <span>© {currentYear} NestGame.</span>
-                        <span className="hidden md:inline">•</span>
-                        <span>{t('footer.rights') || 'All rights reserved.'}</span>
+                <div className="py-6 border-t border-white/5 flex flex-col items-center gap-4">
+                    <div className="flex flex-col md:flex-row items-center justify-between w-full gap-4">
+                        {/* Copyright */}
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono-tech">
+                            <span>© {currentYear} NestGame.</span>
+                            <span className="hidden md:inline">•</span>
+                            <span>{t('footer.rights') || 'All rights reserved.'}</span>
+                        </div>
+
+                        {/* Made with love */}
+                        <div className="flex items-center gap-2 text-sm">
+                            <span className="text-muted-foreground">{t('footer.madeWith') || 'Made with'}</span>
+                            <Heart className="w-4 h-4 text-rose-500 fill-rose-500 animate-pulse" />
+                            <span className="text-muted-foreground">{t('footer.inVietnam') || 'in Vietnam'}</span>
+                        </div>
                     </div>
 
-                    {/* Made with love */}
-                    <div className="flex items-center gap-2 text-sm">
-                        <span className="text-muted-foreground">{t('footer.madeWith') || 'Made with'}</span>
-                        <Heart className="w-4 h-4 text-rose-500 fill-rose-500 animate-pulse" />
-                        <span className="text-muted-foreground">{t('footer.inVietnam') || 'in Vietnam'}</span>
+                    {/* UI Design Credit */}
+                    <div className="text-xs text-muted-foreground/60 text-center space-y-1">
+                        <div>
+                            <span>UI Design inspired by </span>
+                            <Link
+                                href="https://ui-ux-pro-max-skill.nextlevelbuilder.io/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary/70 hover:text-primary transition-colors"
+                            >
+                                NextLevelBuilder.io
+                            </Link>
+                        </div>
+                        <div>
+                            <span>Icons by </span>
+                            <Link
+                                href="https://www.flaticon.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary/70 hover:text-primary transition-colors"
+                            >
+                                Flaticon
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
