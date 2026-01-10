@@ -13,8 +13,7 @@ export const metadata: Metadata = {
 };
 
 import { Footer } from '@/components/layout/Footer';
-
-// ... (imports)
+import { MobileWarning } from '@/components/layout/MobileWarning';
 
 export default function RootLayout({
   children,
@@ -33,6 +32,7 @@ export default function RootLayout({
           <LanguageProvider>
             <QueryProvider>
               <div className="flex min-h-screen flex-col relative">
+                <MobileWarning />
                 <div className="flex-1">
                   {children}
                 </div>

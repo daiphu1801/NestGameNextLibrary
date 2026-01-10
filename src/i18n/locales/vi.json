@@ -208,5 +208,11 @@
     "ctaHighlight": "Khám Phá?",
     "ctaDesc": "Hơn 1700+ game NES kinh điển đang chờ bạn. Bắt đầu ngay hôm nay - hoàn toàn miễn phí!",
     "ctaButton": "Bắt Đầu Chơi Ngay"
+  },
+  "mobile": {
+    "warningTitle": "Trải nghiệm tốt hơn trên PC",
+    "warningDesc": "Để có trải nghiệm chơi game tốt nhất, hãy sử dụng máy tính hoặc laptop với bàn phím.",
+    "warningShort": "Trải nghiệm tốt nhất trên PC/Laptop với bàn phím",
+    "recommended": "Khuyến nghị: PC / Laptop"
   }
 }

@@ -208,5 +208,11 @@
     "ctaHighlight": "Explore?",
     "ctaDesc": "Over 1700+ classic NES games are waiting for you. Start today - completely free!",
     "ctaButton": "Start Playing Now"
+  },
+  "mobile": {
+    "warningTitle": "Better experience on PC",
+    "warningDesc": "For the best gaming experience, please use a computer or laptop with a keyboard.",
+    "warningShort": "Best experience on PC/Laptop with keyboard",
+    "recommended": "Recommended: PC / Laptop"
   }
 }

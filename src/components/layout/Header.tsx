@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Moon, Sun, Zap, BookOpen, Gamepad2, X, Star, ArrowUp } from 'lucide-react';
+import { Search, Moon, Sun, Zap, BookOpen, Gamepad2, X, Star, ArrowUp, Menu, Home } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -17,6 +17,7 @@ export function Header() {
   const [searchValue, setSearchValue] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const {
     allGames,
     currentCategory,
@@ -107,7 +108,12 @@ export function Header() {
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-1 flex-1 justify-center">
-              <NavLink href="/" active={pathname === '/'}>{t('nav.home')}</NavLink>
+              <NavLink href="/" active={pathname === '/'}>
+                <span className="flex items-center gap-1.5">
+                  <Home className="w-3 h-3" />
+                  {t('nav.home')}
+                </span>
+              </NavLink>
               <NavLink href="/library" active={pathname === '/library'}>
                 <span className="flex items-center gap-1.5">
                   <Gamepad2 className="w-3 h-3" />
@@ -143,10 +149,10 @@ export function Header() {
                 </button>
               )}
 
-              {/* Language Toggle */}
+              {/* Language Toggle - Shows on all screens */}
               <button
                 onClick={toggleLanguage}
-                className="px-3 py-1.5 rounded-full hover:bg-white/5 border border-transparent hover:border-white/10 transition-all text-xs font-bold font-mono-tech uppercase hidden sm:flex items-center gap-2"
+                className="px-2 sm:px-3 py-1.5 rounded-full hover:bg-white/5 border border-transparent hover:border-white/10 transition-all text-xs font-bold font-mono-tech uppercase flex items-center gap-1.5 sm:gap-2"
               >
                 <span className={locale === 'en' ? 'text-primary' : 'text-muted-foreground'}>EN</span>
                 <div className="w-[1px] h-3 bg-white/10" />
@@ -174,6 +180,14 @@ export function Header() {
                   {isLandingPage ? (t('landing.exploreNow') || 'Khám Phá') : (t('header.play') || 'Play Now')}
                 </span>
               </Link>
+
+              {/* Mobile Menu Button - Right side */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-all"
+              >
+                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
             </div>
           </div>
 
@@ -211,6 +225,60 @@ export function Header() {
         </div>
       </header>
 
+      {/* Mobile Navigation Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-xl animate-in fade-in duration-200">
+          <div className="container mx-auto px-4 pt-24 pb-8">
+            <nav className="flex flex-col gap-2">
+              <MobileNavLink
+                href="/"
+                icon={<Home className="w-5 h-5" />}
+                active={pathname === '/'}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {t('nav.home')}
+              </MobileNavLink>
+              <MobileNavLink
+                href="/library"
+                icon={<Gamepad2 className="w-5 h-5" />}
+                active={pathname === '/library'}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {t('nav.library')}
+              </MobileNavLink>
+              <MobileNavLink
+                href="/favorites"
+                icon={<Star className="w-5 h-5" />}
+                active={pathname === '/favorites'}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {t('nav.favorites')}
+              </MobileNavLink>
+              <MobileNavLink
+                href="/docs"
+                icon={<BookOpen className="w-5 h-5" />}
+                active={pathname === '/docs'}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {t('nav.docs')}
+              </MobileNavLink>
+            </nav>
+
+            {/* Mobile CTA */}
+            <div className="mt-8">
+              <Link
+                href="/library"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold text-lg shadow-lg shadow-primary/30"
+              >
+                <Zap className="w-5 h-5" />
+                {t('header.play')}
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Scroll to Top Button */}
       <button
         onClick={scrollToTop}
@@ -237,6 +305,36 @@ function NavLink({ href, children, active }: { href: string; children: React.Rea
           : "text-muted-foreground hover:text-foreground hover:bg-white/5"
       )}
     >
+      {children}
+    </Link>
+  );
+}
+
+function MobileNavLink({
+  href,
+  children,
+  icon,
+  active,
+  onClick
+}: {
+  href: string;
+  children: React.ReactNode;
+  icon: React.ReactNode;
+  active?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-4 px-4 py-4 rounded-xl text-lg font-bold transition-all",
+        active
+          ? "text-primary bg-primary/10"
+          : "text-foreground hover:bg-white/5"
+      )}
+    >
+      <span className={active ? "text-primary" : "text-muted-foreground"}>{icon}</span>
       {children}
     </Link>
   );
