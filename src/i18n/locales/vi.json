@@ -112,7 +112,8 @@
     "hot": "Hot",
     "noResults": "Không tìm thấy game nào",
     "tryOther": "Thử tìm kiếm với từ khóa khác",
-    "clearSearch": "Xóa tìm kiếm"
+    "clearSearch": "Xóa tìm kiếm",
+    "reset": "Đặt lại"
   },
   "sort": {
     "label": "Sắp xếp:",
@@ -221,6 +222,10 @@
     "modeOn": "Chế độ tiết kiệm: BẬT",
     "modeOff": "Chế độ tiết kiệm: TẮT",
     "lowMode": "Tiết kiệm",
-    "normalMode": "Hiệu ứng"
+    "normalMode": "Hiệu ứng",
+    "tooltipTitle": "Tối ưu trải nghiệm",
+    "tooltipDesc": "Bật chế độ Tiết kiệm để giảm hiệu ứng hình ảnh, giúp giao diện phản hồi nhanh hơn và tiết kiệm tài nguyên.",
+    "tryIt": "Thử ngay",
+    "dismiss": "Để sau"
   }
 }

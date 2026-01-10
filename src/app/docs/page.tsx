@@ -2,7 +2,7 @@
 
 import { Header } from '@/components/layout/Header';
 import { useLanguage } from '@/components/providers/LanguageProvider';
-import { ArrowLeft, Book, Gamepad2, Keyboard, Save, Zap } from 'lucide-react';
+import { ArrowLeft, Book, Gamepad2, Keyboard, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DocsPage() {
@@ -132,21 +132,7 @@ export default function DocsPage() {
                         </div>
                     </section>
 
-                    {/* Save States */}
-                    <section className="glass-card rounded-2xl p-8">
-                        <div className="flex items-center gap-3 mb-6">
-                            <Save className="w-6 h-6 text-primary" />
-                            <h2 className="text-2xl font-bold">{t('docs.saveStates.title')}</h2>
-                        </div>
-                        <div className="space-y-4 text-muted-foreground">
-                            <p>{t('docs.saveStates.description')}</p>
-                            <ul className="list-disc list-inside space-y-2 ml-4">
-                                <li>{t('docs.saveStates.save')}</li>
-                                <li>{t('docs.saveStates.load')}</li>
-                                <li>{t('docs.saveStates.quick')}</li>
-                            </ul>
-                        </div>
-                    </section>
+
 
                     {/* Gamepad */}
                     <section className="glass-card rounded-2xl p-8">

@@ -112,7 +112,8 @@
     "hot": "Hot",
     "noResults": "No games found",
     "tryOther": "Try searching with different keywords",
-    "clearSearch": "Clear search"
+    "clearSearch": "Clear search",
+    "reset": "Reset"
   },
   "sort": {
     "label": "Sort by:",
@@ -221,6 +222,10 @@
     "modeOn": "Low Performance Mode: ON",
     "modeOff": "Low Performance Mode: OFF",
     "lowMode": "Low FX",
-    "normalMode": "Effects"
+    "normalMode": "Effects",
+    "tooltipTitle": "Optimize your experience",
+    "tooltipDesc": "Enable Low FX mode to reduce visual effects, making the interface more responsive and saving resources.",
+    "tryIt": "Try it",
+    "dismiss": "Later"
   }
 }

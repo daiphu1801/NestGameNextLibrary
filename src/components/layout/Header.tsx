@@ -404,51 +404,131 @@ function MobileNavLink({
   );
 }
 
-// Performance Toggle Button Component
+// Performance Toggle Button Component with First-time Tooltip
 function PerformanceToggleButton() {
   const { isLowPerformanceMode, togglePerformanceMode } = usePerformance();
   const { t } = useLanguage();
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [hasSeenTooltip, setHasSeenTooltip] = useState(true); // Default true to avoid flash
+
+  // Check if user has seen the tooltip before
+  useEffect(() => {
+    const seen = localStorage.getItem('nestgame-perf-tooltip-seen');
+    if (!seen) {
+      // Show tooltip after a short delay
+      const timer = setTimeout(() => setShowTooltip(true), 2000);
+      setHasSeenTooltip(false);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleClick = () => {
+    togglePerformanceMode();
+    // Hide tooltip and mark as seen
+    if (showTooltip) {
+      setShowTooltip(false);
+      localStorage.setItem('nestgame-perf-tooltip-seen', 'true');
+    }
+  };
+
+  const dismissTooltip = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowTooltip(false);
+    localStorage.setItem('nestgame-perf-tooltip-seen', 'true');
+  };
 
   return (
-    <button
-      onClick={togglePerformanceMode}
-      className={cn(
-        "hidden sm:flex group relative px-5 py-2 rounded-full font-bold text-sm overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95",
-        isLowPerformanceMode
-          ? "shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40"
-          : "shadow-lg shadow-primary/25 hover:shadow-primary/40"
+    <div className="relative hidden sm:block">
+      {/* Tooltip */}
+      {showTooltip && (
+        <div className="absolute top-full right-0 mt-3 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+          {/* Arrow */}
+          <div className="absolute -top-2 right-6 w-4 h-4 bg-card rotate-45 border-l border-t border-white/10" />
+
+          {/* Tooltip Content */}
+          <div className="relative bg-card border border-white/10 rounded-2xl p-5 shadow-2xl w-80">
+            <button
+              onClick={dismissTooltip}
+              className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors text-lg"
+            >
+              ×
+            </button>
+
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center flex-shrink-0">
+                <Zap className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1 pr-4">
+                <h4 className="font-bold text-base text-foreground mb-1.5">
+                  {t('performance.tooltipTitle') || 'Tối ưu trải nghiệm'}
+                </h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t('performance.tooltipDesc') || 'Bật chế độ Tiết kiệm để giảm hiệu ứng hình ảnh, giúp giao diện phản hồi nhanh hơn.'}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={handleClick}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary/20 to-accent/20 text-primary text-sm font-semibold hover:from-primary/30 hover:to-accent/30 transition-all"
+              >
+                {t('performance.tryIt') || 'Thử ngay'}
+              </button>
+              <button
+                onClick={dismissTooltip}
+                className="px-4 py-2.5 rounded-xl bg-white/5 text-muted-foreground text-sm font-medium hover:bg-white/10 transition-colors"
+              >
+                {t('performance.dismiss') || 'Để sau'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
-      title={isLowPerformanceMode
-        ? (t('performance.modeOn') || 'Low Performance Mode: ON')
-        : (t('performance.modeOff') || 'Low Performance Mode: OFF')
-      }
-    >
-      {/* Gradient Border */}
-      <div className={cn(
-        "absolute inset-0 bg-gradient-to-r bg-[length:200%_auto]",
-        isLowPerformanceMode
-          ? "from-yellow-500 via-orange-500 to-yellow-500"
-          : "from-primary via-accent to-primary animate-gradient"
-      )} />
-      {/* Inner Background */}
-      <div className="absolute inset-[1px] rounded-full bg-background" />
-      {/* Content */}
-      <span className={cn(
-        "relative flex items-center gap-2 uppercase tracking-wider text-xs transition-colors",
-        isLowPerformanceMode
-          ? "text-yellow-400"
-          : "bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent group-hover:text-primary"
-      )}>
-        {isLowPerformanceMode ? (
-          <ZapOff className="w-3.5 h-3.5 text-yellow-400" />
-        ) : (
-          <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+
+      {/* Main Button */}
+      <button
+        onClick={handleClick}
+        className={cn(
+          "group relative px-5 py-2 rounded-full font-bold text-sm overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95",
+          isLowPerformanceMode
+            ? "shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40"
+            : "shadow-lg shadow-primary/25 hover:shadow-primary/40",
+          showTooltip && "ring-2 ring-primary ring-offset-2 ring-offset-background"
         )}
-        {isLowPerformanceMode
-          ? (t('performance.lowMode') || 'Tiết kiệm')
-          : (t('performance.normalMode') || 'Hiệu ứng')
+        title={isLowPerformanceMode
+          ? (t('performance.modeOn') || 'Low Performance Mode: ON')
+          : (t('performance.modeOff') || 'Low Performance Mode: OFF')
         }
-      </span>
-    </button>
+      >
+        {/* Gradient Border */}
+        <div className={cn(
+          "absolute inset-0 bg-gradient-to-r bg-[length:200%_auto]",
+          isLowPerformanceMode
+            ? "from-yellow-500 via-orange-500 to-yellow-500"
+            : "from-primary via-accent to-primary animate-gradient"
+        )} />
+        {/* Inner Background */}
+        <div className="absolute inset-[1px] rounded-full bg-background" />
+        {/* Content */}
+        <span className={cn(
+          "relative flex items-center gap-2 uppercase tracking-wider text-xs transition-colors",
+          isLowPerformanceMode
+            ? "text-yellow-400"
+            : "bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent group-hover:text-primary"
+        )}>
+          {isLowPerformanceMode ? (
+            <ZapOff className="w-3.5 h-3.5 text-yellow-400" />
+          ) : (
+            <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+          )}
+          {isLowPerformanceMode
+            ? (t('performance.lowMode') || 'Tiết kiệm')
+            : (t('performance.normalMode') || 'Hiệu ứng')
+          }
+        </span>
+      </button>
+    </div>
   );
 }
+

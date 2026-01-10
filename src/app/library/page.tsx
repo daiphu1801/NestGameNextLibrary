@@ -12,6 +12,107 @@ import { validateEnv } from '@/config/env';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { useState } from 'react';
 import { Game } from '@/types';
+import { X, Search, RotateCcw } from 'lucide-react';
+
+// Search Indicator Component - Shows when filters are active
+function SearchIndicator() {
+    const { t } = useLanguage();
+    const {
+        searchQuery,
+        currentCategory,
+        currentRegion,
+        allGames,
+        setSearchQuery,
+        setCategory,
+        setRegion,
+        setSort,
+        setFilteredGames
+    } = useGameStore();
+
+    const hasActiveFilters = searchQuery || currentCategory !== 'all' || currentRegion !== 'all';
+
+    if (!hasActiveFilters) return null;
+
+    const resetAllFilters = () => {
+        setSearchQuery('');
+        setCategory('all');
+        setRegion('all');
+        setSort('name-asc');
+        setFilteredGames(gameService.sortGames(allGames, 'name-asc'));
+    };
+
+    return (
+        <div className="flex items-center gap-2 flex-wrap">
+            {/* Search Query Badge */}
+            {searchQuery && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/20 border border-primary/30">
+                    <Search className="w-3 h-3 text-primary" />
+                    <span className="text-sm font-medium text-primary">"{searchQuery}"</span>
+                    <button
+                        onClick={() => {
+                            setSearchQuery('');
+                            // Re-apply other filters without search
+                            let filtered = allGames;
+                            filtered = gameService.filterByCategory(filtered, currentCategory);
+                            filtered = gameService.filterByRegion(filtered, currentRegion);
+                            setFilteredGames(filtered);
+                        }}
+                        className="w-4 h-4 rounded-full bg-primary/30 hover:bg-primary/50 flex items-center justify-center transition-colors"
+                    >
+                        <X className="w-2.5 h-2.5 text-primary" />
+                    </button>
+                </div>
+            )}
+
+            {/* Category Badge */}
+            {currentCategory !== 'all' && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-500/30">
+                    <span className="text-sm font-medium text-cyan-400">{currentCategory}</span>
+                    <button
+                        onClick={() => {
+                            setCategory('all');
+                            let filtered = allGames;
+                            filtered = gameService.searchGames(filtered, searchQuery);
+                            filtered = gameService.filterByRegion(filtered, currentRegion);
+                            setFilteredGames(filtered);
+                        }}
+                        className="w-4 h-4 rounded-full bg-cyan-500/30 hover:bg-cyan-500/50 flex items-center justify-center transition-colors"
+                    >
+                        <X className="w-2.5 h-2.5 text-cyan-400" />
+                    </button>
+                </div>
+            )}
+
+            {/* Region Badge */}
+            {currentRegion !== 'all' && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/20 border border-orange-500/30">
+                    <span className="text-sm font-medium text-orange-400">{currentRegion}</span>
+                    <button
+                        onClick={() => {
+                            setRegion('all');
+                            let filtered = allGames;
+                            filtered = gameService.searchGames(filtered, searchQuery);
+                            filtered = gameService.filterByCategory(filtered, currentCategory);
+                            setFilteredGames(filtered);
+                        }}
+                        className="w-4 h-4 rounded-full bg-orange-500/30 hover:bg-orange-500/50 flex items-center justify-center transition-colors"
+                    >
+                        <X className="w-2.5 h-2.5 text-orange-400" />
+                    </button>
+                </div>
+            )}
+
+            {/* Reset All Button */}
+            <button
+                onClick={resetAllFilters}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+                <RotateCcw className="w-3 h-3" />
+                {t('search.reset') || 'Reset'}
+            </button>
+        </div>
+    );
+}
 
 export default function LibraryPage() {
     const { setGames, isLoading, filteredGames, allGames } = useGameStore();
@@ -98,9 +199,14 @@ export default function LibraryPage() {
                     <p className="text-muted-foreground">
                         {t('library.subtitle') || 'Browse and select a game to play'}
                     </p>
-                    <div className="mt-4 flex items-center gap-2">
-                        <span className="text-primary font-mono-tech text-2xl font-bold">{filteredGames.length}</span>
-                        <span className="text-muted-foreground font-mono-tech uppercase">{t('header.games') || 'Games'}</span>
+                    <div className="mt-4 flex items-center gap-4 flex-wrap">
+                        <div className="flex items-center gap-2">
+                            <span className="text-primary font-mono-tech text-2xl font-bold">{filteredGames.length}</span>
+                            <span className="text-muted-foreground font-mono-tech uppercase">{t('header.games') || 'Games'}</span>
+                        </div>
+
+                        {/* Search Active Indicator with Reset */}
+                        <SearchIndicator />
                     </div>
                 </div>
 
