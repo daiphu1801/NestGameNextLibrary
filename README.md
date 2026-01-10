@@ -6,11 +6,10 @@ A modern NES game library - Play classic retro games directly in your browser wi
 
 ## 📸 Preview
 
-<!-- Add your preview images here -->
-![Homepage](public/preview/home.png)
-![Game Library](public/preview/library.png)
-![Gameplay](public/preview/gameplay.png)
-![Mobile View](public/preview/mobile.png)
+![Homepage](public/home.png)
+![Game Library](public/library.png)
+![Gameplay](public/gameplay.png)
+![Mobile View](public/mobile.png)
 
 ## 🛠️ Tech Stack
 
