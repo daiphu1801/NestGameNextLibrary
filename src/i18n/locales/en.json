@@ -98,7 +98,13 @@
     "poweredBy": "Powered by",
     "gamesCount": "Games",
     "playOnBrowser": "Play on browser",
-    "free100": "100% Free"
+    "free100": "100% Free",
+    "description": "Online platform for classic NES games. Over 1700+ free games, no installation required.",
+    "quickLinks": "Quick Links",
+    "developer": "Developer",
+    "rights": "All rights reserved.",
+    "madeWith": "Made with",
+    "inVietnam": "in Vietnam"
   },
   "search": {
     "hot": "Hot",
@@ -108,11 +114,22 @@
   },
   "sort": {
     "label": "Sort by:",
-    "nameAsc": "Name A-Z",
-    "nameDesc": "Name Z-A",
-    "ratingDesc": "Highest rated",
-    "yearDesc": "Newest first",
-    "yearAsc": "Oldest first"
+    "nameAZ": "Name A-Z",
+    "nameZA": "Name Z-A",
+    "rating": "Highest Rated",
+    "newest": "Newest",
+    "oldest": "Oldest"
+  },
+  "region": {
+    "all": "All",
+    "usa": "USA",
+    "japan": "Japan",
+    "europe": "Europe",
+    "asia": "Asia"
+  },
+  "filter": {
+    "region": "Region",
+    "sort": "Sort"
   },
   "pagination": {
     "showing": "Showing",
@@ -164,5 +181,32 @@
       "generic": "Generic USB gamepads",
       "note": "Simply connect your gamepad and it will be automatically detected."
     }
+  },
+  "landing": {
+    "exploreNow": "Explore Now",
+    "viewAll": "View All",
+    "aboutTitle": "About",
+    "aboutTitleHighlight": "NestGame",
+    "aboutDesc": "NestGame is an online NES emulator platform that lets you play over 1700+ classic games right in your browser. Built with modern technology, NestGame delivers a smooth experience with no installation required - completely free.",
+    "feature1Title": "Play Anywhere",
+    "feature1Desc": "Access and play games from any device with a browser",
+    "feature2Title": "Safe & Secure",
+    "feature2Desc": "No downloads needed, no risk of viruses or malware",
+    "feature3Title": "Large Community",
+    "feature3Desc": "Thousands of players enjoying classic games every day",
+    "feature4Title": "High Quality",
+    "feature4Desc": "Carefully curated ROMs for the best gaming experience",
+    "howItWorksTitle": "How It",
+    "howItWorksHighlight": "Works",
+    "step1Title": "Choose a Game",
+    "step1Desc": "Browse the library with 1700+ games, search by name or category",
+    "step2Title": "Press Play",
+    "step2Desc": "Click on your favorite game, hit the Play button to start instantly",
+    "step3Title": "Enjoy",
+    "step3Desc": "Use keyboard or gamepad to control, save your progress anytime",
+    "ctaTitle": "Ready to",
+    "ctaHighlight": "Explore?",
+    "ctaDesc": "Over 1700+ classic NES games are waiting for you. Start today - completely free!",
+    "ctaButton": "Start Playing Now"
   }
 }

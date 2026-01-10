@@ -28,6 +28,25 @@ class GameService {
     return games.filter(game => game.category === category);
   }
 
+  filterByRegion(games: Game[], region: string): Game[] {
+    if (region === 'all') return games;
+
+    const regionPatterns: Record<string, string[]> = {
+      usa: ['USA', '🇺🇸', '(U)', 'United States'],
+      japan: ['Japan', '🇯🇵', '(J)', 'Japanese'],
+      europe: ['Europe', '🇪🇺', '(E)', 'European'],
+      asia: ['Asia', '🌏', '(As)'],
+    };
+
+    const patterns = regionPatterns[region] || [];
+    if (patterns.length === 0) return games;
+
+    return games.filter(game => {
+      const regionStr = game.region || '';
+      return patterns.some(pattern => regionStr.includes(pattern));
+    });
+  }
+
   searchGames(games: Game[], query: string): Game[] {
     if (!query.trim()) return games;
 

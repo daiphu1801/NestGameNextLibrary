@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { Game, GameCategoryKey, SortOption } from '@/types';
 
+export type RegionKey = 'all' | 'usa' | 'japan' | 'europe' | 'asia' | 'world';
+
 interface GameStore {
   // State
   allGames: Game[];
@@ -8,6 +10,7 @@ interface GameStore {
   currentCategory: GameCategoryKey;
   searchQuery: string;
   currentSort: SortOption;
+  currentRegion: RegionKey;
   currentPage: number;
   gamesPerPage: number;
   isLoading: boolean;
@@ -18,6 +21,7 @@ interface GameStore {
   setCategory: (category: GameCategoryKey) => void;
   setSearchQuery: (query: string) => void;
   setSort: (sort: SortOption) => void;
+  setRegion: (region: RegionKey) => void;
   setPage: (page: number) => void;
   setLoading: (loading: boolean) => void;
   resetFilters: () => void;
@@ -34,6 +38,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   currentCategory: 'all',
   searchQuery: '',
   currentSort: 'name-asc',
+  currentRegion: 'all',
   currentPage: 1,
   gamesPerPage: 25,
   isLoading: true,
@@ -49,6 +54,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   setSort: (sort) => set({ currentSort: sort }),
 
+  setRegion: (region) => set({ currentRegion: region, currentPage: 1 }),
+
   setPage: (page) => set({ currentPage: page }),
 
   setLoading: (loading) => set({ isLoading: loading }),
@@ -57,6 +64,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     currentCategory: 'all',
     searchQuery: '',
     currentSort: 'name-asc',
+    currentRegion: 'all',
     currentPage: 1,
   }),
 

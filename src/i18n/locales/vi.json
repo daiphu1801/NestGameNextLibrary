@@ -98,7 +98,13 @@
     "poweredBy": "Powered by",
     "gamesCount": "Games",
     "playOnBrowser": "Chơi trên trình duyệt",
-    "free100": "Miễn phí 100%"
+    "free100": "Miễn phí 100%",
+    "description": "Nền tảng chơi game NES kinh điển trực tuyến. Hơn 1700+ game miễn phí, không cần cài đặt.",
+    "quickLinks": "Liên kết nhanh",
+    "developer": "Nhà phát triển",
+    "rights": "All rights reserved.",
+    "madeWith": "Made with",
+    "inVietnam": "in Vietnam"
   },
   "search": {
     "hot": "Hot",
@@ -108,11 +114,22 @@
   },
   "sort": {
     "label": "Sắp xếp:",
-    "nameAsc": "Tên A-Z",
-    "nameDesc": "Tên Z-A",
-    "ratingDesc": "Đánh giá cao",
-    "yearDesc": "Mới nhất",
-    "yearAsc": "Cũ nhất"
+    "nameAZ": "Tên A-Z",
+    "nameZA": "Tên Z-A",
+    "rating": "Đánh giá cao",
+    "newest": "Mới nhất",
+    "oldest": "Cũ nhất"
+  },
+  "region": {
+    "all": "Tất cả",
+    "usa": "USA",
+    "japan": "Nhật Bản",
+    "europe": "Châu Âu",
+    "asia": "Châu Á"
+  },
+  "filter": {
+    "region": "Khu vực",
+    "sort": "Sắp xếp"
   },
   "pagination": {
     "showing": "Hiển thị",
@@ -164,5 +181,32 @@
       "generic": "Tay cầm USB thông dụng",
       "note": "Chỉ cần kết nối tay cầm và nó sẽ được tự động nhận diện."
     }
+  },
+  "landing": {
+    "exploreNow": "Trải Nghiệm Ngay",
+    "viewAll": "Xem Tất Cả",
+    "aboutTitle": "Về",
+    "aboutTitleHighlight": "NestGame",
+    "aboutDesc": "NestGame là nền tảng giả lập NES trực tuyến, cho phép bạn chơi hơn 1700+ game kinh điển ngay trên trình duyệt. Được xây dựng với công nghệ hiện đại, NestGame mang đến trải nghiệm mượt mà, không cần cài đặt, hoàn toàn miễn phí.",
+    "feature1Title": "Chơi Mọi Nơi",
+    "feature1Desc": "Truy cập và chơi game từ bất kỳ thiết bị nào có trình duyệt",
+    "feature2Title": "An Toàn & Bảo Mật",
+    "feature2Desc": "Không cần tải file, không lo virus hay phần mềm độc hại",
+    "feature3Title": "Cộng Đồng Lớn",
+    "feature3Desc": "Hàng nghìn người chơi đang trải nghiệm game kinh điển mỗi ngày",
+    "feature4Title": "Chất Lượng Cao",
+    "feature4Desc": "ROM được chọn lọc kỹ càng, đảm bảo trải nghiệm tốt nhất",
+    "howItWorksTitle": "Cách",
+    "howItWorksHighlight": "Sử Dụng",
+    "step1Title": "Chọn Game",
+    "step1Desc": "Duyệt thư viện với hơn 1700+ games, tìm kiếm theo tên hoặc thể loại",
+    "step2Title": "Nhấn Play",
+    "step2Desc": "Click vào game yêu thích, nhấn nút Play để bắt đầu chơi ngay",
+    "step3Title": "Tận Hưởng",
+    "step3Desc": "Sử dụng bàn phím hoặc tay cầm để điều khiển, lưu game bất cứ lúc nào",
+    "ctaTitle": "Sẵn Sàng",
+    "ctaHighlight": "Khám Phá?",
+    "ctaDesc": "Hơn 1700+ game NES kinh điển đang chờ bạn. Bắt đầu ngay hôm nay - hoàn toàn miễn phí!",
+    "ctaButton": "Bắt Đầu Chơi Ngay"
   }
 }
