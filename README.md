@@ -1,84 +1,89 @@
 # NestGame Library 🎮
 
-A modern, high-performance NES (Nintendo Entertainment System) Emulator and Game Library built with the latest web technologies. Experience classic retro games directly in your browser with a sleek, cyberpunk-inspired interface.
+A modern NES game library - Play classic retro games directly in your browser with a stunning interface.
 
-![NestGame Preview](public/screenshot.png)
+> **Designed & Developed by [@daiphu1801](https://github.com/daiphu1801)**
 
-## ✨ Features
+## 📸 Preview
 
-*   **🕹️ Browser-based NES Emulator**: Powered by `nostalgist.js` for smooth, accurate emulation.
-*   **🎨 Modern UI/UX**: Stunning interface with glassmorphism, animated gradients, and full Dark/Light mode support.
-*   **⚡ Instant Play**: Click and play immediately. No downloads or complex setup required.
-*   **📂 Drag & Drop Support**: Drop your own `.nes` or `.zip` ROMs to play instantly.
-*   **💾 Save & Load**: Save your game progress locally (or cloud - configurable) and resume anytime.
-*   **🌍 Multi-language**: Full support for English and Vietnamese.
-*   **🔍 Smart Search**: Real-time search with hot keywords (Mario, Contra...) and advanced filtering by category/genre.
-*   **📱 Responsive Design**: Fully optimized for desktop, tablet, and mobile devices.
+<!-- Add your preview images here -->
+![Homepage](public/preview/home.png)
+![Game Library](public/preview/library.png)
+![Gameplay](public/preview/gameplay.png)
+![Mobile View](public/preview/mobile.png)
 
 ## 🛠️ Tech Stack
 
-*   **Framework**: [Next.js 16](https://nextjs.org/) (App Router & Server Components)
-*   **Language**: [TypeScript](https://www.typescriptlang.org/)
-*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) + Custom CSS Animations
-*   **State Management**: [Zustand](https://github.com/pmndrs/zustand)
-*   **Icons**: [Lucide React](https://lucide.dev/)
-*   **Emulation Core**: [Nostalgist.js](https://nostalgist.js.org/)
-*   **Deployment**: Vercel
+| Technology | Description |
+|------------|-------------|
+| [Next.js 16](https://nextjs.org/) | React Framework with App Router |
+| [TypeScript](https://www.typescriptlang.org/) | Type-safe JavaScript |
+| [Tailwind CSS](https://tailwindcss.com/) | Utility-first CSS Framework |
+| [Zustand](https://github.com/pmndrs/zustand) | Lightweight State Management |
+| [Lucide React](https://lucide.dev/) | Beautiful Icon Library |
+| [Nostalgist.js](https://nostalgist.js.org/) | NES Emulation Core |
+
+## 📁 Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── page.tsx           # Homepage
+│   ├── library/           # Game library page
+│   ├── favorites/         # Hot games page
+│   ├── docs/              # Documentation page
+│   └── globals.css        # Global styles
+├── components/
+│   ├── layout/            # Header, Footer
+│   ├── game/              # GameCard, GameGrid, GameModal
+│   ├── search/            # CategoryFilter, FilterToolbar
+│   ├── ui/                # shadcn/ui components
+│   └── providers/         # Theme, Language, Performance
+├── features/games/        # Game store (Zustand)
+├── services/              # gameService, imageService
+├── i18n/                  # Internationalization (vi, en)
+└── types/                 # TypeScript interfaces
+```
+
+## ✨ Features
+
+- 🕹️ **NES Emulator** - Play games directly in browser
+- 🎨 **Modern UI/UX** - Glassmorphism, Dark/Light mode
+- 🔍 **Smart Search** - Filter by category, region
+- 💾 **Save Progress** - Local storage support
+- 🌍 **Multi-language** - Vietnamese, English
+- ⚡ **Performance Mode** - Optimized for low-end devices
+- 📱 **Responsive** - Desktop, tablet, mobile
 
 ## 🚀 Getting Started
 
-### Prerequisites
-
-*   Node.js 18.17 or later
-*   npm or yarn
-
-### Installation
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/your-username/nest-game-next.git
-    cd nest-game-next
-    ```
-
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-
-3.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
-
-4.  **Open your browser:**
-    Navigate to [http://localhost:3000](http://localhost:3000) to see the app running.
-
-## 📦 Building for Production
-
-To create an optimized production build:
-
 ```bash
+# Clone the repository
+git clone https://github.com/daiphu1801/NestGameNextLibrary.git
+
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
 npm run build
-npm start
 ```
 
-## ☁️ Deployment
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-This project is optimized for deployment on **Vercel**.
+## 👤 Author
 
-1.  Push your code to a GitHub repository.
-2.  Import the project in [Vercel Dashboard](https://vercel.com/new).
-3.  Vercel will detect Next.js and configure the build settings automatically.
-4.  Click **Deploy**.
+**Đại Phú (daiphu1801)**
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+- GitHub: [@daiphu1801](https://github.com/daiphu1801)
+- Design, Development & Idea by daiphu1801
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License
 
 ---
 
-*Note: This project is an emulator frontend. Users must provide their own game ROMs if they are not included in the demo library.*
+*This project uses an emulator frontend. Users must provide their own game ROMs.*
