@@ -132,7 +132,7 @@ export function Footer() {
                                 rel="noopener noreferrer"
                                 className="text-primary/70 hover:text-primary transition-colors"
                             >
-                                NextLevelBuilder.io
+                                ui-ux-pro-max-skill.io
                             </Link>
                         </div>
                         <div>
