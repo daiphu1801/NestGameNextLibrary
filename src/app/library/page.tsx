@@ -59,7 +59,7 @@ export default function LibraryPage() {
 
             <Header />
 
-            {/* Background Effects */}
+            {/* Background Effects - Hidden in low performance mode via CSS */}
             <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
                 <div
                     className="absolute -top-[400px] left-1/2 -translate-x-1/2 w-[1200px] h-[800px] animate-pulse"
@@ -129,3 +129,4 @@ export default function LibraryPage() {
         </main>
     );
 }
+

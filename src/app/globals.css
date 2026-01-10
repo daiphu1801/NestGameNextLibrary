@@ -392,3 +392,132 @@
     animation-play-state: paused;
   }
 }
+
+/* ==========================================
+   LOW PERFORMANCE MODE
+   Disables heavy effects for better performance on older devices
+   ========================================== */
+
+/* Disable all backdrop blur effects */
+.low-performance-mode *[class*="backdrop-blur"],
+.low-performance-mode .backdrop-blur-sm,
+.low-performance-mode .backdrop-blur-md,
+.low-performance-mode .backdrop-blur-lg,
+.low-performance-mode .backdrop-blur-xl,
+.low-performance-mode .backdrop-blur-2xl,
+.low-performance-mode .backdrop-blur-3xl {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Disable continuous animations */
+.low-performance-mode .animate-pulse,
+.low-performance-mode .animate-bounce,
+.low-performance-mode .animate-ping,
+.low-performance-mode .animate-float,
+.low-performance-mode .animate-float-slow,
+.low-performance-mode .animate-pulse-glow,
+.low-performance-mode .animate-drift,
+.low-performance-mode .animate-gradient {
+  animation: none !important;
+}
+
+/* Keep spin animation for loading indicators */
+.low-performance-mode .animate-spin {
+  animation: spin 1s linear infinite !important;
+}
+
+/* Disable heavy blur filters on background glows */
+.low-performance-mode [style*="filter: blur"] {
+  filter: none !important;
+  opacity: 0.3 !important;
+}
+
+/* Remove glass card backdrop effects */
+.low-performance-mode .glass-card,
+.low-performance-mode .glass-card-strong {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(15, 20, 30, 0.98) !important;
+}
+
+/* Simplify shadows */
+.low-performance-mode .shadow-2xl,
+.low-performance-mode .shadow-xl,
+.low-performance-mode .shadow-lg {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Disable marquee animation */
+.low-performance-mode .animate-marquee {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* Reduce transition duration */
+.low-performance-mode * {
+  transition-duration: 0.1s !important;
+}
+
+/* Disable transform effects on hover */
+.low-performance-mode .hover\:scale-105:hover,
+.low-performance-mode .hover\:scale-110:hover,
+.low-performance-mode .hover\:-translate-y-1:hover,
+.low-performance-mode .hover\:-translate-y-2:hover {
+  transform: none !important;
+}
+
+/* Hide decorative background glow elements */
+.low-performance-mode [class*="blur-3xl"],
+.low-performance-mode [class*="blur-2xl"] {
+  display: none !important;
+}
+
+/* Disable glow box-shadows */
+.low-performance-mode .glow-cyan,
+.low-performance-mode .glow-magenta,
+.low-performance-mode [class*="shadow-primary"],
+.low-performance-mode [class*="shadow-accent"] {
+  box-shadow: none !important;
+}
+
+/* Disable text gradients - use solid colors */
+.low-performance-mode .text-gradient-cyan,
+.low-performance-mode .text-gradient-magic {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: hsl(186, 100%, 50%) !important;
+}
+
+/* Disable hover lift effects */
+.low-performance-mode .hover-lift:hover {
+  transform: none !important;
+}
+
+/* Force will-change auto */
+.low-performance-mode *:not(canvas):not(video) {
+  will-change: auto !important;
+}
+
+/* Simplify game card overlay */
+.low-performance-mode .game-card-overlay {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Hide grid pattern background */
+.low-performance-mode .bg-grid-pattern {
+  background-image: none !important;
+}
+
+/* Reduce filter complexity on images */
+.low-performance-mode img {
+  filter: none !important;
+}
+
+/* Disable ring effects */
+.low-performance-mode [class*="ring-"] {
+  box-shadow: none !important;
+  outline: none !important;
+}

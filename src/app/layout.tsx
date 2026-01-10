@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { QueryProvider } from '@/components/providers/QueryProvider';
 import { LanguageProvider } from '@/components/providers/LanguageProvider';
+import { PerformanceProvider } from '@/components/providers/PerformanceProvider';
 import { metadata as siteMetadata } from '@/config/site';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -30,18 +31,21 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LanguageProvider>
-            <QueryProvider>
-              <div className="flex min-h-screen flex-col relative">
-                <MobileWarning />
-                <div className="flex-1">
-                  {children}
+            <PerformanceProvider>
+              <QueryProvider>
+                <div className="flex min-h-screen flex-col relative">
+                  <MobileWarning />
+                  <div className="flex-1">
+                    {children}
+                  </div>
+                  <Footer />
                 </div>
-                <Footer />
-              </div>
-            </QueryProvider>
+              </QueryProvider>
+            </PerformanceProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
+

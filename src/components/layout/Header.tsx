@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Moon, Sun, Zap, BookOpen, Gamepad2, X, Star, ArrowUp, Menu, Home } from 'lucide-react';
+import { Search, Moon, Sun, Zap, ZapOff, BookOpen, Gamepad2, X, Star, ArrowUp, Menu, Home } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -9,6 +9,7 @@ import { useGameStore } from '@/features/games/store/gameStore';
 import { gameService } from '@/services/gameService';
 import { debounce, cn } from '@/lib/utils';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import { usePerformance } from '@/components/providers/PerformanceProvider';
 
 export function Header() {
   const pathname = usePathname();
@@ -140,12 +141,22 @@ export function Header() {
               {isLibraryPage && (
                 <button
                   onClick={toggleSearch}
-                  className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95",
-                    isSearchOpen ? "bg-primary/20 text-primary" : "hover:bg-white/5"
-                  )}
+                  className="group flex items-center h-10 rounded-full hover:bg-white/5 transition-all duration-300 ease-out overflow-hidden"
                 >
-                  {isSearchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
+                  <div className={cn(
+                    "w-10 h-10 flex-shrink-0 flex items-center justify-center transition-all duration-300",
+                    isSearchOpen ? "text-primary" : "text-muted-foreground group-hover:text-primary"
+                  )}>
+                    {isSearchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
+                  </div>
+                  {/* Expanding Text - Pushes to the right */}
+                  {!isSearchOpen && (
+                    <div className="overflow-hidden max-w-0 group-hover:max-w-[100px] transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]">
+                      <span className="pr-3 whitespace-nowrap text-xs font-semibold text-primary uppercase tracking-wider">
+                        {t('header.search')}
+                      </span>
+                    </div>
+                  )}
                 </button>
               )}
 
@@ -168,18 +179,8 @@ export function Header() {
                 <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-cyan-400" />
               </button>
 
-              {/* CTA Button */}
-              <Link
-                href="/library"
-                className="hidden sm:flex group relative px-5 py-2 rounded-full font-bold text-sm overflow-hidden shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-300 hover:scale-105 active:scale-95"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_auto] animate-gradient" />
-                <div className="absolute inset-[1px] rounded-full bg-background" />
-                <span className="relative flex items-center gap-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent group-hover:text-primary transition-colors uppercase tracking-wider text-xs">
-                  <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
-                  {isLandingPage ? (t('landing.exploreNow') || 'Khám Phá') : (t('header.play') || 'Play Now')}
-                </span>
-              </Link>
+              {/* Performance Mode Toggle Button */}
+              <PerformanceToggleButton />
 
               {/* Mobile Menu Button - Right side */}
               <button
@@ -191,33 +192,96 @@ export function Header() {
             </div>
           </div>
 
-          {/* Search Bar - Expandable on Library page */}
+          {/* Spotlight Search Overlay */}
           {isLibraryPage && isSearchOpen && (
-            <div className="pb-4 animate-in slide-in-from-top-2 duration-200">
-              <div className="relative max-w-2xl mx-auto">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder={t('header.searchPlaceholder')}
-                  value={searchValue}
-                  onChange={handleInputChange}
-                  autoFocus
-                  className="w-full pl-12 pr-4 h-12 rounded-full bg-secondary/50 border border-white/10 focus:border-primary/50 text-base placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                />
-              </div>
-              {/* Hot Keywords */}
-              <div className="flex items-center justify-center gap-3 mt-3">
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('search.hot')}:</span>
-                <div className="flex gap-2">
-                  {['Mario', 'Contra', 'Tetris', 'Zelda', 'Mega Man'].map((keyword) => (
-                    <button
-                      key={keyword}
-                      onClick={() => handleHotKeywordClick(keyword)}
-                      className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium"
-                    >
-                      {keyword}
-                    </button>
-                  ))}
+            <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4">
+              {/* Backdrop */}
+              <div
+                className="absolute inset-0 bg-background/80 backdrop-blur-xl animate-in fade-in duration-300"
+                onClick={() => setIsSearchOpen(false)}
+              />
+
+              {/* Search Container */}
+              <div className="relative w-full max-w-2xl animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-300">
+                {/* Search Box */}
+                <div className="relative bg-secondary/80 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl shadow-primary/10 overflow-hidden">
+                  {/* Search Input */}
+                  <div className="relative flex items-center">
+                    <Search className="absolute left-5 h-6 w-6 text-primary" />
+                    <input
+                      type="text"
+                      placeholder={t('header.searchPlaceholder')}
+                      value={searchValue}
+                      onChange={handleInputChange}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSearch(searchValue);
+                          setIsSearchOpen(false);
+                        }
+                        if (e.key === 'Escape') {
+                          setIsSearchOpen(false);
+                        }
+                      }}
+                      autoFocus
+                      className="w-full pl-14 pr-32 py-5 bg-transparent text-xl font-medium placeholder:text-muted-foreground/50 focus:outline-none"
+                    />
+                    <div className="absolute right-4 flex items-center gap-2">
+                      {/* Clear Button */}
+                      {searchValue && (
+                        <button
+                          onClick={() => setSearchValue('')}
+                          className="px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 text-xs font-medium text-muted-foreground hover:text-foreground transition-all flex items-center gap-1"
+                        >
+                          <X className="h-3 w-3" />
+                          Xóa
+                        </button>
+                      )}
+                      <kbd className="hidden sm:inline-flex px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[10px] font-mono text-muted-foreground">
+                        ESC
+                      </kbd>
+                      <button
+                        onClick={() => setIsSearchOpen(false)}
+                        className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+                  {/* Hot Keywords */}
+                  <div className="p-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                        <Star className="w-3 h-3" />
+                        {t('search.hot')}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {['Mario', 'Contra', 'Tetris', 'Zelda', 'Mega Man', 'Pokemon', 'Metroid'].map((keyword) => (
+                        <button
+                          key={keyword}
+                          onClick={() => {
+                            handleHotKeywordClick(keyword);
+                            setIsSearchOpen(false);
+                          }}
+                          className="px-4 py-2 rounded-xl bg-white/5 border border-white/5 hover:border-primary/50 hover:bg-primary/10 text-sm font-medium transition-all duration-200 hover:scale-105"
+                        >
+                          {keyword}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Hint */}
+                  <div className="px-4 pb-4 flex items-center justify-between text-xs text-muted-foreground">
+                    <span className="flex items-center gap-2">
+                      <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 font-mono">↵</kbd>
+                      {t('header.searchHint') || 'để tìm kiếm'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -337,5 +401,54 @@ function MobileNavLink({
       <span className={active ? "text-primary" : "text-muted-foreground"}>{icon}</span>
       {children}
     </Link>
+  );
+}
+
+// Performance Toggle Button Component
+function PerformanceToggleButton() {
+  const { isLowPerformanceMode, togglePerformanceMode } = usePerformance();
+  const { t } = useLanguage();
+
+  return (
+    <button
+      onClick={togglePerformanceMode}
+      className={cn(
+        "hidden sm:flex group relative px-5 py-2 rounded-full font-bold text-sm overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95",
+        isLowPerformanceMode
+          ? "shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40"
+          : "shadow-lg shadow-primary/25 hover:shadow-primary/40"
+      )}
+      title={isLowPerformanceMode
+        ? (t('performance.modeOn') || 'Low Performance Mode: ON')
+        : (t('performance.modeOff') || 'Low Performance Mode: OFF')
+      }
+    >
+      {/* Gradient Border */}
+      <div className={cn(
+        "absolute inset-0 bg-gradient-to-r bg-[length:200%_auto]",
+        isLowPerformanceMode
+          ? "from-yellow-500 via-orange-500 to-yellow-500"
+          : "from-primary via-accent to-primary animate-gradient"
+      )} />
+      {/* Inner Background */}
+      <div className="absolute inset-[1px] rounded-full bg-background" />
+      {/* Content */}
+      <span className={cn(
+        "relative flex items-center gap-2 uppercase tracking-wider text-xs transition-colors",
+        isLowPerformanceMode
+          ? "text-yellow-400"
+          : "bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent group-hover:text-primary"
+      )}>
+        {isLowPerformanceMode ? (
+          <ZapOff className="w-3.5 h-3.5 text-yellow-400" />
+        ) : (
+          <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+        )}
+        {isLowPerformanceMode
+          ? (t('performance.lowMode') || 'Tiết kiệm')
+          : (t('performance.normalMode') || 'Hiệu ứng')
+        }
+      </span>
+    </button>
   );
 }

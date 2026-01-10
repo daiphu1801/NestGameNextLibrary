@@ -106,137 +106,149 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
+      {/* Backdrop - Removed backdrop-blur for performance on older devices */}
       <div
-        className="absolute inset-0 bg-black/90 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/95"
         onClick={handleClose}
       />
 
-      {/* Modal Container */}
+      {/* Modal Container - New sidebar layout */}
       <div
         ref={modalRef}
-        className="relative w-full max-w-6xl h-[90vh] flex flex-col bg-[#0a0a0a] rounded-xl overflow-hidden border border-white/10 shadow-2xl"
+        className="relative w-full max-w-7xl h-[90vh] flex flex-col bg-[#0a0a0a] rounded-xl overflow-hidden border border-white/10 shadow-2xl"
       >
         {/* Header Bar */}
-        <div className="flex items-center justify-between px-4 py-3 bg-[#111] border-b border-white/10">
+        <div className="flex items-center justify-between px-4 py-2 bg-[#111] border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
               <span className="text-lg">🎮</span>
             </div>
-            <div>
-              <h2 className="text-lg font-bold text-white">{game.name}</h2>
-              <p className="text-xs text-muted-foreground">
-                {t('modal.escHint') || 'Nhấn ESC để quay lại'}
-              </p>
-            </div>
+            <h2 className="text-lg font-bold text-white">{game.name}</h2>
           </div>
 
           <div className="flex items-center gap-2">
             {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-sm text-white border border-white/10"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-sm text-white border border-white/10"
             >
               {isFullscreen ? (
                 <Minimize2 className="w-4 h-4" />
               ) : (
                 <Maximize2 className="w-4 h-4" />
               )}
-              <span>{t('modal.fullscreen') || 'Fullscreen'}</span>
+              <span className="hidden sm:inline">{t('modal.fullscreen') || 'Fullscreen'}</span>
             </button>
 
             {/* Close Button */}
             <button
               onClick={handleClose}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 transition-colors text-sm text-rose-400 border border-rose-500/20"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 transition-colors text-sm text-rose-400 border border-rose-500/20"
             >
               <X className="w-4 h-4" />
-              <span>{t('modal.close') || 'Đóng'} (ESC)</span>
+              <span className="hidden sm:inline">{t('modal.close') || 'Đóng'}</span>
             </button>
           </div>
         </div>
 
-        {/* Game Container */}
-        <div className="flex-1 relative bg-black">
-          {/* Loading State */}
-          {isLoading && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black z-10">
-              <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-              <p className="text-lg font-medium text-white">{t('game.loading') || 'Đang tải game'}...</p>
-              <p className="text-sm text-muted-foreground">{t('modal.pleaseWait') || 'Vui lòng đợi'}</p>
+        {/* Main Content - Sidebar Layout */}
+        <div className="flex-1 flex min-h-0">
+          {/* Left Sidebar - Player 1 Controls */}
+          <div className="hidden md:flex flex-col w-[140px] bg-[#0d0d0d] border-r border-white/10 p-3">
+            <div className="text-xs font-bold text-blue-400 mb-3 text-center">
+              Player 1
             </div>
-          )}
+            <div className="flex flex-col gap-2">
+              <ControlHintVertical keys="W A S D" label={t('docs.controls.movement') || 'Di chuyển'} />
+              <ControlHintVertical keys="J" label="A" color="text-cyan-400" />
+              <ControlHintVertical keys="K" label="B" color="text-cyan-400" />
+              <ControlHintVertical keys="Enter" label="Start" color="text-green-400" />
+              <ControlHintVertical keys="Shift" label="Select" color="text-yellow-400" />
+            </div>
+          </div>
 
-          {/* Error State */}
-          {error && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black z-10">
-              <AlertCircle className="h-12 w-12 text-rose-500 mb-4" />
-              <p className="text-lg font-medium text-white">{t('modal.loadFailed') || 'Không thể tải game'}</p>
-              <p className="text-sm text-muted-foreground mb-4">{error}</p>
-              <div className="flex gap-2">
-                <button
-                  onClick={loadGame}
-                  className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium"
-                >
-                  {t('modal.tryAgain') || 'Thử lại'}
-                </button>
-                <button
-                  onClick={handleClose}
-                  className="px-4 py-2 rounded-lg bg-white/10 text-white font-medium"
-                >
-                  {t('modal.close') || 'Đóng'}
-                </button>
+          {/* Game Container */}
+          <div className="flex-1 relative bg-black min-w-0">
+            {/* Loading State */}
+            {isLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black z-10">
+                <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+                <p className="text-lg font-medium text-white">{t('game.loading') || 'Đang tải game'}...</p>
+                <p className="text-sm text-muted-foreground">{t('modal.pleaseWait') || 'Vui lòng đợi'}</p>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Emulator Container */}
-          <div
-            id="emulator-container"
-            ref={containerRef}
-            className="w-full h-full flex items-center justify-center bg-black"
-            tabIndex={0}
-          />
+            {/* Error State */}
+            {error && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black z-10">
+                <AlertCircle className="h-12 w-12 text-rose-500 mb-4" />
+                <p className="text-lg font-medium text-white">{t('modal.loadFailed') || 'Không thể tải game'}</p>
+                <p className="text-sm text-muted-foreground mb-4">{error}</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={loadGame}
+                    className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium"
+                  >
+                    {t('modal.tryAgain') || 'Thử lại'}
+                  </button>
+                  <button
+                    onClick={handleClose}
+                    className="px-4 py-2 rounded-lg bg-white/10 text-white font-medium"
+                  >
+                    {t('modal.close') || 'Đóng'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Emulator Container */}
+            <div
+              id="emulator-container"
+              ref={containerRef}
+              className="w-full h-full flex items-center justify-center bg-black"
+              tabIndex={0}
+            />
+          </div>
+
+          {/* Right Sidebar - Player 2 Controls */}
+          <div className="hidden md:flex flex-col w-[140px] bg-[#0d0d0d] border-l border-white/10 p-3">
+            <div className="text-xs font-bold text-red-400 mb-3 text-center">
+              Player 2
+            </div>
+            <div className="flex flex-col gap-2">
+              <ControlHintVertical keys="↑ ↓ ← →" label={t('docs.controls.movement') || 'Di chuyển'} />
+              <ControlHintVertical keys="1" label="A" color="text-cyan-400" />
+              <ControlHintVertical keys="2" label="B" color="text-cyan-400" />
+              <ControlHintVertical keys="3" label="Start" color="text-green-400" />
+              <ControlHintVertical keys="4" label="Select" color="text-yellow-400" />
+            </div>
+          </div>
         </div>
 
-        {/* Control Hints Bar - 2 Players */}
-        <div className="flex flex-col gap-2 px-4 py-3 bg-[#111] border-t border-white/10">
-          {/* Player 1 Controls */}
-          <div className="flex items-center justify-center gap-4">
-            <span className="text-xs font-bold text-blue-400 min-w-[70px]">Player 1:</span>
-            <ControlHint keys="W A S D" label={t('docs.controls.movement') || 'Di chuyển'} />
-            <ControlHint keys="J" label="A" color="text-cyan-400" />
-            <ControlHint keys="K" label="B" color="text-cyan-400" />
-            <ControlHint keys="Enter" label="Start" color="text-green-400" />
-            <ControlHint keys="Shift" label="Select" color="text-yellow-400" />
+        {/* Bottom Bar - ESC Hint only */}
+        <div className="flex items-center justify-center px-4 py-2 bg-[#111] border-t border-white/10">
+          <div className="flex items-center gap-2 text-sm">
+            <kbd className="px-2 py-1 rounded bg-white/10 font-mono text-xs text-rose-400">ESC</kbd>
+            <span className="text-muted-foreground">{t('modal.back') || 'Quay lại'}</span>
           </div>
-          {/* Player 2 Controls */}
-          <div className="flex items-center justify-center gap-4">
-            <span className="text-xs font-bold text-red-400 min-w-[70px]">Player 2:</span>
-            <ControlHint keys="↑ ↓ ← →" label={t('docs.controls.movement') || 'Di chuyển'} />
-            <ControlHint keys="1" label="A" color="text-cyan-400" />
-            <ControlHint keys="2" label="B" color="text-cyan-400" />
-            <ControlHint keys="3" label="Start" color="text-green-400" />
-            <ControlHint keys="4" label="Select" color="text-yellow-400" />
-          </div>
-          {/* Exit Hint */}
-          <div className="flex items-center justify-center">
-            <ControlHint keys="ESC" label={t('modal.back') || 'Quay lại'} color="text-rose-400" />
-          </div>
+          {/* Mobile hint */}
+          <span className="md:hidden text-xs text-muted-foreground ml-4">
+            ({t('modal.rotateForControls') || 'Xoay ngang để xem phím'})
+          </span>
         </div>
       </div>
     </div>
   );
 }
 
-// Control Hint Component
-function ControlHint({ keys, label, color = 'text-white' }: { keys: string; label: string; color?: string }) {
+// Vertical Control Hint Component for sidebars
+function ControlHintVertical({ keys, label, color = 'text-white' }: { keys: string; label: string; color?: string }) {
   return (
-    <div className="flex items-center gap-2 text-sm">
+    <div className="flex flex-col items-center gap-1 text-center">
       <kbd className={`px-2 py-1 rounded bg-white/10 font-mono text-xs ${color}`}>
         {keys}
       </kbd>
-      <span className="text-muted-foreground">{label}</span>
+      <span className="text-xs text-muted-foreground">{label}</span>
     </div>
   );
 }

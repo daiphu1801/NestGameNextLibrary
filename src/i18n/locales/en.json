@@ -9,7 +9,8 @@
     "gamesFound": "Found",
     "games": "games",
     "search": "Search",
-    "play": "Play Now"
+    "play": "Play Now",
+    "searchHint": "Press Enter to search"
   },
   "nav": {
     "home": "Home",
@@ -84,7 +85,8 @@
     "back": "Back",
     "pleaseWait": "Please wait",
     "loadFailed": "Failed to load game",
-    "tryAgain": "Try Again"
+    "tryAgain": "Try Again",
+    "rotateForControls": "Rotate for controls"
   },
   "controls": {
     "move": "Move",
@@ -214,5 +216,11 @@
     "warningDesc": "For the best gaming experience, please use a computer or laptop with a keyboard.",
     "warningShort": "Best experience on PC/Laptop with keyboard",
     "recommended": "Recommended: PC / Laptop"
+  },
+  "performance": {
+    "modeOn": "Low Performance Mode: ON",
+    "modeOff": "Low Performance Mode: OFF",
+    "lowMode": "Low FX",
+    "normalMode": "Effects"
   }
 }

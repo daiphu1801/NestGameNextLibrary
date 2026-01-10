@@ -156,23 +156,50 @@ export function GameGrid() {
                   pages.push(i);
                 }
 
-                return pages.map((pageNum) => (
-                  <button
-                    key={pageNum}
-                    onClick={() => {
-                      setPage(pageNum);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className={cn(
-                      "w-12 h-12 rounded-lg flex items-center justify-center text-sm font-semibold transition-all duration-300",
-                      currentPage === pageNum
-                        ? "bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/30"
-                        : "bg-card hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                return (
+                  <>
+                    {pages.map((pageNum) => (
+                      <button
+                        key={pageNum}
+                        onClick={() => {
+                          setPage(pageNum);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className={cn(
+                          "w-12 h-12 rounded-lg flex items-center justify-center text-sm font-semibold transition-all duration-300",
+                          currentPage === pageNum
+                            ? "bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/30"
+                            : "bg-card hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+
+                    {/* Ellipsis and Last Page */}
+                    {end < totalPages && (
+                      <>
+                        <span className="w-8 h-12 flex items-center justify-center text-muted-foreground font-semibold">
+                          ...
+                        </span>
+                        <button
+                          onClick={() => {
+                            setPage(totalPages);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className={cn(
+                            "w-12 h-12 rounded-lg flex items-center justify-center text-sm font-semibold transition-all duration-300",
+                            currentPage === totalPages
+                              ? "bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/30"
+                              : "bg-card hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                          )}
+                        >
+                          {totalPages}
+                        </button>
+                      </>
                     )}
-                  >
-                    {pageNum}
-                  </button>
-                ));
+                  </>
+                );
               })()}
             </div>
 

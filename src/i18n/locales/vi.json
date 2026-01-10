@@ -8,8 +8,9 @@
     "searchPlaceholder": "Tìm kiếm game...",
     "gamesFound": "Tìm thấy",
     "games": "games",
-    "search": "Tìm",
-    "play": "Chơi Ngay"
+    "search": "Tìm kiếm",
+    "play": "Chơi Ngay",
+    "searchHint": "Nhấn Enter để tìm kiếm"
   },
   "nav": {
     "home": "Trang chủ",
@@ -84,7 +85,8 @@
     "back": "Quay lại",
     "pleaseWait": "Vui lòng đợi",
     "loadFailed": "Không thể tải game",
-    "tryAgain": "Thử lại"
+    "tryAgain": "Thử lại",
+    "rotateForControls": "Xoay ngang để xem phím"
   },
   "controls": {
     "move": "Di chuyển",
@@ -214,5 +216,11 @@
     "warningDesc": "Để có trải nghiệm chơi game tốt nhất, hãy sử dụng máy tính hoặc laptop với bàn phím.",
     "warningShort": "Trải nghiệm tốt nhất trên PC/Laptop với bàn phím",
     "recommended": "Khuyến nghị: PC / Laptop"
+  },
+  "performance": {
+    "modeOn": "Chế độ tiết kiệm: BẬT",
+    "modeOff": "Chế độ tiết kiệm: TẮT",
+    "lowMode": "Tiết kiệm",
+    "normalMode": "Hiệu ứng"
   }
 }
