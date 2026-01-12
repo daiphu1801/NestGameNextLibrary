@@ -1,37 +1,36 @@
-# Dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Backend
+backend/src/main/resources/application-local.yml
+backend/target/
+*.class
 
-# Testing
-/coverage
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
 
-# Next.js
-/.next/
-/out/
+# ROM Libraries (large files, do not commit)
+frontend/LibraryNes/Nes ROMs Complete 1 Of 4/
+frontend/LibraryNes/Nes ROMs Complete 2 Of 4/
+frontend/LibraryNes/Nes ROMs Complete 3 Of 4/
+frontend/LibraryNes/Nes ROMs Complete 4 Of 4/
 
-# Production
-/build
+# IDE
+.idea/
+*.iml
+.vscode/
 
-# Misc
+# Logs
+*.log
+
+# OS
 .DS_Store
-*.pem
+Thumbs.db
 
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Local env files
-.env*.local
+# Environment
 .env
+.env.local
+*.env
 
-# Vercel
-.vercel
-
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
-
-# Local ROM Library (offline gaming - do not upload to Git)
-/LibraryNes/
+# Compiled
+*.jar
+*.war

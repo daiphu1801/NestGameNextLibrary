@@ -1,0 +1,296 @@
+{
+  "app": {
+    "title": "NES Game Library",
+    "subtitle": "Thư viện Game NES Kinh Điển",
+    "description": "Chơi trực tiếp trên trình duyệt!"
+  },
+  "header": {
+    "searchPlaceholder": "Tìm kiếm game...",
+    "gamesFound": "Tìm thấy",
+    "games": "games",
+    "search": "Tìm kiếm",
+    "play": "Chơi Ngay",
+    "searchHint": "Nhấn Enter để tìm kiếm"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "library": "Thư viện",
+    "favorites": "Yêu thích",
+    "docs": "Hướng dẫn"
+  },
+  "categories": {
+    "all": "Tất cả",
+    "platformer": "Platform",
+    "rpg": "RPG",
+    "sports": "Thể thao",
+    "fighting": "Đối kháng",
+    "puzzle": "Puzzle",
+    "racing": "Đua xe",
+    "shooter": "Shooter",
+    "strategy": "Chiến thuật",
+    "adventure": "Phiêu lưu",
+    "action": "Hành động",
+    "arcade": "Arcade",
+    "simulation": "Mô phỏng",
+    "other": "Khác"
+  },
+  "featured": {
+    "title": "Games Hot 🔥",
+    "subtitle": "Những tựa game được yêu thích nhất tuần này"
+  },
+  "library": {
+    "title": "Thư viện Games",
+    "subtitle": "Duyệt và chọn game để chơi"
+  },
+  "welcome": {
+    "title": "Chơi Game Kinh Điển.",
+    "titlePart1": "Chơi Game",
+    "titlePart2": "Kinh Điển",
+    "subtitle": "Không Cần Giả Lập.",
+    "badge": "Hơn {count}+ Game Online",
+    "description": "Tuyển tập những tựa game NES huyền thoại. Trải nghiệm lịch sử game ngay trên trình duyệt với tính năng lưu game và chơi ngay.",
+    "free": "Miễn Phí",
+    "noInstall": "Tải Nhanh",
+    "saveState": "Lưu Đám Mây",
+    "startPlaying": "Bắt Đầu Chơi",
+    "browseLibrary": "Xem Thư Viện"
+  },
+  "game": {
+    "playNow": "Chơi ngay",
+    "loading": "Đang tải",
+    "library": "Thư Viện Game",
+    "waitMessage": "Vui lòng chờ trong giây lát",
+    "loadError": "Không thể tải game",
+    "tryAgain": "Vui lòng thử lại",
+    "selectRom": "Chọn file ROM",
+    "runServerHint": "Để tự động tải game, hãy chạy local server:",
+    "orSelectManually": "Hoặc chọn file ROM thủ công:"
+  },
+  "stats": {
+    "games": "GAMES",
+    "users": "USERS",
+    "free": "FREE"
+  },
+  "features": {
+    "freeDesc": "Không cần thanh toán, chơi ngay lập tức",
+    "instantDesc": "Không cần tải xuống, chạy trực tiếp trên trình duyệt",
+    "saveDesc": "Lưu tiến trình và tiếp tục bất cứ lúc nào"
+  },
+  "modal": {
+    "playing": "Đang chơi...",
+    "pressEscToBack": "Nhấn ESC để quay lại",
+    "escHint": "Nhấn ESC để quay lại",
+    "fullscreen": "Toàn màn hình",
+    "close": "Đóng",
+    "back": "Quay lại",
+    "pleaseWait": "Vui lòng đợi",
+    "loadFailed": "Không thể tải game",
+    "tryAgain": "Thử lại",
+    "rotateForControls": "Xoay ngang để xem phím"
+  },
+  "controls": {
+    "move": "Di chuyển",
+    "buttonA": "Button A",
+    "buttonB": "Button B",
+    "start": "Start",
+    "select": "Select",
+    "back": "Quay lại"
+  },
+  "footer": {
+    "poweredBy": "Powered by",
+    "gamesCount": "Games",
+    "playOnBrowser": "Chơi trên trình duyệt",
+    "free100": "Miễn phí 100%",
+    "description": "Nền tảng chơi game NES kinh điển trực tuyến. Hơn 1700+ game miễn phí, không cần cài đặt.",
+    "quickLinks": "Liên kết nhanh",
+    "developer": "Nhà phát triển",
+    "rights": "All rights reserved.",
+    "madeWith": "Made with",
+    "inVietnam": "in Vietnam"
+  },
+  "search": {
+    "hot": "Hot",
+    "noResults": "Không tìm thấy game nào",
+    "tryOther": "Thử tìm kiếm với từ khóa khác",
+    "clearSearch": "Xóa tìm kiếm",
+    "reset": "Đặt lại"
+  },
+  "sort": {
+    "label": "Sắp xếp:",
+    "nameAZ": "Tên A-Z",
+    "nameZA": "Tên Z-A",
+    "rating": "Đánh giá cao",
+    "newest": "Mới nhất",
+    "oldest": "Cũ nhất"
+  },
+  "region": {
+    "all": "Tất cả",
+    "usa": "USA",
+    "japan": "Nhật Bản",
+    "europe": "Châu Âu",
+    "asia": "Châu Á"
+  },
+  "filter": {
+    "region": "Khu vực",
+    "sort": "Sắp xếp"
+  },
+  "pagination": {
+    "showing": "Hiển thị",
+    "of": "trong",
+    "games": "games",
+    "previous": "Trang trước",
+    "next": "Trang sau",
+    "itemsPerPage": "Hiển thị:",
+    "page": "Trang"
+  },
+  "loadMore": "Xem thêm games",
+  "docs": {
+    "title": "Hướng Dẫn",
+    "subtitle": "Tìm hiểu cách sử dụng NestGame",
+    "gettingStarted": {
+      "title": "Bắt Đầu",
+      "welcome": "Chào mừng đến với NestGame - giả lập NES trên trình duyệt! Đây là cách bắt đầu:",
+      "step1": "Duyệt thư viện game trên trang chủ",
+      "step2": "Click vào game bất kỳ để mở",
+      "step3": "Nhấn \"Play\" để bắt đầu chơi",
+      "step4": "Sử dụng bàn phím hoặc tay cầm để điều khiển game"
+    },
+    "controls": {
+      "title": "Phím Điều Khiển",
+      "movement": "Di chuyển",
+      "actions": "Hành động",
+      "up": "Lên",
+      "down": "Xuống",
+      "left": "Trái",
+      "right": "Phải",
+      "aButton": "Nút A",
+      "bButton": "Nút B",
+      "start": "Start",
+      "select": "Select"
+    },
+    "saveStates": {
+      "title": "Lưu Trạng Thái",
+      "description": "NestGame hỗ trợ lưu trạng thái để bạn có thể lưu tiến trình bất cứ lúc nào:",
+      "save": "Lưu: Nhấn F5 để lưu trạng thái game hiện tại",
+      "load": "Tải: Nhấn F8 để tải trạng thái đã lưu",
+      "quick": "Lưu nhanh: Trạng thái được tự động lưu vào trình duyệt"
+    },
+    "gamepad": {
+      "title": "Hỗ Trợ Tay Cầm",
+      "description": "NestGame hỗ trợ hầu hết các tay cầm USB và Bluetooth:",
+      "xbox": "Tay cầm Xbox (có dây và không dây)",
+      "playstation": "Tay cầm PlayStation (DualShock, DualSense)",
+      "switch": "Nintendo Switch Pro Controller",
+      "generic": "Tay cầm USB thông dụng",
+      "note": "Chỉ cần kết nối tay cầm và nó sẽ được tự động nhận diện."
+    }
+  },
+  "landing": {
+    "exploreNow": "Trải Nghiệm Ngay",
+    "viewAll": "Xem Tất Cả",
+    "aboutTitle": "Về",
+    "aboutTitleHighlight": "NestGame",
+    "aboutDesc": "NestGame là nền tảng giả lập NES trực tuyến, cho phép bạn chơi hơn 1700+ game kinh điển ngay trên trình duyệt. Được xây dựng với công nghệ hiện đại, NestGame mang đến trải nghiệm mượt mà, không cần cài đặt, hoàn toàn miễn phí.",
+    "feature1Title": "Chơi Mọi Nơi",
+    "feature1Desc": "Truy cập và chơi game từ bất kỳ thiết bị nào có trình duyệt",
+    "feature2Title": "An Toàn & Bảo Mật",
+    "feature2Desc": "Không cần tải file, không lo virus hay phần mềm độc hại",
+    "feature3Title": "Cộng Đồng Lớn",
+    "feature3Desc": "Hàng nghìn người chơi đang trải nghiệm game kinh điển mỗi ngày",
+    "feature4Title": "Chất Lượng Cao",
+    "feature4Desc": "ROM được chọn lọc kỹ càng, đảm bảo trải nghiệm tốt nhất",
+    "howItWorksTitle": "Cách",
+    "howItWorksHighlight": "Sử Dụng",
+    "step1Title": "Chọn Game",
+    "step1Desc": "Duyệt thư viện với hơn 1700+ games, tìm kiếm theo tên hoặc thể loại",
+    "step2Title": "Nhấn Play",
+    "step2Desc": "Click vào game yêu thích, nhấn nút Play để bắt đầu chơi ngay",
+    "step3Title": "Tận Hưởng",
+    "step3Desc": "Sử dụng bàn phím hoặc tay cầm để điều khiển, lưu game bất cứ lúc nào",
+    "ctaTitle": "Sẵn Sàng",
+    "ctaHighlight": "Khám Phá?",
+    "ctaDesc": "Hơn 1700+ game NES kinh điển đang chờ bạn. Bắt đầu ngay hôm nay - hoàn toàn miễn phí!",
+    "ctaButton": "Bắt Đầu Chơi Ngay"
+  },
+  "mobile": {
+    "warningTitle": "Trải nghiệm tốt hơn trên PC",
+    "warningDesc": "Để có trải nghiệm chơi game tốt nhất, hãy sử dụng máy tính hoặc laptop với bàn phím.",
+    "warningShort": "Trải nghiệm tốt nhất trên PC/Laptop với bàn phím",
+    "recommended": "Khuyến nghị: PC / Laptop"
+  },
+  "performance": {
+    "modeOn": "Chế độ tiết kiệm: BẬT",
+    "modeOff": "Chế độ tiết kiệm: TẮT",
+    "lowMode": "Tiết kiệm",
+    "normalMode": "Hiệu ứng",
+    "tooltipTitle": "Tối ưu trải nghiệm",
+    "tooltipDesc": "Bật chế độ Tiết kiệm để giảm hiệu ứng hình ảnh, giúp giao diện phản hồi nhanh hơn và tiết kiệm tài nguyên.",
+    "tryIt": "Thử ngay",
+    "dismiss": "Để sau"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "loginDesc": "Đăng nhập để lưu tiến trình và game yêu thích",
+    "loggingIn": "Đang đăng nhập...",
+    "register": "Đăng ký",
+    "registerDesc": "Tạo tài khoản để trải nghiệm đầy đủ",
+    "registering": "Đang đăng ký...",
+    "createAccount": "Tạo tài khoản",
+    "logout": "Đăng xuất",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "username": "Tên người dùng",
+    "forgotPassword": "Quên mật khẩu?",
+    "forgotPasswordDesc": "Nhập email của bạn, chúng tôi sẽ gửi link đặt lại mật khẩu",
+    "sendResetLink": "Gửi link đặt lại",
+    "sending": "Đang gửi...",
+    "emailSent": "Email đã được gửi!",
+    "checkEmail": "Vui lòng kiểm tra hộp thư của bạn và làm theo hướng dẫn để đặt lại mật khẩu.",
+    "emailTo": "Email đã gửi đến:",
+    "backToLogin": "Quay lại đăng nhập",
+    "noAccount": "Chưa có tài khoản?",
+    "hasAccount": "Đã có tài khoản?",
+    "or": "hoặc",
+    "rememberMe": "Ghi nhớ đăng nhập"
+  },
+  "settings": {
+    "title": "Cài đặt tài khoản",
+    "profile": "Hồ sơ cá nhân",
+    "security": "Bảo mật",
+    "currentPassword": "Mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "confirmNewPassword": "Xác nhận mật khẩu mới",
+    "updatePassword": "Cập nhật mật khẩu",
+    "passwordMismatch": "Mật khẩu mới không khớp",
+    "passwordUpdated": "Đổi mật khẩu thành công",
+    "username": "Tên hiển thị",
+    "email": "Email",
+    "role": "Vai trò",
+    "joined": "Tham gia ngày",
+    "changeAvatar": "Đổi Avatar"
+  },
+  "user": {
+    "history": "Lịch sử chơi",
+    "settings": "Cài đặt",
+    "favoritesDesc": "Bộ sưu tập các game bạn yêu thích",
+    "historyDesc": "Các game bạn đã chơi gần đây"
+  },
+  "trial": {
+    "active": "Chế độ dùng thử: Còn {seconds}s. Đăng nhập để chơi không giới hạn.",
+    "loginRequired": "Yêu cầu đăng nhập",
+    "desc": "Thời gian dùng thử 10 giây đã kết thúc. Vui lòng đăng nhập để tiếp tục chơi {gameName} và lưu tiến trình.",
+    "loginToContinue": "Đăng nhập để tiếp tục",
+    "closeGame": "Đóng game",
+    "ended.desc": "Vui lòng đăng nhập để tiếp tục chơi không giới hạn.",
+    "ended.login": "Đăng nhập / Đăng ký"
+  },
+  "favorites": {
+    "empty": "Chưa có game yêu thích",
+    "emptyDesc": "Nhấn vào biểu tượng trái tim trên game để thêm vào đây!"
+  },
+  "history": {
+    "empty": "Chưa có lịch sử chơi",
+    "emptyDesc": "Hãy bắt đầu chơi game để xem lịch sử tại đây!"
+  }
+}

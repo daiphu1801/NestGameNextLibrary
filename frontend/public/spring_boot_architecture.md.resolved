@@ -1,0 +1,215 @@
+# 🏗️ NestGame - Thiết Kế Hệ Thống Full-Stack (Updated)
+
+> Cập nhật sau thảo luận - Phân tách rõ trách nhiệm Next.js và Spring Boot
+
+---
+
+## 📐 1. Kiến Trúc Tổng Quan
+
+```mermaid
+flowchart TB
+    subgraph Browser["🖥️ Browser"]
+        UI["Next.js UI"]
+        Emulator["NES Emulator\n(nostalgist)"]
+    end
+    
+    subgraph NextJS["🟢 Next.js Server"]
+        API_ROM["/api/roms\n(Dev/Offline)"]
+    end
+    
+    subgraph SpringBoot["🟠 Spring Boot"]
+        API_DATA["/api/games\n/api/auth\n/api/users"]
+    end
+    
+    subgraph Storage["💾 Storage"]
+        DB[(PostgreSQL)]
+        R2["Cloudflare R2\n(Production ROMs)"]
+        Local["LibraryNes/\n(Dev ROMs)"]
+    end
+    
+    UI -->|"GET games data"| API_DATA
+    API_DATA --> DB
+    
+    UI -->|"Play game"| Emulator
+    Emulator -->|"Online"| R2
+    Emulator -->|"Offline"| API_ROM
+    API_ROM --> Local
+```
+
+---
+
+## 📁 2. Cấu Trúc Folder (Monorepo)
+
+```
+NestGame/
+├── frontend/                    # Next.js (move từ NestGameNext)
+│   ├── LibraryNes/              # ROMs cho dev/offline
+│   ├── src/
+│   │   ├── app/
+│   │   │   └── api/roms/        # Serve ROMs local
+│   │   ├── services/
+│   │   │   ├── api.ts           # NEW - Gọi Spring Boot API
+│   │   │   ├── gameService.ts   # MODIFY - Gọi API thay JSON
+│   │   │   └── romLocatorService.ts
+│   │   ├── contexts/
+│   │   │   └── AuthContext.tsx  # NEW - Authentication
+│   │   └── components/
+│   │       └── auth/            # NEW - Login/Register modals
+│   ├── package.json
+│   └── ...
+│
+├── backend/                     # Spring Boot (NEW)
+│   ├── src/main/java/com/nestgame/
+│   │   ├── controller/
+│   │   ├── service/
+│   │   ├── repository/
+│   │   ├── entity/
+│   │   └── dto/
+│   ├── src/main/resources/
+│   │   └── application.yml
+│   └── pom.xml
+│
+├── database/                    # ✅ Đã tạo
+│   ├── schema.sql
+│   ├── sample_data.sql
+│   └── README.md
+│
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+## 🔀 3. Phân Chia Trách Nhiệm
+
+### Next.js (Frontend)
+
+| Chức năng | Mô tả |
+|-----------|-------|
+| **UI Components** | Hiển thị danh sách games, modals, filters |
+| **NES Emulator** | Chạy emulator trong browser (nostalgist) |
+| **ROM Serving** | `/api/roms/` - Serve ROMs cho dev/offline |
+| **ROM Source** | Online → R2 CDN, Offline → local |
+
+### Spring Boot (Backend)
+
+| Chức năng | API Endpoint |
+|-----------|--------------|
+| **Games Data** | `GET /api/games`, `GET /api/games/{id}` |
+| **Search/Filter** | `GET /api/games?category=&search=&page=` |
+| **Authentication** | `POST /api/auth/login`, `/register`, `/forgot-password` |
+| **User Profile** | `GET/PUT /api/users/me` |
+| **Favorites** | `GET/POST/DELETE /api/users/me/favorites` |
+| **Play History** | `GET/POST /api/users/me/history` |
+| **Admin** | `POST/PUT/DELETE /api/admin/games` |
+
+### ❌ Spring Boot KHÔNG làm
+
+- Serve ROM files
+- Chạy emulator
+- Render UI
+
+---
+
+## 🗃️ 4. Database Schema (PostgreSQL)
+
+```
+✅ Đã tạo: f:\NestGameNext\database\schema.sql
+
+7 Tables:
+├── categories      - Lookup table cho categories
+├── games           - 1714 games (import từ games.json)
+├── users           - User accounts
+├── favorites       - User's favorite games
+├── play_history    - Lịch sử chơi
+├── refresh_tokens  - JWT refresh tokens
+└── password_reset_tokens - Quên mật khẩu (gửi qua Gmail)
+```
+
+---
+
+## 🎮 5. Flow Chơi Game
+
+```mermaid
+sequenceDiagram
+    participant User as 👤 User
+    participant FE as Next.js
+    participant BE as Spring Boot
+    participant DB as PostgreSQL
+    participant ROM as ROM Source
+
+    Note over User,ROM: 1️⃣ Load game list
+    User->>FE: Mở /library
+    FE->>BE: GET /api/games?category=platformer
+    BE->>DB: SELECT * FROM games
+    DB-->>BE: Game data
+    BE-->>FE: JSON [{id, name, path, ...}]
+    FE-->>User: Hiển thị cards
+
+    Note over User,ROM: 2️⃣ Play game
+    User->>FE: Click "Play Contra"
+    FE->>ROM: GET ROM file (R2 hoặc local)
+    ROM-->>FE: Binary file
+    FE->>FE: Load vào Emulator
+    FE-->>User: 🎮 Chơi game!
+
+    Note over User,ROM: 3️⃣ Save favorite (if logged in)
+    User->>FE: Click ❤️
+    FE->>BE: POST /api/users/me/favorites/43 [JWT]
+    BE->>DB: INSERT INTO favorites
+    BE-->>FE: 200 OK
+```
+
+---
+
+## 🎨 6. Design Patterns (Spring Boot)
+
+### 4 Patterns Cơ Bản
+
+| Pattern | Áp dụng | Mục đích |
+|---------|---------|----------|
+| **Repository** | `GameRepository.java` | Truy cập database |
+| **DTO** | `GameDTO.java` | Tách Entity với API response |
+| **Service Layer** | `GameService.java` | Business logic |
+| **MVC** | Controller → Service → Repository | Tách layers |
+
+---
+
+## 📝 7. Implementation Checklist
+
+### Phase 1: Setup ✅
+- [x] Database schema (schema.sql)
+- [ ] Tạo Spring Boot project
+- [ ] Config PostgreSQL connection
+- [ ] Import games.json vào database
+
+### Phase 2: Core API
+- [ ] GameController + GameService
+- [ ] CategoryController
+- [ ] Pagination & Filtering
+- [ ] Search functionality
+
+### Phase 3: Authentication
+- [ ] UserController + UserService
+- [ ] JWT Token generation
+- [ ] Login/Register endpoints
+- [ ] Password reset (Gmail)
+
+### Phase 4: User Features
+- [ ] Favorites API
+- [ ] Play History API
+
+### Phase 5: Frontend Integration
+- [ ] Thêm api.ts service
+- [ ] Modify gameService.ts
+- [ ] Add AuthContext
+- [ ] Login/Register modals
+
+---
+
+## 🚀 Bước Tiếp Theo
+
+**Tạo Spring Boot project** với:
+1. Maven + Java 17
+2. Dependencies: Spring Web, JPA, Security, PostgreSQL
+3. Base package: `com.nestgame`
