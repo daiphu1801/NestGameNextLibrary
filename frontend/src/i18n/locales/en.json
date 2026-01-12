@@ -16,6 +16,8 @@
     "home": "Home",
     "library": "Library",
     "favorites": "Favorites",
+    "leaderboard": "Leaderboard",
+    "donate": "Donate",
     "docs": "Docs"
   },
   "categories": {
@@ -87,7 +89,10 @@
     "pleaseWait": "Please wait",
     "loadFailed": "Failed to load game",
     "tryAgain": "Try Again",
-    "rotateForControls": "Rotate for controls"
+    "rotateForControls": "Rotate for controls",
+    "controlsNote": "*A/B actions (Jump/Attack) vary by game",
+    "buttonA": "Button A",
+    "buttonB": "Button B"
   },
   "controls": {
     "move": "Move",
@@ -313,5 +318,25 @@
   "common": {
     "classic": "Classic",
     "universal": "Universal"
+  },
+  "leaderboard": {
+    "title": "TOP RATED GAMES",
+    "subtitle": "Most loved by the community"
+  },
+  "donate": {
+    "title": "SUPPORT NESTGAME",
+    "subtitle": "Help us keep the servers running and ad-free",
+    "scanQr": "Scan QR to Donate",
+    "openApp": "Open Bank App",
+    "selectAmount": "Select Amount",
+    "customAmount": "Custom Amount",
+    "message": "Message",
+    "whySupport": "Why Support Us?",
+    "reason1Title": "Server Costs:",
+    "reason1Desc": "Keeping thousands of games available online 24/7 requires reliable hosting.",
+    "reason2Title": "Ad-Free Experience:",
+    "reason2Desc": "We are committed to keeping NestGame 100% free of intrusive ads.",
+    "reason3Title": "New Features:",
+    "reason3Desc": "Your support helps us build features like Leaderboards, Save States, and Multiplayer."
   }
 }

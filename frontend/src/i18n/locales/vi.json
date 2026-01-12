@@ -16,6 +16,8 @@
     "home": "Trang chủ",
     "library": "Thư viện",
     "favorites": "Yêu thích",
+    "leaderboard": "Bảng xếp hạng",
+    "donate": "Ủng hộ",
     "docs": "Hướng dẫn"
   },
   "categories": {
@@ -87,7 +89,10 @@
     "pleaseWait": "Vui lòng đợi",
     "loadFailed": "Không thể tải game",
     "tryAgain": "Thử lại",
-    "rotateForControls": "Xoay ngang để xem phím"
+    "rotateForControls": "Xoay ngang để xem phím",
+    "controlsNote": "*Chức năng (Nhảy/Đánh) của nút A/B thay đổi tùy theo game",
+    "buttonA": "Nút A",
+    "buttonB": "Nút B"
   },
   "controls": {
     "move": "Di chuyển",
@@ -311,5 +316,25 @@
   "common": {
     "classic": "Cổ điển",
     "universal": "Quốc tế"
+  },
+  "leaderboard": {
+    "title": "BẢNG XẾP HẠNG",
+    "subtitle": "Những game được cộng đồng yêu thích nhất"
+  },
+  "donate": {
+    "title": "ỦNG HỘ NESTGAME",
+    "subtitle": "Giúp chúng tôi duy trì server ổn định và không quảng cáo",
+    "scanQr": "Quét mã để ủng hộ",
+    "openApp": "Mở App Ngân hàng",
+    "selectAmount": "Chọn mức ủng hộ",
+    "customAmount": "Số tiền khác",
+    "message": "Lời nhắn",
+    "whySupport": "Tại sao nên ủng hộ?",
+    "reason1Title": "Chi phí Server:",
+    "reason1Desc": "Duy trì hàng ngàn game online 24/7 cần hệ thống ổn định và chi phí vận hành.",
+    "reason2Title": "Trải nghiệm không quảng cáo:",
+    "reason2Desc": "Chúng tôi cam kết giữ NestGame hoàn toàn miễn phí và không có quảng cáo làm phiền.",
+    "reason3Title": "Tính năng mới:",
+    "reason3Desc": "Sự ủng hộ của bạn giúp chúng tôi phát triển thêm các tính năng như Bảng xếp hạng, Lưu game, và Chơi nhiều người."
   }
 }

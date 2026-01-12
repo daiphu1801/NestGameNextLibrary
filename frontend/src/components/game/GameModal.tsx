@@ -225,10 +225,15 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
             </div>
             <div className="flex flex-col gap-2">
               <ControlHintVertical keys="W A S D" label={t('docs.controls.movement') || 'Di chuyển'} />
-              <ControlHintVertical keys="J" label="A" color="text-cyan-400" />
-              <ControlHintVertical keys="K" label="B" color="text-cyan-400" />
+              <ControlHintVertical keys="J" label={t('modal.buttonA') || 'Nút A'} color="text-cyan-400" />
+              <ControlHintVertical keys="K" label={t('modal.buttonB') || 'Nút B'} color="text-cyan-400" />
               <ControlHintVertical keys="Enter" label="Start" color="text-green-400" />
               <ControlHintVertical keys="Shift" label="Select" color="text-yellow-400" />
+              <div className="mt-4 px-1">
+                <p className="text-[10px] text-muted-foreground text-center italic leading-tight opacity-70">
+                  {t('modal.controlsNote') || '*Vai trò (Nhảy/Đánh/...) của A/B tùy thuộc vào từng game'}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -313,10 +318,15 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
             </div>
             <div className="flex flex-col gap-2">
               <ControlHintVertical keys="↑ ↓ ← →" label={t('docs.controls.movement') || 'Di chuyển'} />
-              <ControlHintVertical keys="1" label="A" color="text-cyan-400" />
-              <ControlHintVertical keys="2" label="B" color="text-cyan-400" />
+              <ControlHintVertical keys="1" label={t('modal.buttonA') || 'Nút A'} color="text-cyan-400" />
+              <ControlHintVertical keys="2" label={t('modal.buttonB') || 'Nút B'} color="text-cyan-400" />
               <ControlHintVertical keys="3" label="Start" color="text-green-400" />
               <ControlHintVertical keys="4" label="Select" color="text-yellow-400" />
+              <div className="mt-4 px-1">
+                <p className="text-[10px] text-muted-foreground text-center italic leading-tight opacity-70">
+                  {t('modal.controlsNote') || '*Vai trò (Nhảy/Đánh/...) của A/B tùy thuộc vào từng game'}
+                </p>
+              </div>
             </div>
           </div>
         </div>

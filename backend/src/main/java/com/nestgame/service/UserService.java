@@ -78,21 +78,26 @@ public class UserService {
         }
 
         private GameDTO convertToGameDTO(Game game) {
-                return new GameDTO(
-                                game.getId(),
-                                game.getName(),
-                                game.getFileName(),
-                                game.getPath(),
-                                game.getCategory() != null ? game.getCategory().getName() : null,
-                                game.getDescription(),
-                                game.getRating(),
-                                game.getYear(),
-                                game.getRegion(),
-                                game.getIsFeatured(),
-                                game.getImageUrl(),
-                                game.getImageSnap(),
-                                game.getImageTitle(),
-                                game.getPlayCount());
+                return GameDTO.builder()
+                                .id(game.getId())
+                                .name(game.getName())
+                                .fileName(game.getFileName())
+                                .path(game.getPath())
+                                .categoryId(game.getCategory() != null ? game.getCategory().getId() : null)
+                                .categoryName(game.getCategory() != null ? game.getCategory().getName() : null)
+                                .category(game.getCategory() != null ? game.getCategory().getName() : null)
+                                .description(game.getDescription())
+                                .rating(game.getRating())
+                                .year(game.getYear())
+                                .region(game.getRegion())
+                                .isFeatured(game.getIsFeatured())
+                                .imageUrl(game.getImageUrl())
+                                .imageSnap(game.getImageSnap())
+                                .imageTitle(game.getImageTitle())
+                                .playCount(game.getPlayCount())
+                                .createdAt(game.getCreatedAt())
+                                .updatedAt(game.getUpdatedAt())
+                                .build();
         }
 
         @Transactional

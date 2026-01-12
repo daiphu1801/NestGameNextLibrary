@@ -92,10 +92,12 @@ public class GameReviewController {
 
         gameRating.setRating(rating);
         gameRating.setUpdatedAt(LocalDateTime.now());
-        ratingRepository.save(gameRating);
-
         // Get new average
         Double avgRating = ratingRepository.getAverageRatingByGameId(gameId);
+
+        // Update rating in Game entity for Leaderboard sorting
+        game.setRating(avgRating != null ? Math.round(avgRating * 10) / 10.0 : rating.doubleValue());
+        gameRepository.save(game);
 
         return ResponseEntity.ok(Map.of(
                 "success", true,

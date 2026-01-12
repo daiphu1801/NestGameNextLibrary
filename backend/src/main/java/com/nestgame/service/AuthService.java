@@ -29,6 +29,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
     @Value("${jwt.refresh-token.expiration}")
     private long refreshExpiration; // in milliseconds
@@ -146,15 +147,40 @@ public class AuthService {
     }
 
     /**
-     * Reset password by email (used after OTP verification)
+     * Request password reset link
      */
     @Transactional
-    public void resetPasswordByEmail(String email, String newPassword) {
+    public void requestPasswordReset(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với email này"));
+
+        String resetToken = jwtService.generatePasswordResetToken(user);
+        emailService.sendPasswordResetEmail(user.getEmail(), user.getUsername(), resetToken);
+    }
+
+    /**
+     * Reset password using token
+     */
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        String username;
+        try {
+            username = jwtService.extractUsername(token);
+        } catch (Exception e) {
+            throw new RuntimeException("Token không hợp lệ hoặc đã hết hạn");
+        }
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+        if (!jwtService.isTokenValid(token, user)) {
+            throw new RuntimeException("Token không hợp lệ hoặc đã hết hạn");
+        }
 
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
+
+        // Optionally revoke all tokens (if you had a way to blacklist them)
     }
 }

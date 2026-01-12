@@ -12,4 +12,6 @@ public interface GameRepository extends JpaRepository<Game, Long>, JpaSpecificat
     List<Game> findByIsFeaturedTrue();
 
     List<Game> findByCategoryId(Long categoryId);
+
+    List<Game> findTop10ByOrderByRatingDesc();
 }

@@ -1,7 +1,6 @@
 package com.nestgame.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -26,34 +25,17 @@ import java.util.List;
 public class SecurityConfig {
 
         private final JwtAuthenticationFilter jwtAuthFilter;
-        private final RateLimitingFilter rateLimitingFilter;
         private final AuthenticationProvider authenticationProvider;
-
-        @Value("${app.frontend.url:http://localhost:3000}")
-        private String frontendUrl;
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                System.out.println("!!! SecurityConfig loaded - permitAll for ALL requests !!!");
                 http
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                                 .csrf(AbstractHttpConfigurer::disable)
-
-                                // Security Headers
-                                .headers(headers -> headers
-                                                .frameOptions(frame -> frame.deny())
-                                                .contentTypeOptions(contentType -> {
-                                                })
-                                                .xssProtection(xss -> xss.disable()) // Modern browsers handle this
-                                                .cacheControl(cache -> {
-                                                }))
-
                                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                                 .sessionManagement(session -> session
-                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                .authenticationProvider(authenticationProvider)
-                                // Add filters in order: Rate Limiting -> JWT
-                                .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
-                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
                 return http.build();
         }
@@ -61,19 +43,11 @@ public class SecurityConfig {
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                // Use frontend URL from config (supports multiple origins for production)
-                configuration.setAllowedOrigins(List.of(frontendUrl));
+                configuration.setAllowedOrigins(List.of("http://localhost:3000"));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-                // Restrict headers in production
-                configuration.setAllowedHeaders(Arrays.asList(
-                                "Authorization",
-                                "Content-Type",
-                                "Accept",
-                                "Origin",
-                                "X-Requested-With"));
+                configuration.setAllowedHeaders(Arrays.asList("*"));
                 configuration.setAllowCredentials(true);
                 configuration.setExposedHeaders(Arrays.asList("Authorization"));
-                configuration.setMaxAge(3600L); // Cache preflight for 1 hour
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
                 source.registerCorsConfiguration("/**", configuration);

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Moon, Sun, Zap, ZapOff, BookOpen, Gamepad2, X, Star, ArrowUp, Menu, Home } from 'lucide-react';
+import { Search, Moon, Sun, Zap, ZapOff, BookOpen, Gamepad2, X, Star, ArrowUp, Menu, Home, Trophy, Heart } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -129,10 +129,18 @@ export function Header() {
                   {t('nav.library')}
                 </span>
               </NavLink>
-              <NavLink href="/favorites" active={pathname === '/favorites'}>
+              <NavLink href="/leaderboard" active={pathname === '/leaderboard'}>
                 <span className="flex items-center gap-1.5">
-                  <Star className="w-3 h-3" />
-                  {t('nav.favorites')}
+                  <Trophy className="w-3 h-3 text-yellow-500" />
+                  {t('nav.leaderboard')}
+                </span>
+              </NavLink>
+              <NavLink href="/donate" active={pathname === '/donate'}>
+                <span className="flex items-center gap-1.5">
+                  <Heart className="w-3 h-3 text-pink-500" />
+                  <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent group-hover:text-pink-400 transition-all font-black">
+                    {t('nav.donate')}
+                  </span>
                 </span>
               </NavLink>
               <NavLink href="/docs" active={pathname === '/docs'}>
@@ -410,7 +418,7 @@ function NavLink({ href, children, active }: { href: string; children: React.Rea
     <Link
       href={href}
       className={cn(
-        "px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide transition-all duration-300",
+        "px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap",
         active
           ? "text-primary bg-primary/10"
           : "text-muted-foreground hover:text-foreground hover:bg-white/5"

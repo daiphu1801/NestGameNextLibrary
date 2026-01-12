@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,54 +29,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
-
-        // Skip JWT validation for PUBLIC auth endpoints only
-        // change-password requires authentication so it should NOT be skipped
+        // Skip JWT validation for public endpoints
         String path = request.getServletPath();
-        if (path.equals("/auth/login") ||
-                path.equals("/auth/register") ||
-                path.equals("/auth/forgot-password") ||
-                path.equals("/auth/verify-otp") ||
-                path.equals("/auth/reset-password") ||
-                path.equals("/auth/refresh")) {
+        System.out.println(">>> Processing: " + request.getMethod() + " " + path);
+        if (path.startsWith("/auth/") ||
+                path.startsWith("/games/") ||
+                path.startsWith("/categories/")) {
+            System.out.println(">>> Public endpoint, skipping JWT");
             filterChain.doFilter(request, response);
             return;
         }
 
         final String authHeader = request.getHeader("Authorization");
+        final String jwt;
+        final String username;
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String jwt = authHeader.substring(7);
-        final String username;
+        jwt = authHeader.substring(7);
+        username = jwtService.extractUsername(jwt);
 
-        try {
-            username = jwtService.extractUsername(jwt);
-        } catch (Exception e) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-        // Allow setting auth if no current auth OR current auth is Anonymous
-        var currentAuth = SecurityContextHolder.getContext().getAuthentication();
-        boolean shouldSetAuth = currentAuth == null || currentAuth instanceof AnonymousAuthenticationToken;
-
-        if (username != null && shouldSetAuth) {
-            try {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-                if (jwtService.isTokenValid(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                }
-            } catch (Exception e) {
-                // Token invalid or user not found - continue without authentication
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities());
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
         filterChain.doFilter(request, response);

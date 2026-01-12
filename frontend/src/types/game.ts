@@ -16,6 +16,10 @@ export interface Game {
   isFeatured?: boolean;
   fileName?: string;
   playCount?: number;
+  imageUrl?: string;
+  categoryName?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // Category Types
