@@ -29,19 +29,28 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     private final Map<String, RateLimitInfo> ipRateLimits = new ConcurrentHashMap<>();
     private final Map<String, RateLimitInfo> loginRateLimits = new ConcurrentHashMap<>();
     private final Map<String, RateLimitInfo> otpRateLimits = new ConcurrentHashMap<>();
+    private final Map<String, RateLimitInfo> registerRateLimits = new ConcurrentHashMap<>();
 
     // Rate limit configurations
-    private static final int GENERAL_LIMIT = 100; // requests per minute
-    private static final int LOGIN_LIMIT = 5; // attempts per minute
-    private static final int OTP_LIMIT = 3; // requests per 10 minutes
+    private static final int GENERAL_LIMIT = 300; // requests per minute
+    private static final int LOGIN_LIMIT = 10; // attempts per minute
+    private static final int OTP_LIMIT = 5; // requests per 10 minutes
+    private static final int REGISTER_LIMIT = 5; // requests per hour
     private static final long GENERAL_WINDOW_MS = 60_000; // 1 minute
     private static final long LOGIN_WINDOW_MS = 60_000; // 1 minute
     private static final long OTP_WINDOW_MS = 600_000; // 10 minutes
+    private static final long REGISTER_WINDOW_MS = 3600_000; // 1 hour
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
+
+        // Skip rate limiting for OPTIONS requests (CORS preflight)
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String clientIp = getClientIP(request);
         String path = request.getServletPath();
@@ -58,6 +67,16 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         if (path.equals("/auth/forgot-password") && "POST".equalsIgnoreCase(request.getMethod())) {
             if (isRateLimited(otpRateLimits, clientIp, OTP_LIMIT, OTP_WINDOW_MS)) {
                 sendRateLimitResponse(response, "Quá nhiều yêu cầu OTP. Vui lòng thử lại sau 10 phút.");
+                return;
+            }
+        }
+
+        // Check registration rate limit (Anti-spam)
+        if (path.equals("/auth/register") && "POST".equalsIgnoreCase(request.getMethod())) {
+            // Strict limit: 5 registrations per 1 hour per IP
+            // This prevents automated scripts from creating thousands of accounts
+            if (isRateLimited(registerRateLimits, clientIp, REGISTER_LIMIT, REGISTER_WINDOW_MS)) {
+                sendRateLimitResponse(response, "Quá nhiều lượt đăng ký từ IP này. Vui lòng thử lại sau 1 giờ.");
                 return;
             }
         }

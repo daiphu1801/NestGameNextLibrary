@@ -15,6 +15,7 @@ export interface Game {
   region?: string;
   isFeatured?: boolean;
   fileName?: string;
+  playCount?: number;
 }
 
 // Category Types

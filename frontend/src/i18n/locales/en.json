@@ -64,7 +64,8 @@
     "tryAgain": "Please try again",
     "selectRom": "Select ROM file",
     "runServerHint": "To auto-load games, run local server:",
-    "orSelectManually": "Or select ROM file manually:"
+    "orSelectManually": "Or select ROM file manually:",
+    "details": "Details"
   },
   "stats": {
     "games": "GAMES",
@@ -294,5 +295,23 @@
   "history": {
     "empty": "No played games yet",
     "emptyDesc": "Start playing games to see them here!"
+  },
+  "gameDetails": {
+    "platform": "Platform",
+    "year": "Year",
+    "region": "Region",
+    "playCount": "Play Count",
+    "description": "Description",
+    "defaultDescription": "{name} is one of the classic NES titles. Experience engaging gameplay and typical 8-bit retro graphics.",
+    "yourRating": "Your Rating",
+    "loginToRate": "Login to rate",
+    "comments": "Comments",
+    "noComments": "No comments yet",
+    "writeComment": "Write a comment...",
+    "loginToComment": "Please login to comment"
+  },
+  "common": {
+    "classic": "Classic",
+    "universal": "Universal"
   }
 }

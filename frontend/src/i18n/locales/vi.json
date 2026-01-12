@@ -64,7 +64,8 @@
     "tryAgain": "Vui lòng thử lại",
     "selectRom": "Chọn file ROM",
     "runServerHint": "Để tự động tải game, hãy chạy local server:",
-    "orSelectManually": "Hoặc chọn file ROM thủ công:"
+    "orSelectManually": "Hoặc chọn file ROM thủ công:",
+    "details": "Chi tiết"
   },
   "stats": {
     "games": "GAMES",
@@ -292,5 +293,23 @@
   "history": {
     "empty": "Chưa có lịch sử chơi",
     "emptyDesc": "Hãy bắt đầu chơi game để xem lịch sử tại đây!"
+  },
+  "gameDetails": {
+    "platform": "Hệ máy",
+    "year": "Năm",
+    "region": "Vùng",
+    "playCount": "Lượt chơi",
+    "description": "Mô tả",
+    "defaultDescription": "{name} là một trong những tựa game NES kinh điển. Trải nghiệm gameplay hấp dẫn và đồ họa retro đặc trưng của thời kỳ 8-bit.",
+    "yourRating": "Đánh giá của bạn",
+    "loginToRate": "Đăng nhập để đánh giá",
+    "comments": "Bình luận",
+    "noComments": "Chưa có bình luận nào",
+    "writeComment": "Viết bình luận...",
+    "loginToComment": "Vui lòng đăng nhập để bình luận"
+  },
+  "common": {
+    "classic": "Cổ điển",
+    "universal": "Quốc tế"
   }
 }

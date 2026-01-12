@@ -5,12 +5,13 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { Header } from '@/components/layout/Header';
-import { User, Mail, Calendar, Shield, Lock, Save, Loader2, Camera, Sparkles, Check, X } from 'lucide-react';
+import { User, Mail, Calendar, Shield, Lock, Save, Loader2, Sparkles, Check, X, ArrowLeft, Edit2 } from 'lucide-react';
 import { authService } from '@/services/authService';
 import { validatePassword, getStrengthColor, getStrengthLabel } from '@/lib/passwordValidation';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { AvatarUpload } from '@/components/profile/AvatarUpload';
+import { BioEditor } from '@/components/profile/BioEditor';
 
 export default function SettingsPage() {
     const { user } = useAuth();
@@ -142,26 +143,24 @@ export default function SettingsPage() {
                             {/* Decorative gradient overlay */}
                             <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-transparent opacity-50" />
 
-                            <div className="relative inline-block mb-6 group-hover:scale-105 transition-transform duration-500">
-                                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl mx-auto bg-gradient-to-br from-gray-800 to-black p-1">
-                                    {user.avatarUrl ? (
-                                        <img src={user.avatarUrl} alt={user.username} className="w-full h-full object-cover rounded-full" />
-                                    ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center rounded-full">
-                                            <span className="text-5xl font-bold text-white uppercase">{user.username.charAt(0)}</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <button className="absolute bottom-1 right-1 p-2.5 rounded-full bg-primary text-white hover:bg-primary/80 transition-all hover:scale-110 shadow-lg border-2 border-background">
-                                    <Camera className="w-4 h-4" />
-                                </button>
+                            <div className="mb-6 group-hover:scale-105 transition-transform duration-500">
+                                <AvatarUpload
+                                    currentAvatarUrl={user.avatarUrl}
+                                    username={user.username}
+                                />
                             </div>
 
                             <div className="relative z-10">
                                 <h2 className="text-2xl font-bold text-white mb-1">{user.username}</h2>
-                                <p className="text-sm text-foreground/60 mb-6 bg-white/5 inline-block px-3 py-1 rounded-full border border-white/5">
+                                <p className="text-sm text-foreground/60 mb-4 bg-white/5 inline-block px-3 py-1 rounded-full border border-white/5">
                                     {user.email}
                                 </p>
+
+                                {/* Bio Section */}
+                                <div className="mt-4 p-4 bg-black/20 rounded-xl border border-white/5 text-left">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold mb-2">Giới thiệu</p>
+                                    <BioEditor currentBio={user.bio || ''} />
+                                </div>
 
                                 <div className="grid gap-3 text-left bg-black/20 rounded-2xl p-4 border border-white/5">
                                     <div className="flex items-center gap-3 p-2">

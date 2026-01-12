@@ -39,9 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.equals("/auth/forgot-password") ||
                 path.equals("/auth/verify-otp") ||
                 path.equals("/auth/reset-password") ||
-                path.equals("/auth/refresh") ||
-                path.startsWith("/games/") ||
-                path.startsWith("/categories/")) {
+                path.equals("/auth/refresh")) {
             filterChain.doFilter(request, response);
             return;
         }

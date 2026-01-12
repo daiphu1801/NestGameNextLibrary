@@ -21,74 +21,105 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final GameRepository gameRepository;
+        private final UserRepository userRepository;
+        private final GameRepository gameRepository;
 
-    @Transactional
-    public void addFavorite(User user, Long gameId) {
-        log.info("Adding favorite: userId={}, gameId={}", user.getId(), gameId);
+        @Transactional
+        public void addFavorite(User user, Long gameId) {
+                log.info("Adding favorite: userId={}, gameId={}", user.getId(), gameId);
 
-        User managedUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
+                User managedUser = userRepository.findById(user.getId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
 
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy game với ID: " + gameId));
+                Game game = gameRepository.findById(gameId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Không tìm thấy game với ID: " + gameId));
 
-        if (managedUser.getFavorites().contains(game)) {
-            throw new BadRequestException("Game đã có trong danh sách yêu thích");
+                if (managedUser.getFavorites().contains(game)) {
+                        throw new BadRequestException("Game đã có trong danh sách yêu thích");
+                }
+
+                managedUser.getFavorites().add(game);
+                userRepository.save(managedUser);
+                log.info("Successfully added game '{}' to favorites for user '{}'", game.getName(),
+                                managedUser.getUsername());
         }
 
-        managedUser.getFavorites().add(game);
-        userRepository.save(managedUser);
-        log.info("Successfully added game '{}' to favorites for user '{}'", game.getName(), managedUser.getUsername());
-    }
+        @Transactional
+        public void removeFavorite(User user, Long gameId) {
+                log.info("Removing favorite: userId={}, gameId={}", user.getId(), gameId);
 
-    @Transactional
-    public void removeFavorite(User user, Long gameId) {
-        log.info("Removing favorite: userId={}, gameId={}", user.getId(), gameId);
+                User managedUser = userRepository.findById(user.getId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
 
-        User managedUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
+                Game game = gameRepository.findById(gameId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Không tìm thấy game với ID: " + gameId));
 
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy game với ID: " + gameId));
+                if (!managedUser.getFavorites().contains(game)) {
+                        throw new BadRequestException("Game không có trong danh sách yêu thích");
+                }
 
-        if (!managedUser.getFavorites().contains(game)) {
-            throw new BadRequestException("Game không có trong danh sách yêu thích");
+                managedUser.getFavorites().remove(game);
+                userRepository.save(managedUser);
+                log.info("Successfully removed game '{}' from favorites for user '{}'", game.getName(),
+                                managedUser.getUsername());
         }
 
-        managedUser.getFavorites().remove(game);
-        userRepository.save(managedUser);
-        log.info("Successfully removed game '{}' from favorites for user '{}'", game.getName(),
-                managedUser.getUsername());
-    }
+        @Transactional(readOnly = true)
+        public List<GameDTO> getUserFavorites(User user) {
+                log.info("Getting favorites for userId={}", user.getId());
 
-    @Transactional(readOnly = true)
-    public List<GameDTO> getUserFavorites(User user) {
-        log.info("Getting favorites for userId={}", user.getId());
+                return userRepository.findById(user.getId())
+                                .map(managedUser -> managedUser.getFavorites().stream()
+                                                .map(this::convertToGameDTO)
+                                                .collect(Collectors.toList()))
+                                .orElse(Collections.emptyList());
+        }
 
-        return userRepository.findById(user.getId())
-                .map(managedUser -> managedUser.getFavorites().stream()
-                        .map(this::convertToGameDTO)
-                        .collect(Collectors.toList()))
-                .orElse(Collections.emptyList());
-    }
+        private GameDTO convertToGameDTO(Game game) {
+                return new GameDTO(
+                                game.getId(),
+                                game.getName(),
+                                game.getFileName(),
+                                game.getPath(),
+                                game.getCategory() != null ? game.getCategory().getName() : null,
+                                game.getDescription(),
+                                game.getRating(),
+                                game.getYear(),
+                                game.getRegion(),
+                                game.getIsFeatured(),
+                                game.getImageUrl(),
+                                game.getImageSnap(),
+                                game.getImageTitle(),
+                                game.getPlayCount());
+        }
 
-    private GameDTO convertToGameDTO(Game game) {
-        return new GameDTO(
-                game.getId(),
-                game.getName(),
-                game.getFileName(),
-                game.getPath(),
-                game.getCategory() != null ? game.getCategory().getName() : null,
-                game.getDescription(),
-                game.getRating(),
-                game.getYear(),
-                game.getRegion(),
-                game.getIsFeatured(),
-                game.getImageUrl(),
-                game.getImageSnap(),
-                game.getImageTitle(),
-                game.getPlayCount());
-    }
+        @Transactional
+        public void updateAvatarUrl(Long userId, String avatarUrl) {
+                log.info("Updating avatar for userId={}", userId);
+                User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
+                user.setAvatarUrl(avatarUrl);
+                userRepository.save(user);
+        }
+
+        @Transactional
+        public void updateBio(Long userId, String bio) {
+                log.info("Updating bio for userId={}", userId);
+                User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
+                user.setBio(bio);
+                userRepository.save(user);
+        }
+
+        public com.nestgame.dto.UserDTO getUserDTO(User user) {
+                return new com.nestgame.dto.UserDTO(
+                                user.getId(),
+                                user.getEmail(),
+                                user.getUsername(),
+                                user.getAvatarUrl(),
+                                user.getBio(),
+                                user.getRole());
+        }
 }

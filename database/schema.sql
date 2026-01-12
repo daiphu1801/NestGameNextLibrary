@@ -59,6 +59,7 @@ CREATE TABLE users (
     username VARCHAR(100) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,    -- BCrypt hashed
     avatar_url VARCHAR(500),
+    bio TEXT,                               -- User bio/about me
     role VARCHAR(20) DEFAULT 'USER',        -- USER, ADMIN
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -118,6 +119,34 @@ CREATE TABLE password_reset_otp (
 
 CREATE INDEX idx_password_reset_otp_email ON password_reset_otp(email);
 
+-- 8. TABLE: game_ratings (User ratings for games - 1 to 5 stars)
+CREATE TABLE game_ratings (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    game_id BIGINT NOT NULL REFERENCES games(id) ON DELETE CASCADE,
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, game_id)                -- Mỗi user chỉ rate 1 game 1 lần
+);
+
+CREATE INDEX idx_game_ratings_user ON game_ratings(user_id);
+CREATE INDEX idx_game_ratings_game ON game_ratings(game_id);
+
+-- 9. TABLE: game_comments (User comments on games)
+CREATE TABLE game_comments (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    game_id BIGINT NOT NULL REFERENCES games(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_game_comments_user ON game_comments(user_id);
+CREATE INDEX idx_game_comments_game ON game_comments(game_id);
+CREATE INDEX idx_game_comments_created_at ON game_comments(created_at DESC);
+
 -- ========================================
 -- INSERT DEFAULT DATA
 -- ========================================
@@ -142,3 +171,4 @@ INSERT INTO categories (name, display_name, icon) VALUES
 -- Admin user (password: admin123 - sẽ hash trong Spring Boot)
 -- INSERT INTO users (email, username, password_hash, role) VALUES
 -- ('admin@nestgame.com', 'admin', '$2a$10$...', 'ADMIN');
+

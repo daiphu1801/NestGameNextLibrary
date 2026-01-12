@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useGameStore } from '@/features/games/store/gameStore';
 import { GameCard } from './GameCard';
 import { GameModal } from './GameModal';
+import { GameDetailsModal } from './GameDetailsModal';
 import { Game } from '@/types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,19 +23,34 @@ export function GameGrid() {
   } = useGameStore();
 
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPlayModalOpen, setIsPlayModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   const games = getCurrentPageGames();
   const totalPages = getTotalPages();
 
-  const handleGameClick = (game: Game) => {
+  const handlePlayClick = (game: Game) => {
     setSelectedGame(game);
-    setIsModalOpen(true);
+    setIsPlayModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleDetailsClick = (game: Game) => {
+    setSelectedGame(game);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleClosePlayModal = () => {
+    setIsPlayModalOpen(false);
     setTimeout(() => setSelectedGame(null), 300);
+  };
+
+  const handleCloseDetailsModal = () => {
+    setIsDetailsModalOpen(false);
+  };
+
+  const handlePlayFromDetails = () => {
+    setIsDetailsModalOpen(false);
+    setIsPlayModalOpen(true);
   };
 
   const handlePrevPage = () => {
@@ -65,7 +81,7 @@ export function GameGrid() {
         </div>
         <Button
           className="rounded-full"
-          onClick={() => setPage(1)} // Just a dummy action usually
+          onClick={() => setPage(1)}
         >
           {t('search.clearSearch')}
         </Button>
@@ -96,7 +112,8 @@ export function GameGrid() {
           <GameCard
             key={game.id}
             game={game}
-            onClick={() => handleGameClick(game)}
+            onPlayClick={() => handlePlayClick(game)}
+            onDetailsClick={() => handleDetailsClick(game)}
             priority={index < PERFORMANCE_CONFIG.IMAGE_PRIORITY_COUNT}
           />
         ))}
@@ -233,12 +250,22 @@ export function GameGrid() {
         </div>
       )}
 
-      {/* Game Modal */}
+      {/* Play Modal (Emulator) */}
       {selectedGame && (
         <GameModal
           game={selectedGame}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
+          isOpen={isPlayModalOpen}
+          onClose={handleClosePlayModal}
+        />
+      )}
+
+      {/* Details Modal */}
+      {selectedGame && (
+        <GameDetailsModal
+          game={selectedGame}
+          isOpen={isDetailsModalOpen}
+          onClose={handleCloseDetailsModal}
+          onPlayNow={handlePlayFromDetails}
         />
       )}
     </div>

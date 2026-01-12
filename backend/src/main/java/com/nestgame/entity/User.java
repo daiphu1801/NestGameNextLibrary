@@ -38,6 +38,9 @@ public class User implements UserDetails {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
     @Builder.Default
     private String role = "USER";
 

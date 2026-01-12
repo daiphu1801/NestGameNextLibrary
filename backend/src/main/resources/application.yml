@@ -43,6 +43,11 @@ app:
   frontend:
     url: ${FRONTEND_URL:http://localhost:3000}
 
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}
+
 # ===========================================
 # TEMPLATE FILE - Commit this to Git
 # Copy to application-local.yml and fill values

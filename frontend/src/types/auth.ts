@@ -2,7 +2,8 @@ export interface User {
     id: number;
     username: string;
     email: string;
-    avatarUrl?: string; // Optional as per backend DTO
+    avatarUrl?: string;
+    bio?: string;
     role: string;
 }
 
