@@ -86,53 +86,111 @@ export default function DocsPage() {
                             <Keyboard className="w-6 h-6 text-primary" />
                             <h2 className="text-2xl font-bold">{t('docs.controls.title')}</h2>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-3">
-                                <h3 className="font-semibold text-foreground">{t('docs.controls.movement')}</h3>
-                                <div className="space-y-2 text-sm text-muted-foreground">
-                                    <div className="flex justify-between">
-                                        <span>{t('docs.controls.up')}</span>
-                                        <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">↑ / W</kbd>
+
+                        {/* Player 1 */}
+                        <div className="mb-6">
+                            <div className="flex items-center gap-2 mb-4">
+                                <span className="text-xs font-bold text-primary uppercase tracking-wider bg-primary/10 px-3 py-1 rounded-full">{t('docs.controls.player1')}</span>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-3">
+                                    <h3 className="font-semibold text-foreground text-sm">{t('docs.controls.movement')}</h3>
+                                    <div className="space-y-2 text-sm text-muted-foreground">
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.up')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">W</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.down')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">S</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.left')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">A</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.right')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">D</kbd>
+                                        </div>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span>{t('docs.controls.down')}</span>
-                                        <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">↓ / S</kbd>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>{t('docs.controls.left')}</span>
-                                        <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">← / A</kbd>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>{t('docs.controls.right')}</span>
-                                        <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">→ / D</kbd>
+                                </div>
+                                <div className="space-y-3">
+                                    <h3 className="font-semibold text-foreground text-sm">{t('docs.controls.actions')}</h3>
+                                    <div className="space-y-2 text-sm text-muted-foreground">
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.aButton')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">J</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.bButton')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">K</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.start')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">Enter</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.select')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">Shift</kbd>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="space-y-3">
-                                <h3 className="font-semibold text-foreground">{t('docs.controls.actions')}</h3>
-                                <div className="space-y-2 text-sm text-muted-foreground">
-                                    <div className="flex justify-between">
-                                        <span>{t('docs.controls.aButton')}</span>
-                                        <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">X / J</kbd>
+                        </div>
+
+                        <div className="h-px bg-white/10 my-6" />
+
+                        {/* Player 2 */}
+                        <div>
+                            <div className="flex items-center gap-2 mb-4">
+                                <span className="text-xs font-bold text-accent uppercase tracking-wider bg-accent/10 px-3 py-1 rounded-full">{t('docs.controls.player2')}</span>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-3">
+                                    <h3 className="font-semibold text-foreground text-sm">{t('docs.controls.movement')}</h3>
+                                    <div className="space-y-2 text-sm text-muted-foreground">
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.up')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">↑</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.down')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">↓</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.left')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">←</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.right')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">→</kbd>
+                                        </div>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span>{t('docs.controls.bButton')}</span>
-                                        <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">Z / K</kbd>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>{t('docs.controls.start')}</span>
-                                        <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">Enter</kbd>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>{t('docs.controls.select')}</span>
-                                        <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">Shift</kbd>
+                                </div>
+                                <div className="space-y-3">
+                                    <h3 className="font-semibold text-foreground text-sm">{t('docs.controls.actions')}</h3>
+                                    <div className="space-y-2 text-sm text-muted-foreground">
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.aButton')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">1</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.bButton')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">2</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.start')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">3</kbd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>{t('docs.controls.select')}</span>
+                                            <kbd className="px-2 py-1 rounded bg-secondary text-xs font-mono">4</kbd>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </section>
-
-
 
                     {/* Gamepad */}
                     <section className="glass-card rounded-2xl p-8">

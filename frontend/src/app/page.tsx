@@ -7,7 +7,7 @@ import { Header } from '@/components/layout/Header';
 import { FeaturedGames } from '@/components/game/FeaturedGames';
 import { GameModal } from '@/components/game/GameModal';
 import { validateEnv } from '@/config/env';
-import { Sparkles, Zap, Save, Play, Gamepad2, ArrowRight, Shield, Globe, Users, Star } from 'lucide-react';
+import { Sparkles, Zap, Save, Play, Gamepad2, ArrowRight, Shield, Globe, Users, Star, Github, ExternalLink } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { useState } from 'react';
@@ -149,7 +149,19 @@ export default function LandingPage() {
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link href="/docs" className="btn-outline inline-flex items-center gap-2">
-                  {t('nav.docs') || 'Hướng Dẫn'}
+                  <span className="flex items-center gap-2">
+                    {t('nav.docs') || 'Hướng Dẫn'}
+                  </span>
+                </Link>
+                <Link
+                  href="https://github.com/daiphu1801/NestGameNextLibrary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3 rounded-lg font-semibold text-sm uppercase tracking-wider transition-all duration-300 inline-flex items-center gap-2 bg-transparent border-2 border-white/20 text-muted-foreground hover:text-white hover:border-white hover:bg-white/5 hover:shadow-lg hover:shadow-white/10 active:scale-95"
+                >
+                  <Github className="w-4 h-4" />
+                  <span>GitHub</span>
+                  <ExternalLink className="w-3 h-3 opacity-50" />
                 </Link>
               </div>
 

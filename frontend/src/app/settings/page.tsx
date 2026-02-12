@@ -164,16 +164,6 @@ export default function SettingsPage() {
 
                                 <div className="grid gap-3 text-left bg-black/20 rounded-2xl p-4 border border-white/5">
                                     <div className="flex items-center gap-3 p-2">
-                                        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                                            <Shield className="w-4 h-4" />
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">{t('settings.role') || 'VAI TRÒ'}</p>
-                                            <p className="text-sm font-semibold text-white">{user.role}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full h-px bg-white/5" />
-                                    <div className="flex items-center gap-3 p-2">
                                         <div className="p-2 rounded-lg bg-accent/10 text-accent">
                                             <Calendar className="w-4 h-4" />
                                         </div>

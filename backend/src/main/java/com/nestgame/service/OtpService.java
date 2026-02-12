@@ -38,20 +38,32 @@ public class OtpService {
     }
 
     /**
-     * Send OTP to user's email for password reset
+     * Send OTP to user's email for password reset.
+     * Always returns success to prevent user enumeration.
      */
     @Transactional
     public OtpResponse sendOtp(String email) {
-        // Check if user exists
-        var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản với email này"));
+        String genericMessage = "Nếu email này đã được đăng ký, mã OTP sẽ được gửi đến hộp thư của bạn";
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(otpExpirationMinutes);
+
+        // Check if user exists - don't reveal if not found
+        var userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            log.info("Password reset requested for non-existent email: {}", email);
+            return OtpResponse.builder()
+                    .success(true)
+                    .message(genericMessage)
+                    .expiresAt(expiresAt)
+                    .build();
+        }
+
+        var user = userOptional.get();
 
         // Delete old OTPs for this email
         otpRepository.deleteByEmail(email);
 
         // Generate new OTP
         String otpCode = generateOtpCode();
-        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(otpExpirationMinutes);
 
         // Save OTP (hashed)
         PasswordResetOtp otp = PasswordResetOtp.builder()
@@ -72,7 +84,7 @@ public class OtpService {
 
         return OtpResponse.builder()
                 .success(true)
-                .message("Mã OTP đã được gửi đến email của bạn")
+                .message(genericMessage)
                 .expiresAt(expiresAt)
                 .build();
     }

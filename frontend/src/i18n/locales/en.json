@@ -10,13 +10,19 @@
     "games": "games",
     "search": "Search",
     "play": "Play Now",
-    "searchHint": "Press Enter to search"
+    "searchHint": "Press Enter to search",
+    "welcomeTooltip": {
+      "title": "New here?",
+      "content": "Check the guide for controls and gameplay tips!",
+      "action": "View Now"
+    }
   },
   "nav": {
     "home": "Home",
     "library": "Library",
     "favorites": "Favorites",
     "leaderboard": "Leaderboard",
+    "random": "Random",
     "donate": "Donate",
     "docs": "Docs"
   },
@@ -51,6 +57,7 @@
     "subtitle": "No Console Required.",
     "badge": "{count}+ Games Available Online",
     "description": "A curated collection of legendary NES titles. Experience gaming history directly in your browser with save states and instant play.",
+    "openSource": "Open Source on GitHub",
     "free": "Free to Play",
     "noInstall": "Instant Load",
     "saveState": "Cloud Saves",
@@ -112,7 +119,11 @@
     "developer": "Developer",
     "rights": "All rights reserved.",
     "madeWith": "Made with",
-    "inVietnam": "in Vietnam"
+    "inVietnam": "in Vietnam",
+    "disclaimer": {
+      "projectPurpose": "The NestGame project is for educational community sharing purposes only and does not profit from any content.",
+      "romsPurpose": "All ROM games provided are for educational and preservation purposes of classic game heritage only."
+    }
   },
   "search": {
     "hot": "Hot",
@@ -163,6 +174,8 @@
     },
     "controls": {
       "title": "Keyboard Controls",
+      "player1": "Player 1",
+      "player2": "Player 2",
       "movement": "Movement",
       "actions": "Actions",
       "up": "Up",
@@ -338,5 +351,18 @@
     "reason2Desc": "We are committed to keeping NestGame 100% free of intrusive ads.",
     "reason3Title": "New Features:",
     "reason3Desc": "Your support helps us build features like Leaderboards, Save States, and Multiplayer."
+  },
+  "random": {
+    "title": "RANDOM PLAY",
+    "subtitle": "Don't know what to play? Let fate decide! Press the button to pick a random game.",
+    "clickToStart": "Press button to start",
+    "yourGame": "Your game awaits!",
+    "spin": "SPIN RANDOM",
+    "spinning": "Spinning...",
+    "playNow": "PLAY NOW",
+    "played": "spins",
+    "recentSpins": "Recent Spins",
+    "tip": "Tip: You can also visit the",
+    "tipEnd": "to search for games by name or category."
   }
 }

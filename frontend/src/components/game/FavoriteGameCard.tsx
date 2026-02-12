@@ -6,9 +6,7 @@ import { Play, Star, X, HeartCrack, Trash2 } from 'lucide-react';
 import { Game } from '@/types';
 import { cn } from '@/lib/utils';
 import { imageService } from '@/services/imageService';
-import { storageService } from '@/services/storageService';
-import { userService } from '@/services/userService';
-import { useAuth } from '@/components/providers/AuthProvider';
+import { useFavorites } from '@/components/providers/FavoritesProvider';
 
 interface FavoriteGameCardProps {
     game: Game;
@@ -17,7 +15,7 @@ interface FavoriteGameCardProps {
 }
 
 export function FavoriteGameCard({ game, onClick, onRemove }: FavoriteGameCardProps) {
-    const { user } = useAuth();
+    const { toggleFavorite } = useFavorites();
     const [imageUrl, setImageUrl] = useState(game.image || game.thumbnail || '/placeholder.png');
     const [fallbackUrls] = useState(() =>
         imageService.generateFallbackUrls(game.name, game.image)
@@ -31,16 +29,7 @@ export function FavoriteGameCard({ game, onClick, onRemove }: FavoriteGameCardPr
         setIsRemoving(true);
 
         try {
-            // Remove from localStorage
-            storageService.toggleFavorite(game.id);
-
-            // If logged in, also remove from server
-            if (user) {
-                await userService.removeFavorite(game.id);
-            }
-
-            // Notify parent and other components
-            window.dispatchEvent(new Event('favorites-updated'));
+            await toggleFavorite(game.id);
             onRemove(game.id);
         } catch (err) {
             console.error('Failed to remove favorite:', err);

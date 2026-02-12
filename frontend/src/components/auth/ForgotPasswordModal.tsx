@@ -34,7 +34,7 @@ export function ForgotPasswordModal({ isOpen, onClose, onBackToLogin }: ForgotPa
             await authService.requestPasswordReset(email);
             setStep('otp');
         } catch (err: any) {
-            setError(err.message || 'Không thể gửi mã OTP. Vui lòng thử lại.');
+            setError(err.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
         } finally {
             setIsLoading(false);
         }
@@ -159,7 +159,7 @@ export function ForgotPasswordModal({ isOpen, onClose, onBackToLogin }: ForgotPa
                                     Quên mật khẩu?
                                 </h2>
                                 <p className="text-sm text-muted-foreground mt-2">
-                                    Nhập email để nhận mã OTP xác thực
+                                    Nhập email đã đăng ký để nhận mã OTP
                                 </p>
                             </div>
 
@@ -223,7 +223,7 @@ export function ForgotPasswordModal({ isOpen, onClose, onBackToLogin }: ForgotPa
                                     Nhập mã OTP
                                 </h2>
                                 <p className="text-sm text-muted-foreground mt-2">
-                                    Chúng tôi đã gửi mã 6 số đến <span className="text-primary">{email}</span>
+                                    Nếu email đã được đăng ký, mã OTP 6 số sẽ được gửi đến hộp thư của bạn
                                 </p>
                             </div>
 

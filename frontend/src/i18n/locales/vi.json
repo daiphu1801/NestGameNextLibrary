@@ -10,13 +10,19 @@
     "games": "games",
     "search": "Tìm kiếm",
     "play": "Chơi Ngay",
-    "searchHint": "Nhấn Enter để tìm kiếm"
+    "searchHint": "Nhấn Enter để tìm kiếm",
+    "welcomeTooltip": {
+      "title": "Mới tới?",
+      "content": "Xem hướng dẫn để biết cách chơi và cấu hình phím nhé!",
+      "action": "Xem ngay"
+    }
   },
   "nav": {
     "home": "Trang chủ",
     "library": "Thư viện",
     "favorites": "Yêu thích",
     "leaderboard": "Bảng xếp hạng",
+    "random": "Ngẫu nhiên",
     "donate": "Ủng hộ",
     "docs": "Hướng dẫn"
   },
@@ -51,6 +57,7 @@
     "subtitle": "Không Cần Giả Lập.",
     "badge": "Hơn {count}+ Game Online",
     "description": "Tuyển tập những tựa game NES huyền thoại. Trải nghiệm lịch sử game ngay trên trình duyệt với tính năng lưu game và chơi ngay.",
+    "openSource": "Mã nguồn mở trên GitHub",
     "free": "Miễn Phí",
     "noInstall": "Tải Nhanh",
     "saveState": "Lưu Đám Mây",
@@ -112,7 +119,11 @@
     "developer": "Nhà phát triển",
     "rights": "All rights reserved.",
     "madeWith": "Made with",
-    "inVietnam": "in Vietnam"
+    "inVietnam": "in Vietnam",
+    "disclaimer": {
+      "projectPurpose": "Dự án NestGame mang mục đích chia sẻ cộng đồng để học tập, không thu lợi nhuận từ bất kỳ nội dung nào.",
+      "romsPurpose": "Tất cả ROM games được cung cấp chỉ nhằm mục đích giáo dục và bảo tồn di sản game cổ điển."
+    }
   },
   "search": {
     "hot": "Hot",
@@ -163,6 +174,8 @@
     },
     "controls": {
       "title": "Phím Điều Khiển",
+      "player1": "Người chơi 1",
+      "player2": "Người chơi 2",
       "movement": "Di chuyển",
       "actions": "Hành động",
       "up": "Lên",
@@ -336,5 +349,18 @@
     "reason2Desc": "Chúng tôi cam kết giữ NestGame hoàn toàn miễn phí và không có quảng cáo làm phiền.",
     "reason3Title": "Tính năng mới:",
     "reason3Desc": "Sự ủng hộ của bạn giúp chúng tôi phát triển thêm các tính năng như Bảng xếp hạng, Lưu game, và Chơi nhiều người."
+  },
+  "random": {
+    "title": "RANDOM PLAY",
+    "subtitle": "Không biết chơi gì? Để số phận quyết định! Bấm nút để chọn ngẫu nhiên một game.",
+    "clickToStart": "Bấm nút để bắt đầu",
+    "yourGame": "Game dành cho bạn!",
+    "spin": "QUAY NGẪU NHIÊN",
+    "spinning": "Đang quay...",
+    "playNow": "CHƠI NGAY",
+    "played": "đã quay",
+    "recentSpins": "Đã quay gần đây",
+    "tip": "Mẹo: Bạn cũng có thể truy cập",
+    "tipEnd": "để tìm kiếm game theo tên hoặc danh mục."
   }
 }

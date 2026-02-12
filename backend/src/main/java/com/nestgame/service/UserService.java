@@ -3,7 +3,7 @@ package com.nestgame.service;
 import com.nestgame.dto.GameDTO;
 import com.nestgame.entity.Game;
 import com.nestgame.entity.User;
-import com.nestgame.exception.BadRequestException;
+
 import com.nestgame.exception.ResourceNotFoundException;
 import com.nestgame.repository.GameRepository;
 import com.nestgame.repository.UserRepository;
@@ -36,7 +36,9 @@ public class UserService {
                                                 "Không tìm thấy game với ID: " + gameId));
 
                 if (managedUser.getFavorites().contains(game)) {
-                        throw new BadRequestException("Game đã có trong danh sách yêu thích");
+                        log.info("Game '{}' is already in favorites for user '{}', skipping", game.getName(),
+                                        managedUser.getUsername());
+                        return; // Already in favorites, just return success
                 }
 
                 managedUser.getFavorites().add(game);
@@ -57,7 +59,9 @@ public class UserService {
                                                 "Không tìm thấy game với ID: " + gameId));
 
                 if (!managedUser.getFavorites().contains(game)) {
-                        throw new BadRequestException("Game không có trong danh sách yêu thích");
+                        log.info("Game '{}' is not in favorites for user '{}', skipping", game.getName(),
+                                        managedUser.getUsername());
+                        return; // Not in favorites, just return success
                 }
 
                 managedUser.getFavorites().remove(game);

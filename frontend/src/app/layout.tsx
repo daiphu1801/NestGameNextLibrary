@@ -7,6 +7,7 @@ import { LanguageProvider } from '@/components/providers/LanguageProvider';
 import { PerformanceProvider } from '@/components/providers/PerformanceProvider';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { ToastProvider } from '@/components/providers/ToastProvider';
+import { FavoritesProvider } from '@/components/providers/FavoritesProvider';
 import { metadata as siteMetadata } from '@/config/site';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -35,17 +36,19 @@ export default function RootLayout({
           <LanguageProvider>
             <PerformanceProvider>
               <AuthProvider>
-                <QueryProvider>
-                  <ToastProvider>
-                    <div className="flex min-h-screen flex-col relative">
-                      <MobileWarning />
-                      <div className="flex-1">
-                        {children}
+                <FavoritesProvider>
+                  <QueryProvider>
+                    <ToastProvider>
+                      <div className="flex min-h-screen flex-col relative">
+                        <MobileWarning />
+                        <div className="flex-1">
+                          {children}
+                        </div>
+                        <Footer />
                       </div>
-                      <Footer />
-                    </div>
-                  </ToastProvider>
-                </QueryProvider>
+                    </ToastProvider>
+                  </QueryProvider>
+                </FavoritesProvider>
               </AuthProvider>
             </PerformanceProvider>
           </LanguageProvider>

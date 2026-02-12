@@ -10,6 +10,7 @@ import { Game } from '@/types';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { ArrowLeft, Heart, Trash2, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -18,13 +19,14 @@ export default function FavoritesPage() {
     const { t } = useLanguage();
     const { user, openLoginModal } = useAuth();
     const { isLowPerformanceMode } = usePerformance();
+    const { favorites, isLoading: isFavoritesLoading, toggleFavorite, refreshFavorites } = useFavorites();
     const [favoriteGames, setFavoriteGames] = useState<Game[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedGame, setSelectedGame] = useState<Game | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
-        const loadFavorites = async () => {
+        const loadFavoriteGames = async () => {
             if (!user) {
                 setFavoriteGames([]);
                 setIsLoading(false);
@@ -43,15 +45,8 @@ export default function FavoritesPage() {
             }
         };
 
-        loadFavorites();
-
-        const handleStorageUpdate = () => {
-            loadFavorites();
-        };
-        window.addEventListener('favorites-updated', handleStorageUpdate);
-        return () => window.removeEventListener('favorites-updated', handleStorageUpdate);
-
-    }, [user]);
+        loadFavoriteGames();
+    }, [user, favorites]); // Re-fetch when favorites Set changes
 
     const handleGameClick = (game: Game) => {
         setSelectedGame(game);
@@ -72,13 +67,12 @@ export default function FavoritesPage() {
 
         for (const game of favoriteGames) {
             try {
-                await userService.removeFavorite(game.id);
+                await toggleFavorite(game.id);
             } catch (e) {
                 console.error('Failed to remove', e);
             }
         }
         setFavoriteGames([]);
-        window.dispatchEvent(new Event('favorites-updated'));
     };
 
     return (

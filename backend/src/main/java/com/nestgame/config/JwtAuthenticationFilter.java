@@ -29,12 +29,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
-        // Skip JWT validation for public endpoints
+        // Skip JWT validation only for auth endpoints
         String path = request.getServletPath();
         System.out.println(">>> Processing: " + request.getMethod() + " " + path);
-        if (path.startsWith("/auth/") ||
-                path.startsWith("/games/") ||
-                path.startsWith("/categories/")) {
+        if (path.startsWith("/auth/")) {
             System.out.println(">>> Public endpoint, skipping JWT");
             filterChain.doFilter(request, response);
             return;

@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { Play, Star, Heart, Sparkles, LogIn, Info } from 'lucide-react';
 import { Game } from '@/types';
 import { cn } from '@/lib/utils';
 import { imageService } from '@/services/imageService';
-import { userService } from '@/services/userService';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useToast } from '@/components/providers/ToastProvider';
+import { useFavorites } from '@/components/providers/FavoritesProvider';
 
 interface GameCardProps {
   game: Game;
@@ -24,41 +24,19 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
   const { t } = useLanguage();
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { isFavorite: checkIsFavorite, toggleFavorite } = useFavorites();
+
   const [imageUrl, setImageUrl] = useState(game.image || game.thumbnail || '/placeholder.png');
   const [fallbackUrls] = useState(() =>
     imageService.generateFallbackUrls(game.name, game.image)
   );
   const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
   const [hasError, setHasError] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showLoginTooltip, setShowLoginTooltip] = useState(false);
 
-  // Load favorite status from API when user is logged in
-  useEffect(() => {
-    const loadFavoriteStatus = async () => {
-      if (user) {
-        try {
-          const favorites = await userService.getFavorites();
-          const isFav = favorites.some((f: any) => f.id === game.id || f.id === String(game.id));
-          setIsFavorite(isFav);
-        } catch (err) {
-          console.error('Failed to load favorites:', err);
-        }
-      } else {
-        setIsFavorite(false);
-      }
-    };
-
-    loadFavoriteStatus();
-
-    const handleFavoritesUpdate = () => {
-      loadFavoriteStatus();
-    };
-
-    window.addEventListener('favorites-updated', handleFavoritesUpdate);
-    return () => window.removeEventListener('favorites-updated', handleFavoritesUpdate);
-  }, [game.id, user]);
+  // Get favorite status from context (no local state needed)
+  const isFavorite = checkIsFavorite(game.id);
 
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -77,26 +55,14 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
     setIsAnimating(true);
     setTimeout(() => setIsAnimating(false), 600);
 
-    // Optimistic update
-    const newFavoriteState = !isFavorite;
-    setIsFavorite(newFavoriteState);
-    window.dispatchEvent(new Event('favorites-updated'));
-
     try {
-      if (newFavoriteState) {
-        await userService.addFavorite(game.id);
-      } else {
-        await userService.removeFavorite(game.id);
-      }
+      await toggleFavorite(game.id);
     } catch (err) {
-      console.error('Failed to sync favorite:', err);
-      // Rollback on error
-      setIsFavorite(!newFavoriteState);
-      window.dispatchEvent(new Event('favorites-updated'));
-      // Show toast notification
+      console.error('Failed to toggle favorite:', err);
       showToast('Không thể kết nối server. Thử lại sau.', 'offline');
     }
   };
+
 
   const handleImageError = () => {
     if (hasError) return;

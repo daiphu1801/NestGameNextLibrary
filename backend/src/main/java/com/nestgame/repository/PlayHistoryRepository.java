@@ -18,4 +18,7 @@ public interface PlayHistoryRepository extends JpaRepository<PlayHistory, Long> 
     Optional<PlayHistory> findTopByUserOrderByPlayedAtAsc(User user);
 
     long countByUser(User user);
+
+    // Admin
+    List<PlayHistory> findTop10ByUserIdOrderByPlayedAtDesc(Long userId);
 }

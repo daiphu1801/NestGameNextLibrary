@@ -5,6 +5,7 @@ import com.nestgame.dto.request.ChangePasswordRequest;
 import com.nestgame.dto.request.LoginRequest;
 import com.nestgame.dto.request.RegisterRequest;
 import com.nestgame.dto.response.AuthResponse;
+import com.nestgame.dto.response.OtpResponse;
 import com.nestgame.entity.RefreshToken;
 import com.nestgame.entity.User;
 import com.nestgame.repository.RefreshTokenRepository;
@@ -29,7 +30,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final EmailService emailService;
+    private final OtpService otpService;
 
     @Value("${jwt.refresh-token.expiration}")
     private long refreshExpiration; // in milliseconds
@@ -124,9 +125,6 @@ public class AuthService {
     }
 
     private RefreshToken createRefreshToken(User user) {
-        // Invalidate old refresh tokens if any (optional, keeping it simple for now)
-        // refreshTokenRepository.deleteByUser(user);
-
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
                 .token(UUID.randomUUID().toString())
@@ -147,40 +145,39 @@ public class AuthService {
     }
 
     /**
-     * Request password reset link
+     * Request password reset via OTP
      */
     @Transactional
-    public void requestPasswordReset(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với email này"));
-
-        String resetToken = jwtService.generatePasswordResetToken(user);
-        emailService.sendPasswordResetEmail(user.getEmail(), user.getUsername(), resetToken);
+    public OtpResponse requestPasswordReset(String email) {
+        return otpService.sendOtp(email);
     }
 
     /**
-     * Reset password using token
+     * Verify OTP code
      */
     @Transactional
-    public void resetPassword(String token, String newPassword) {
-        String username;
-        try {
-            username = jwtService.extractUsername(token);
-        } catch (Exception e) {
-            throw new RuntimeException("Token không hợp lệ hoặc đã hết hạn");
+    public OtpResponse verifyOtp(String email, String otpCode) {
+        return otpService.verifyOtp(email, otpCode);
+    }
+
+    /**
+     * Reset password using verified OTP
+     */
+    @Transactional
+    public void resetPasswordWithOtp(String email, String otpCode, String newPassword) {
+        // Verify OTP is valid and verified
+        if (!otpService.isOtpVerified(email)) {
+            throw new RuntimeException("Mã OTP chưa được xác thực. Vui lòng xác thực OTP trước");
         }
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
-
-        if (!jwtService.isTokenValid(token, user)) {
-            throw new RuntimeException("Token không hợp lệ hoặc đã hết hạn");
-        }
 
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
 
-        // Optionally revoke all tokens (if you had a way to blacklist them)
+        // Cleanup OTP after successful password reset
+        otpService.cleanupExpiredOtps();
     }
 }

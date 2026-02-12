@@ -5,8 +5,10 @@ import com.nestgame.dto.request.ForgotPasswordRequest;
 import com.nestgame.dto.request.LoginRequest;
 import com.nestgame.dto.request.RefreshTokenRequest;
 import com.nestgame.dto.request.RegisterRequest;
-import com.nestgame.dto.request.ResetPasswordRequest;
+import com.nestgame.dto.request.ResetPasswordWithOtpRequest;
+import com.nestgame.dto.request.VerifyOtpRequest;
 import com.nestgame.dto.response.AuthResponse;
+import com.nestgame.dto.response.OtpResponse;
 import com.nestgame.entity.User;
 import com.nestgame.service.AuthService;
 import jakarta.validation.Valid;
@@ -39,15 +41,19 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-        authService.requestPasswordReset(request.getEmail());
-        return ResponseEntity.ok(Map.of("message", "Password reset email sent successfully"));
+    public ResponseEntity<OtpResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        return ResponseEntity.ok(authService.requestPasswordReset(request.getEmail()));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<OtpResponse> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+        return ResponseEntity.ok(authService.verifyOtp(request.getEmail(), request.getOtpCode()));
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<Map<String, String>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        authService.resetPassword(request.getToken(), request.getNewPassword());
-        return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
+    public ResponseEntity<Map<String, String>> resetPassword(@Valid @RequestBody ResetPasswordWithOtpRequest request) {
+        authService.resetPasswordWithOtp(request.getEmail(), request.getOtpCode(), request.getNewPassword());
+        return ResponseEntity.ok(Map.of("message", "Đặt lại mật khẩu thành công"));
     }
 
     @PostMapping("/change-password")

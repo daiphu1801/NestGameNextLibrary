@@ -47,16 +47,16 @@ public class EmailService {
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>Đặt lại mật khẩu - NestGame</title>
                 </head>
-                <body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0a0f1e 0%, #1a1f2e 100%); min-height: 100vh;">
-                    <table role="presentation" style="width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #0a0f1e 0%, #1a1f2e 100%); padding: 40px 20px;">
+                <body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0a0f1e 0%%, #1a1f2e 100%%); min-height: 100vh;">
+                    <table role="presentation" style="width: 100%%; border-collapse: collapse; background: linear-gradient(135deg, #0a0f1e 0%%, #1a1f2e 100%%); padding: 40px 20px;">
                         <tr>
                             <td align="center">
                                 <!-- Main Container -->
-                                <table role="presentation" style="max-width: 600px; width: 100%; border-collapse: collapse; background: rgba(17, 25, 40, 0.95); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(6, 182, 212, 0.1); border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <table role="presentation" style="max-width: 600px; width: 100%%; border-collapse: collapse; background: rgba(17, 25, 40, 0.95); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(6, 182, 212, 0.1); border: 1px solid rgba(255, 255, 255, 0.1);">
 
                                     <!-- Header with Gradient -->
                                     <tr>
-                                        <td style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%); padding: 40px 30px; text-align: center;">
+                                        <td style="background: linear-gradient(135deg, #06b6d4 0%%, #3b82f6 50%%, #8b5cf6 100%%); padding: 40px 30px; text-align: center;">
                                             <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase;">
                                                 🎮 NestGame
                                             </h1>
@@ -83,11 +83,11 @@ public class EmailService {
                                             </p>
 
                                             <!-- CTA Button -->
-                                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 32px 0;">
+                                            <table role="presentation" style="width: 100%%; border-collapse: collapse; margin: 32px 0;">
                                                 <tr>
                                                     <td align="center">
                                                         <a href="%s"
-                                                           style="display: inline-block; padding: 16px 48px; background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); color: #ffffff; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 16px; letter-spacing: 0.5px; box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3); transition: all 0.3s ease;">
+                                                           style="display: inline-block; padding: 16px 48px; background: linear-gradient(135deg, #06b6d4 0%%, #3b82f6 100%%); color: #ffffff; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 16px; letter-spacing: 0.5px; box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3); transition: all 0.3s ease;">
                                                             ✨ ĐẶT LẠI MẬT KHẨU
                                                         </a>
                                                     </td>

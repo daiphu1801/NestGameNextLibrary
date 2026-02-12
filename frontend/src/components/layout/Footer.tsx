@@ -2,11 +2,17 @@
 
 import { Github, Heart, Code, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 
 export function Footer() {
     const { t } = useLanguage();
+    const pathname = usePathname();
     const currentYear = new Date().getFullYear();
+
+    if (pathname?.startsWith('/admin')) {
+        return null;
+    }
 
     return (
         <footer className="w-full border-t border-white/5 bg-background/80 backdrop-blur-xl mt-auto">
@@ -100,6 +106,21 @@ export function Footer() {
                                     <ExternalLink className="w-3 h-3 text-muted-foreground" />
                                 </Link>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Community Disclaimer */}
+                <div className="py-5 border-t border-white/5">
+                    <div className="flex items-start gap-3 px-1">
+                        <span className="text-lg flex-shrink-0 mt-0.5">⚠️</span>
+                        <div className="space-y-1.5 text-xs text-muted-foreground leading-relaxed">
+                            <p>
+                                {t('footer.disclaimer.projectPurpose')}
+                            </p>
+                            <p>
+                                {t('footer.disclaimer.romsPurpose')}
+                            </p>
                         </div>
                     </div>
                 </div>

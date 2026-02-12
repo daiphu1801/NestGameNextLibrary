@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Moon, Sun, Zap, ZapOff, BookOpen, Gamepad2, X, Star, ArrowUp, Menu, Home, Trophy, Heart } from 'lucide-react';
+import { Search, Moon, Sun, Zap, ZapOff, BookOpen, Gamepad2, X, Star, ArrowUp, Menu, Home, Trophy, Heart, Dices, Sparkles } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -22,6 +22,29 @@ export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false);
+
+  // Check if first visit — show disclaimer banner + welcome popup
+  useEffect(() => {
+    const dismissed = localStorage.getItem('nestgame-disclaimer-dismissed');
+    if (!dismissed) setShowDisclaimer(true);
+    const welcomed = localStorage.getItem('nestgame-welcome-seen');
+    if (!welcomed) {
+      const timer = setTimeout(() => setShowWelcomePopup(true), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const dismissDisclaimer = () => {
+    setShowDisclaimer(false);
+    localStorage.setItem('nestgame-disclaimer-dismissed', 'true');
+  };
+
+  const dismissWelcome = () => {
+    setShowWelcomePopup(false);
+    localStorage.setItem('nestgame-welcome-seen', 'true');
+  };
 
   // Auth Modal States (Register and ForgotPassword still use local state)
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
@@ -92,7 +115,34 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+      {/* Guide Banner */}
+      {showDisclaimer && (
+        <div className="sticky top-0 z-[51] w-full bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-b border-primary/20 backdrop-blur-xl">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="flex items-center justify-between gap-3 py-2">
+              <Link href="/docs" className="flex items-center gap-2.5 flex-1 min-w-0 group" onClick={dismissDisclaimer}>
+                <BookOpen className="w-4 h-4 text-primary flex-shrink-0" />
+                <p className="text-xs sm:text-sm text-foreground/80 truncate">
+                  <span className="font-semibold text-primary">Hướng dẫn:</span>{' '}
+                  <span className="group-hover:text-primary transition-colors">Tìm hiểu cách chơi, cấu hình phím và các tính năng của NestGame →</span>
+                </p>
+              </Link>
+              <button
+                onClick={dismissDisclaimer}
+                className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all flex-shrink-0 cursor-pointer"
+                aria-label="Dismiss"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <header className={cn(
+        "sticky z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60",
+        showDisclaimer ? 'top-[37px] sm:top-[37px]' : 'top-0'
+      )}>
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex h-20 items-center justify-between gap-6">
             {/* Logo */}
@@ -135,29 +185,61 @@ export function Header() {
                   {t('nav.leaderboard')}
                 </span>
               </NavLink>
-              <NavLink href="/donate" active={pathname === '/donate'}>
+              <NavLink href="/random" active={pathname === '/random'}>
                 <span className="flex items-center gap-1.5">
-                  <Heart className="w-3 h-3 text-pink-500" />
-                  <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent group-hover:text-pink-400 transition-all font-black">
-                    {t('nav.donate')}
+                  <Dices className="w-3 h-3 text-primary" />
+                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent group-hover:text-primary transition-all font-black">
+                    {t('nav.random')}
                   </span>
                 </span>
               </NavLink>
-              <NavLink href="/docs" active={pathname === '/docs'}>
-                <span className="flex items-center gap-1.5">
-                  <BookOpen className="w-3 h-3" />
-                  {t('nav.docs')}
-                </span>
-              </NavLink>
+              <div className="relative">
+                <NavLink href="/docs" active={pathname === '/docs'}>
+                  <span className="flex items-center gap-1.5">
+                    <BookOpen className="w-3 h-3" />
+                    {t('nav.docs')}
+                  </span>
+                </NavLink>
+                {/* Small welcome tooltip */}
+                {showWelcomePopup && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card rotate-45 border-l border-t border-primary/30" />
+                    <div className="relative bg-card/95 backdrop-blur-xl border border-primary/30 rounded-xl shadow-lg shadow-primary/10 px-4 py-3 w-[220px]">
+                      <button
+                        onClick={dismissWelcome}
+                        className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full hover:bg-white/10 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                        <span className="text-xs font-bold text-foreground">{t('header.welcomeTooltip.title')}</span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed">
+                        {t('header.welcomeTooltip.content')}
+                      </p>
+                      <Link
+                        href="/docs"
+                        onClick={dismissWelcome}
+                        className="mt-2 flex items-center justify-center gap-1.5 w-full px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-[11px] font-bold transition-all"
+                      >
+                        <BookOpen className="w-3 h-3" />
+                        {t('header.welcomeTooltip.action')}
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {/* Search Button - Only on Library page */}
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+              {/* Group 1: Search + Keyboard */}
               {isLibraryPage && (
                 <button
                   onClick={toggleSearch}
                   className="group flex items-center h-10 rounded-full hover:bg-white/5 transition-all duration-300 ease-out overflow-hidden"
+                  title={t('header.search')}
                 >
                   <div className={cn(
                     "w-10 h-10 flex-shrink-0 flex items-center justify-center transition-all duration-300",
@@ -165,18 +247,22 @@ export function Header() {
                   )}>
                     {isSearchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
                   </div>
-                  {/* Expanding Text - Pushes to the right */}
-                  {!isSearchOpen && (
-                    <div className="overflow-hidden max-w-0 group-hover:max-w-[100px] transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]">
-                      <span className="pr-3 whitespace-nowrap text-xs font-semibold text-primary uppercase tracking-wider">
-                        {t('header.search')}
-                      </span>
-                    </div>
-                  )}
                 </button>
               )}
 
-              {/* Language Toggle - Shows on all screens */}
+              {/* Separator */}
+              <div className="hidden sm:block w-px h-5 bg-white/10 mx-0.5" />
+
+              {/* Group 2: Theme + Language */}
+              <button
+                onClick={toggleTheme}
+                className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-all hover:scale-105 active:scale-95"
+                title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              >
+                <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-orange-400" />
+                <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-cyan-400" />
+              </button>
+
               <button
                 onClick={toggleLanguage}
                 className="px-2 sm:px-3 py-1.5 rounded-full hover:bg-white/5 border border-transparent hover:border-white/10 transition-all text-xs font-bold font-mono-tech uppercase flex items-center gap-1.5 sm:gap-2"
@@ -186,26 +272,23 @@ export function Header() {
                 <span className={locale === 'vi' ? 'text-primary' : 'text-muted-foreground'}>VI</span>
               </button>
 
-              {/* Theme Toggle */}
-              <button
-                onClick={toggleTheme}
-                className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-all hover:scale-105 active:scale-95"
-              >
-                <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-orange-400" />
-                <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-cyan-400" />
-              </button>
+              {/* Separator */}
+              <div className="hidden sm:block w-px h-5 bg-white/10 mx-0.5" />
 
-              {/* Performance Mode Toggle Button */}
+              {/* Group 3: Performance */}
               <PerformanceToggleButton />
 
-              {/* User Auth Dropdown */}
+              {/* Separator */}
+              <div className="hidden sm:block w-px h-5 bg-white/10 mx-0.5" />
+
+              {/* Group 4: User */}
               <UserDropdown
                 user={user}
                 onLogin={openLoginModal}
                 onLogout={logout}
               />
 
-              {/* Mobile Menu Button - Right side */}
+              {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="md:hidden w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-all"
@@ -409,6 +492,7 @@ export function Header() {
           openLoginModal();
         }}
       />
+
     </>
   );
 }

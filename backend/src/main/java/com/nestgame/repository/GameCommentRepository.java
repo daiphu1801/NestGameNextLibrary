@@ -18,4 +18,16 @@ public interface GameCommentRepository extends JpaRepository<GameComment, Long> 
     List<GameComment> findByUserId(Long userId);
 
     Long countByGameId(Long gameId);
+
+    // Admin queries
+    Page<GameComment> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    @org.springframework.data.jpa.repository.Query("SELECT c FROM GameComment c WHERE LOWER(c.content) LIKE LOWER(CONCAT('%', :search, '%')) "
+            +
+            "OR LOWER(c.user.username) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "OR LOWER(c.game.name) LIKE LOWER(CONCAT('%', :search, '%')) ORDER BY c.createdAt DESC")
+    Page<GameComment> searchComments(@org.springframework.data.repository.query.Param("search") String search,
+            Pageable pageable);
+
+    long countByUserId(Long userId);
 }
