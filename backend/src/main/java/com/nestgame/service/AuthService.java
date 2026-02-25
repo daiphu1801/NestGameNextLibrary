@@ -141,7 +141,8 @@ public class AuthService {
                 user.getUsername(),
                 user.getAvatarUrl(),
                 user.getBio(),
-                user.getRole());
+                user.getRole(),
+                user.getKeybindingConfig());
     }
 
     /**

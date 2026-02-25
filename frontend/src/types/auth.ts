@@ -5,6 +5,7 @@ export interface User {
     avatarUrl?: string;
     bio?: string;
     role: string;
+    keybindingConfig?: string;
 }
 
 export interface LoginRequest {

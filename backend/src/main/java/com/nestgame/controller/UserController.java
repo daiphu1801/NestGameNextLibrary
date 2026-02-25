@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/users/me/favorites")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/{gameId}")
+    @PostMapping("/me/favorites/{gameId}")
     public ResponseEntity<Map<String, String>> addFavorite(
             @PathVariable Long gameId,
             Principal connectedUser) {
@@ -28,7 +28,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Added to favorites successfully"));
     }
 
-    @DeleteMapping("/{gameId}")
+    @DeleteMapping("/me/favorites/{gameId}")
     public ResponseEntity<Map<String, String>> removeFavorite(
             @PathVariable Long gameId,
             Principal connectedUser) {
@@ -38,11 +38,22 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Removed from favorites successfully"));
     }
 
-    @GetMapping
+    @GetMapping("/me/favorites")
     public ResponseEntity<List<GameDTO>> getUserFavorites(Principal connectedUser) {
         var user = (User) ((org.springframework.security.authentication.UsernamePasswordAuthenticationToken) connectedUser)
                 .getPrincipal();
         List<GameDTO> favorites = userService.getUserFavorites(user);
         return ResponseEntity.ok(favorites);
+    }
+
+    @PatchMapping("/me/keybindings")
+    public ResponseEntity<Map<String, String>> updateKeybindings(
+            @RequestBody Map<String, String> request,
+            Principal connectedUser) {
+        var user = (User) ((org.springframework.security.authentication.UsernamePasswordAuthenticationToken) connectedUser)
+                .getPrincipal();
+        String config = request.get("config");
+        userService.updateKeybindingConfig(user.getId(), config);
+        return ResponseEntity.ok(Map.of("message", "Keybindings updated successfully"));
     }
 }

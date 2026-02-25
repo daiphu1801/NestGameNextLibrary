@@ -13,9 +13,8 @@ interface AuthContextType {
     logout: () => void;
     refreshUser: () => Promise<void>;
     isLoading: boolean;
-    isLoginModalOpen: boolean;
+    /** @deprecated Use router.push('/login') instead */
     openLoginModal: () => void;
-    closeLoginModal: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,16 +22,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
-        const initAuth = () => {
-            const currentUser = authService.getCurrentUser();
-            if (currentUser) {
-                setUser(currentUser);
+        const initAuth = async () => {
+            try {
+                // Try to restore session using HttpOnly cookie (auto-sent by browser)
+                const restoredUser = await authService.tryAutoRefresh();
+                if (restoredUser) {
+                    setUser(restoredUser);
+                }
+            } catch (error) {
+                console.error('Failed to restore session', error);
+            } finally {
+                setIsLoading(false);
             }
-            setIsLoading(false);
         };
         initAuth();
     }, []);
@@ -40,9 +44,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const login = async (data: LoginRequest, rememberMe: boolean = false) => {
         try {
             const response = await authService.login(data);
-            authService.setSession(response, rememberMe);
+            // Tokens are in HttpOnly cookies, just save user info locally
+            authService.setLocalUser(response);
             setUser(response.user);
-            setIsLoginModalOpen(false);
         } catch (error) {
             console.error('Login failed', error);
             throw error;
@@ -52,43 +56,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const register = async (data: RegisterRequest) => {
         try {
             const response = await authService.register(data);
-            authService.setSession(response);
+            authService.setLocalUser(response);
             setUser(response.user);
-            setIsLoginModalOpen(false);
         } catch (error) {
             console.error('Register failed', error);
             throw error;
         }
     };
 
-    const logout = () => {
-        authService.logout();
+    const logout = async () => {
+        await authService.logout();
         setUser(null);
         router.push('/');
     };
-
-
 
     const refreshUser = async () => {
         try {
             const updatedUser = await userService.getProfile();
             setUser(updatedUser);
-
-            // Sync with local storage
-            const token = localStorage.getItem('accessToken');
-            const refreshToken = localStorage.getItem('refreshToken');
-
-            if (token) {
-                // Update user in local storage without losing tokens
-                localStorage.setItem('user', JSON.stringify(updatedUser));
-            }
+            // Sync with localStorage (non-sensitive fields only)
+            authService.setLocalUser(updatedUser);
         } catch (error) {
             console.error('Failed to refresh user profile', error);
         }
     };
 
-    const openLoginModal = () => setIsLoginModalOpen(true);
-    const closeLoginModal = () => setIsLoginModalOpen(false);
+    // Navigate to login page instead of opening modal
+    const openLoginModal = () => router.push('/login');
 
     return (
         <AuthContext.Provider value={{
@@ -98,9 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             logout,
             refreshUser,
             isLoading,
-            isLoginModalOpen,
-            openLoginModal,
-            closeLoginModal
+            openLoginModal
         }}>
             {children}
         </AuthContext.Provider>
@@ -114,4 +106,3 @@ export function useAuth() {
     }
     return context;
 }
-

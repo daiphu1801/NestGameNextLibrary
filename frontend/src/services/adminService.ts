@@ -1,7 +1,5 @@
 const API_URL = 'http://localhost:8080/api/admin';
 
-const ADMIN_TOKEN_KEY = 'admin_accessToken';
-const ADMIN_REFRESH_KEY = 'admin_refreshToken';
 const ADMIN_USER_KEY = 'admin_user';
 
 interface AdminUser {
@@ -11,12 +9,6 @@ interface AdminUser {
     avatarUrl: string | null;
     bio: string | null;
     role: string;
-}
-
-interface AdminAuthResponse {
-    accessToken: string;
-    refreshToken: string;
-    user: AdminUser;
 }
 
 interface DashboardStats {
@@ -39,18 +31,15 @@ interface PageResponse<T> {
 }
 
 async function apiRequest(endpoint: string, options: RequestInit = {}) {
-    const token = localStorage.getItem(ADMIN_TOKEN_KEY);
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
         ...(options.headers as Record<string, string> || {}),
     };
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
 
     const response = await fetch(`${API_URL}${endpoint}`, {
         ...options,
         headers,
+        credentials: 'include', // Send HttpOnly cookies automatically
     });
 
     if (response.status === 401 || response.status === 403) {
@@ -70,10 +59,11 @@ async function apiRequest(endpoint: string, options: RequestInit = {}) {
 
 export const adminService = {
     // ==================== AUTH ====================
-    async login(email: string, password: string): Promise<AdminAuthResponse> {
+    async login(email: string, password: string): Promise<{ user: AdminUser }> {
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ login: email, password }),
         });
 
@@ -82,21 +72,28 @@ export const adminService = {
             throw new Error(errorData.message || 'Đăng nhập thất bại');
         }
 
-        const data: AdminAuthResponse = await response.json();
-        localStorage.setItem(ADMIN_TOKEN_KEY, data.accessToken);
-        localStorage.setItem(ADMIN_REFRESH_KEY, data.refreshToken);
-        localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(data.user));
+        const data = await response.json();
+        // Only store non-sensitive fields (no email, role, id, bio)
+        localStorage.setItem(ADMIN_USER_KEY, JSON.stringify({
+            username: data.user.username,
+            avatarUrl: data.user.avatarUrl,
+        }));
         return data;
     },
 
-    logout() {
-        localStorage.removeItem(ADMIN_TOKEN_KEY);
-        localStorage.removeItem(ADMIN_REFRESH_KEY);
+    async logout() {
+        try {
+            await fetch(`${API_URL}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+        } catch {
+            // Silently fail
+        }
         localStorage.removeItem(ADMIN_USER_KEY);
-    },
-
-    getToken(): string | null {
-        return localStorage.getItem(ADMIN_TOKEN_KEY);
+        // Clean up legacy keys if present
+        localStorage.removeItem('admin_accessToken');
+        localStorage.removeItem('admin_refreshToken');
     },
 
     getCurrentAdmin(): AdminUser | null {
@@ -105,7 +102,7 @@ export const adminService = {
     },
 
     isAuthenticated(): boolean {
-        return !!localStorage.getItem(ADMIN_TOKEN_KEY);
+        return !!localStorage.getItem(ADMIN_USER_KEY);
     },
 
     // ==================== DASHBOARD ====================
@@ -206,5 +203,47 @@ export const adminService = {
 
     async deleteComment(commentId: number): Promise<void> {
         return apiRequest(`/comments/${commentId}`, { method: 'DELETE' });
+    },
+
+    // ==================== ACTIVITY LOG ====================
+    async getActivityLogs(page = 0, size = 20, targetType?: string): Promise<PageResponse<any>> {
+        const params = new URLSearchParams({ page: String(page), size: String(size) });
+        if (targetType) params.append('targetType', targetType);
+        return apiRequest(`/activity?${params}`);
+    },
+
+    // ==================== SETTINGS ====================
+    async getProfile(username: string): Promise<any> {
+        return apiRequest(`/settings/profile?username=${encodeURIComponent(username)}`);
+    },
+
+    async updateProfile(data: any): Promise<any> {
+        return apiRequest('/settings/profile', {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    },
+
+    async changePassword(data: { username: string; currentPassword: string; newPassword: string }): Promise<any> {
+        return apiRequest('/settings/password', {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    },
+
+    // ==================== NOTIFICATIONS ====================
+    async getNotifications(): Promise<any[]> {
+        return apiRequest('/notifications');
+    },
+
+    // ==================== RATINGS ====================
+    async getRatings(page = 0, size = 20, search?: string): Promise<PageResponse<any>> {
+        const params = new URLSearchParams({ page: String(page), size: String(size) });
+        if (search) params.append('search', search);
+        return apiRequest(`/ratings?${params}`);
+    },
+
+    async deleteRating(ratingId: number): Promise<void> {
+        return apiRequest(`/ratings/${ratingId}`, { method: 'DELETE' });
     },
 };

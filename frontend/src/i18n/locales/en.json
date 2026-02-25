@@ -21,6 +21,7 @@
     "home": "Home",
     "library": "Library",
     "favorites": "Favorites",
+    "explore": "Explore",
     "leaderboard": "Leaderboard",
     "random": "Random",
     "donate": "Donate",
@@ -74,7 +75,13 @@
     "selectRom": "Select ROM file",
     "runServerHint": "To auto-load games, run local server:",
     "orSelectManually": "Or select ROM file manually:",
-    "details": "Details"
+    "details": "Details",
+    "ratings": "ratings",
+    "rating": "Rating",
+    "information": "Information",
+    "ratingSuccess": "Rating submitted successfully!",
+    "addedToFavorites": "Added to favorites",
+    "removedFromFavorites": "Removed from favorites"
   },
   "stats": {
     "games": "GAMES",
@@ -185,7 +192,21 @@
       "aButton": "A Button",
       "bButton": "B Button",
       "start": "Start",
-      "select": "Select"
+      "select": "Select",
+      "common": "Common"
+    },
+    "customControls": {
+      "title": "Custom Keybindings",
+      "description": "You can customize your keyboard controls in the Settings page:",
+      "step1": "Go to Settings → Game Controls section",
+      "step2": "Click on the button you want to remap (e.g. A, B, Start)",
+      "step3": "Press the new key you want to assign",
+      "step4": "Click 'Save' to apply your changes",
+      "note": "Your custom controls are saved to your account automatically. If you're logged in, they will sync across devices.",
+      "tips": "Tips",
+      "tip1": "Press Escape to cancel while assigning a key",
+      "tip2": "Each button must have a unique key — conflicts are highlighted in yellow",
+      "tip3": "Click 'Default' to restore the original controls (WASD + JK)"
     },
     "saveStates": {
       "title": "Save States",
@@ -273,6 +294,39 @@
     "or": "or",
     "rememberMe": "Remember me"
   },
+  "authPage": {
+    "loginTitle": "Sign In",
+    "loginDesc": "Sign in to save your progress and favorite games",
+    "registerTitle": "Create Account",
+    "registerDesc": "Register for the full experience",
+    "backHome": "Home",
+    "orContinueWith": "or continue with",
+    "continueWith": "Continue with",
+    "comingSoon": "Coming soon",
+    "registerNow": "Register now",
+    "loginNow": "Sign In",
+    "createNewAccount": "Create new account",
+    "forgotPassword": "Forgot password?",
+    "footerText": "Play free classic games",
+    "emailNote": "If you're concerned about email security, you can use a virtual email — but you won't be able to reset your password if forgotten.",
+    "error": {
+      "invalidCredentials": "Incorrect email or password. Please try again.",
+      "userNotFound": "This email is not registered. Create a new account!",
+      "wrongPassword": "Incorrect password. Please try again.",
+      "network": "Cannot connect to server. Please try again later.",
+      "generic": "Login failed. Please try again.",
+      "weakPassword": "Password is not strong enough. Check the requirements below.",
+      "passwordMismatch": "Passwords do not match",
+      "registerFailed": "Registration failed. Please try again."
+    },
+    "pwd": {
+      "minLength": "Minimum 6 characters",
+      "uppercase": "Uppercase (A-Z)",
+      "lowercase": "Lowercase (a-z)",
+      "number": "Number (0-9)",
+      "special": "Special character (@$!%*?&)"
+    }
+  },
   "settings": {
     "title": "Account Settings",
     "profile": "Profile",
@@ -285,9 +339,43 @@
     "passwordUpdated": "Password updated successfully",
     "username": "Username",
     "email": "Email",
+    "subtitle": "Manage your profile and security settings",
+    "bio": "BIO",
+    "setNewPassword": "Set New Password",
     "role": "Role",
     "joined": "Joined",
-    "changeAvatar": "Change Avatar"
+    "changeAvatar": "Change Avatar",
+    "controls": "Game Controls",
+    "controlsDesc": "Customize keyboard controls for each NES button. Click a button, then press the key you want to assign.",
+    "controllerLayout": "Player 1",
+    "player1": "Player 1",
+    "player2": "Player 2",
+    "controlsHint": "Click a key box → press new key → Save. Press Esc to cancel.",
+    "pressKey": "⌨ Press key...",
+    "keyUp": "Up",
+    "keyDown": "Down",
+    "keyLeft": "Left",
+    "keyRight": "Right",
+    "keyA": "Button A",
+    "keyB": "Button B",
+    "keyStart": "Start",
+    "keySelect": "Select",
+    "saveControls": "Save controls",
+    "resetDefault": "Default",
+    "controlsSaved": "Controls saved!",
+    "controlsSaveError": "Failed to save controls",
+    "controlsReset": "Reset to default. Press Save to apply.",
+    "controlsConflict": "Key conflict detected! Each button must have a unique key.",
+    "controlsConflictError": "Fix key conflicts before saving!",
+    "unsavedChanges": "● Unsaved changes",
+    "loginRequiredDesc": "Please login to access your account settings.",
+    "readOnly": "Read-only",
+    "updating": "Updating...",
+    "reqMinLength": "Minimum 8 characters",
+    "reqUppercase": "Uppercase (A-Z)",
+    "reqLowercase": "Lowercase (a-z)",
+    "reqNumber": "Number (0-9)",
+    "reqSpecial": "Special character (@$!%*?&)"
   },
   "user": {
     "history": "Play History",
@@ -330,7 +418,9 @@
   },
   "common": {
     "classic": "Classic",
-    "universal": "Universal"
+    "universal": "Universal",
+    "back": "Back",
+    "linkCopied": "Link copied to clipboard"
   },
   "leaderboard": {
     "title": "TOP RATED GAMES",
@@ -364,5 +454,71 @@
     "recentSpins": "Recent Spins",
     "tip": "Tip: You can also visit the",
     "tipEnd": "to search for games by name or category."
+  },
+  "saveState": {
+    "saveGame": "Save Game",
+    "loadGame": "Load Game",
+    "save": "Save",
+    "load": "Load",
+    "slot": "Slot",
+    "empty": "Empty",
+    "overwrite": "Overwrite",
+    "delete": "Delete",
+    "saved": "Saved to Slot {slot}!",
+    "loaded": "Loaded Slot {slot}!",
+    "deleted": "Deleted Slot {slot}",
+    "saveFailed": "Save failed",
+    "loadFailed": "Load failed",
+    "deleteFailed": "Delete failed",
+    "emulatorNotReady": "Emulator not ready",
+    "quickSave": "Quick Save",
+    "quickLoad": "Quick Load"
+  },
+  "tutorial": {
+    "stepOf": "Step {current} / {total}",
+    "next": "Next",
+    "skip": "Skip",
+    "start": "Let's Play!",
+    "step1": {
+      "title": "Movement",
+      "desc": "Use W, A, S, D keys to move your character in the game. W = Up, S = Down, A = Left, D = Right."
+    },
+    "step2": {
+      "title": "Action Buttons",
+      "desc": "Press J for Button A and K for Button B. The role of each button (jump, attack, etc.) depends on the game."
+    },
+    "step3": {
+      "title": "Start & Select",
+      "desc": "Press Enter to start the game or pause. Press Shift for the Select button."
+    },
+    "step4": {
+      "title": "Save & Load",
+      "desc": "Save your progress to the cloud and load it anytime. Log in or register to use this feature."
+    },
+    "step5": {
+      "title": "Tips",
+      "desc": "Press ESC to exit the game. Click the fullscreen button for an immersive experience. You can also customize your keyboard controls on the Settings page after logging in."
+    }
+  },
+  "errors": {
+    "gameNotFound": "Game not found",
+    "ratingFailed": "Failed to submit rating. Please try again",
+    "favoriteToggleFailed": "Failed to update favorites. Please try again"
+  },
+  "play": {
+    "confirmExit": "Are you sure you want to exit? Unsaved progress will be lost.",
+    "hotGames": "🔥 Hot Games",
+    "newGames": "✨ New Arrivals",
+    "topGames": "⭐ Top Rated",
+    "hotGamesDesc": "Quick switch to popular games",
+    "noHotGames": "No hot games available",
+    "expandTutorial": "Expand tutorial",
+    "collapseTutorial": "Collapse tutorial",
+    "controlsDesc": "Keyboard controls reference",
+    "tips": "Pro Tips",
+    "tip1": "Press ESC to pause and return to game details",
+    "tip2": "Use Save States to save progress at any time",
+    "tip3": "Controls auto-hide after 3 seconds of inactivity",
+    "tip4": "Try Fullscreen mode for immersive experience"
   }
 }

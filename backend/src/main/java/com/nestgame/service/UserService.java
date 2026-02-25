@@ -122,6 +122,15 @@ public class UserService {
                 userRepository.save(user);
         }
 
+        @Transactional
+        public void updateKeybindingConfig(Long userId, String config) {
+                log.info("Updating keybinding config for userId={}", userId);
+                User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
+                user.setKeybindingConfig(config);
+                userRepository.save(user);
+        }
+
         public com.nestgame.dto.UserDTO getUserDTO(User user) {
                 return new com.nestgame.dto.UserDTO(
                                 user.getId(),
@@ -129,6 +138,7 @@ public class UserService {
                                 user.getUsername(),
                                 user.getAvatarUrl(),
                                 user.getBio(),
-                                user.getRole());
+                                user.getRole(),
+                                user.getKeybindingConfig());
         }
 }

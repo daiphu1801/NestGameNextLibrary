@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { Shuffle, Play, RotateCcw, Sparkles, Dices, History, Gamepad2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/layout/Header';
-import { GameModal } from '@/components/game/GameModal';
 import { gameService } from '@/services/gameService';
 import { Game } from '@/types';
 import Image from 'next/image';
@@ -14,6 +14,7 @@ import { imageService } from '@/services/imageService';
 import Link from 'next/link';
 
 export default function RandomPlayPage() {
+    const router = useRouter();
     const { t } = useLanguage();
     const { isLowPerformanceMode } = usePerformance();
 
@@ -21,7 +22,6 @@ export default function RandomPlayPage() {
     const [selectedGame, setSelectedGame] = useState<Game | null>(null);
     const [isSpinning, setIsSpinning] = useState(false);
     const [history, setHistory] = useState<Game[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [showResult, setShowResult] = useState(false);
 
     // Load all games on mount
@@ -69,12 +69,8 @@ export default function RandomPlayPage() {
 
     const handlePlayGame = () => {
         if (selectedGame) {
-            setIsModalOpen(true);
+            router.push(`/games/${selectedGame.id}/play`);
         }
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
     };
 
     return (
@@ -299,15 +295,6 @@ export default function RandomPlayPage() {
                     </div>
                 </div>
             </div>
-
-            {/* Game Modal */}
-            {selectedGame && (
-                <GameModal
-                    game={selectedGame}
-                    isOpen={isModalOpen}
-                    onClose={handleCloseModal}
-                />
-            )}
         </main>
     );
 }

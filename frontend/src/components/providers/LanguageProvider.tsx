@@ -10,7 +10,7 @@ type Messages = typeof en;
 interface LanguageContextType {
     locale: Locale;
     setLocale: (locale: Locale) => void;
-    t: (key: string, params?: Record<string, string | number>) => string;
+    t: (key: string, params?: Record<string, string | number>, defaultValue?: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -36,12 +36,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('nestgame-locale', newLocale);
     };
 
-    const t = (path: string, params?: Record<string, string | number>) => {
+    const t = (path: string, params?: Record<string, string | number>, defaultValue?: string) => {
         const keys = path.split('.');
         let current: any = messages[locale];
 
         for (const key of keys) {
             if (current[key] === undefined) {
+                // Return default value if provided, otherwise return key path
+                if (defaultValue) return defaultValue;
+
                 console.warn(`Translation missing for key: ${path} in locale: ${locale}`);
                 return path;
             }

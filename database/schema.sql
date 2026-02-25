@@ -147,6 +147,20 @@ CREATE INDEX idx_game_comments_user ON game_comments(user_id);
 CREATE INDEX idx_game_comments_game ON game_comments(game_id);
 CREATE INDEX idx_game_comments_created_at ON game_comments(created_at DESC);
 
+-- 10. TABLE: admin_activity_logs (Lịch sử hoạt động admin)
+CREATE TABLE admin_activity_logs (
+    id BIGSERIAL PRIMARY KEY,
+    admin_username VARCHAR(255) NOT NULL,        -- Username admin thực hiện
+    action VARCHAR(50) NOT NULL,                 -- CREATE, UPDATE, DELETE, TOGGLE, LOGIN
+    target_type VARCHAR(50) NOT NULL,            -- GAME, USER, CATEGORY, COMMENT, RATING, SETTINGS
+    target_name VARCHAR(255),                    -- Tên đối tượng bị tác động
+    details TEXT,                                -- Chi tiết hành động
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_admin_activity_logs_created_at ON admin_activity_logs(created_at DESC);
+CREATE INDEX idx_admin_activity_logs_target_type ON admin_activity_logs(target_type);
+
 -- ========================================
 -- INSERT DEFAULT DATA
 -- ========================================

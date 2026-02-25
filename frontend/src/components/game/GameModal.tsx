@@ -1,12 +1,14 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { X, Loader2, AlertCircle, Maximize2, Minimize2, LogIn } from 'lucide-react';
+import { X, Loader2, AlertCircle, Maximize2, Minimize2, LogIn, Save, FolderOpen, Trash2 } from 'lucide-react';
 import { Game } from '@/types';
 import { emulatorService } from '@/services/emulatorService';
 import { storageService } from '@/services/storageService';
 import { userService } from '@/services/userService';
+import { saveStateService, SaveSlotInfo } from '@/services/saveStateService';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { LoginModal, RegisterModal, ForgotPasswordModal } from '@/components/auth';
+import { GameTutorial } from './GameTutorial';
 
 interface GameModalProps {
   game: Game;
@@ -15,7 +17,7 @@ interface GameModalProps {
 }
 
 export function GameModal({ game, isOpen, onClose }: GameModalProps) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const { user } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -31,6 +33,16 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+
+  // Save State UI
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [saveModalMode, setSaveModalMode] = useState<'save' | 'load'>('save');
+  const [saveSlots, setSaveSlots] = useState<(SaveSlotInfo | null)[]>([null, null, null]);
+  const [savingSlot, setSavingSlot] = useState<number | null>(null);
+  const [saveStatus, setSaveStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  // Tutorial State
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -91,6 +103,12 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
 
       setIsLoading(false);
 
+      // Show tutorial if first time
+      const tutorialSeen = localStorage.getItem('nestgame_tutorial_seen');
+      if (!tutorialSeen) {
+        setShowTutorial(true);
+      }
+
       // Focus the container for keyboard input
       containerRef.current?.focus();
     } catch (err) {
@@ -148,6 +166,74 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
     onClose();
   };
 
+  // ============ SAVE STATE HANDLERS ============
+
+  const loadSlotInfo = useCallback(async () => {
+    if (!user || !game.id) return;
+    try {
+      const slots = await saveStateService.listSlots(game.id);
+      const slotArray: (SaveSlotInfo | null)[] = [null, null, null];
+      slots.forEach(s => {
+        if (s.slot >= 1 && s.slot <= 3) slotArray[s.slot - 1] = s;
+      });
+      setSaveSlots(slotArray);
+    } catch (err) {
+      console.error('Failed to load save slots:', err);
+    }
+  }, [user, game.id]);
+
+  const openSaveModal = async (mode: 'save' | 'load') => {
+    setSaveModalMode(mode);
+    setSaveStatus(null);
+    setShowSaveModal(true);
+    await loadSlotInfo();
+  };
+
+  const handleSaveToSlot = async (slot: number) => {
+    setSavingSlot(slot);
+    setSaveStatus(null);
+    try {
+      const result = await emulatorService.saveState();
+      if (!result) throw new Error(t('saveState.emulatorNotReady') || 'Emulator chưa sẵn sàng');
+
+      await saveStateService.saveToServer(game.id, slot, result.state, result.thumbnail);
+      setSaveStatus({ type: 'success', message: t('saveState.saved', { slot }) || `Đã lưu vào Slot ${slot}!` });
+      await loadSlotInfo();
+    } catch (err: any) {
+      setSaveStatus({ type: 'error', message: err.message || t('saveState.saveFailed') || 'Lưu thất bại' });
+    } finally {
+      setSavingSlot(null);
+    }
+  };
+
+  const handleLoadFromSlot = async (slot: number) => {
+    setSavingSlot(slot);
+    setSaveStatus(null);
+    try {
+      const stateBlob = await saveStateService.loadFromServer(game.id, slot);
+      await emulatorService.loadState(stateBlob);
+      setSaveStatus({ type: 'success', message: t('saveState.loaded', { slot }) || `Đã tải Slot ${slot}!` });
+      setTimeout(() => setShowSaveModal(false), 800);
+    } catch (err: any) {
+      setSaveStatus({ type: 'error', message: err.message || t('saveState.loadFailed') || 'Tải thất bại' });
+    } finally {
+      setSavingSlot(null);
+    }
+  };
+
+  const handleDeleteSlot = async (slot: number) => {
+    setSavingSlot(slot);
+    try {
+      await saveStateService.deleteSlot(game.id, slot);
+      setSaveStatus({ type: 'success', message: t('saveState.deleted', { slot }) || `Đã xóa Slot ${slot}` });
+      await loadSlotInfo();
+    } catch (err: any) {
+      setSaveStatus({ type: 'error', message: err.message || t('saveState.deleteFailed') || 'Xóa thất bại' });
+    } finally {
+      setSavingSlot(null);
+    }
+  };
+
   const toggleFullscreen = async () => {
     if (!modalRef.current) return;
 
@@ -183,27 +269,68 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Fullscreen Button */}
-            <button
-              onClick={toggleFullscreen}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-sm text-white border border-white/10"
-            >
-              {isFullscreen ? (
-                <Minimize2 className="w-4 h-4" />
-              ) : (
-                <Maximize2 className="w-4 h-4" />
-              )}
-              <span className="hidden sm:inline">{t('modal.fullscreen') || 'Fullscreen'}</span>
-            </button>
+            {/* Save/Load Buttons */}
+            <div className="flex items-center gap-2" data-tutorial="saveload">
+              {user && !isLoading && !error ? (
+                <>
+                  <button
+                    onClick={() => openSaveModal('save')}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors text-sm text-emerald-400 border border-emerald-500/20"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span className="hidden sm:inline">{t('saveState.save') || 'Save'}</span>
+                  </button>
+                  <button
+                    onClick={() => openSaveModal('load')}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 transition-colors text-sm text-blue-400 border border-blue-500/20"
+                  >
+                    <FolderOpen className="w-4 h-4" />
+                    <span className="hidden sm:inline">{t('saveState.load') || 'Load'}</span>
+                  </button>
+                </>
+              ) : !isLoading && !error ? (
+                <>
+                  <button
+                    disabled
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/5 text-sm text-emerald-400/40 border border-emerald-500/10 cursor-not-allowed"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span className="hidden sm:inline">{t('saveState.save') || 'Save'}</span>
+                  </button>
+                  <button
+                    disabled
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/5 text-sm text-blue-400/40 border border-blue-500/10 cursor-not-allowed"
+                  >
+                    <FolderOpen className="w-4 h-4" />
+                    <span className="hidden sm:inline">{t('saveState.load') || 'Load'}</span>
+                  </button>
+                </>
+              ) : null}
+            </div>
 
-            {/* Close Button */}
-            <button
-              onClick={handleClose}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 transition-colors text-sm text-rose-400 border border-rose-500/20"
-            >
-              <X className="w-4 h-4" />
-              <span className="hidden sm:inline">{t('modal.close') || 'Đóng'}</span>
-            </button>
+            {/* Fullscreen & Close - Tutorial target */}
+            <div className="flex items-center gap-2" data-tutorial="tips">
+              <button
+                onClick={toggleFullscreen}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-sm text-white border border-white/10"
+              >
+                {isFullscreen ? (
+                  <Minimize2 className="w-4 h-4" />
+                ) : (
+                  <Maximize2 className="w-4 h-4" />
+                )}
+                <span className="hidden sm:inline">{t('modal.fullscreen') || 'Fullscreen'}</span>
+              </button>
+
+              {/* Close Button */}
+              <button
+                onClick={handleClose}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 transition-colors text-sm text-rose-400 border border-rose-500/20"
+              >
+                <X className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('modal.close') || 'Đóng'}</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -224,11 +351,17 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
               Player 1
             </div>
             <div className="flex flex-col gap-2">
-              <ControlHintVertical keys="W A S D" label={t('docs.controls.movement') || 'Di chuyển'} />
-              <ControlHintVertical keys="J" label={t('modal.buttonA') || 'Nút A'} color="text-cyan-400" />
-              <ControlHintVertical keys="K" label={t('modal.buttonB') || 'Nút B'} color="text-cyan-400" />
-              <ControlHintVertical keys="Enter" label="Start" color="text-green-400" />
-              <ControlHintVertical keys="Shift" label="Select" color="text-yellow-400" />
+              <div data-tutorial="movement">
+                <ControlHintVertical keys="W A S D" label={t('docs.controls.movement') || 'Di chuyển'} />
+              </div>
+              <div data-tutorial="actions">
+                <ControlHintVertical keys="J" label={t('modal.buttonA') || 'Nút A'} color="text-cyan-400" />
+                <ControlHintVertical keys="K" label={t('modal.buttonB') || 'Nút B'} color="text-cyan-400" />
+              </div>
+              <div data-tutorial="startselect">
+                <ControlHintVertical keys="Enter" label="Start" color="text-green-400" />
+                <ControlHintVertical keys="Shift" label="Select" color="text-yellow-400" />
+              </div>
               <div className="mt-4 px-1">
                 <p className="text-[10px] text-muted-foreground text-center italic leading-tight opacity-70">
                   {t('modal.controlsNote') || '*Vai trò (Nhảy/Đánh/...) của A/B tùy thuộc vào từng game'}
@@ -302,6 +435,8 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
               </div>
             )}
 
+
+
             {/* Emulator Container */}
             <div
               id="emulator-container"
@@ -342,7 +477,110 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
             ({t('modal.rotateForControls') || 'Xoay ngang để xem phím'})
           </span>
         </div>
+
+        {/* Game Tutorial Spotlight Overlay */}
+        <GameTutorial
+          isOpen={showTutorial}
+          onClose={() => {
+            setShowTutorial(false);
+            containerRef.current?.focus();
+          }}
+          modalRef={modalRef}
+        />
       </div>
+      {/* Save/Load Slot Modal */}
+      {showSaveModal && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#111] border border-white/10 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                {saveModalMode === 'save' ? (
+                  <><Save className="w-5 h-5 text-emerald-400" /> {t('saveState.saveGame') || 'Lưu Game'}</>
+                ) : (
+                  <><FolderOpen className="w-5 h-5 text-blue-400" /> {t('saveState.loadGame') || 'Tải Game'}</>
+                )}
+              </h3>
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 text-muted-foreground hover:text-white transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Status Message */}
+            {saveStatus && (
+              <div className={`mb-4 p-3 rounded-xl text-sm font-medium ${saveStatus.type === 'success'
+                ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
+                : 'bg-rose-500/10 border border-rose-500/20 text-rose-400'
+                }`}>
+                {saveStatus.message}
+              </div>
+            )}
+
+            {/* Slot List */}
+            <div className="space-y-3">
+              {[1, 2, 3].map((slot) => {
+                const info = saveSlots[slot - 1];
+                const isProcessing = savingSlot === slot;
+
+                return (
+                  <div
+                    key={slot}
+                    className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all"
+                  >
+                    {/* Slot Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-bold text-white">{t('saveState.slot') || 'Slot'} {slot}</div>
+                      {info ? (
+                        <div className="text-xs text-muted-foreground mt-0.5">
+                          {new Date(info.updatedAt).toLocaleString(locale === 'vi' ? 'vi-VN' : 'en-US')} · {Math.round(info.stateSize / 1024)}KB
+                        </div>
+                      ) : (
+                        <div className="text-xs text-muted-foreground/50 mt-0.5">{t('saveState.empty') || 'Trống'}</div>
+                      )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-1.5">
+                      {saveModalMode === 'save' ? (
+                        <button
+                          onClick={() => handleSaveToSlot(slot)}
+                          disabled={isProcessing}
+                          className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-xs font-bold transition-all disabled:opacity-50"
+                        >
+                          {isProcessing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : info ? (t('saveState.overwrite') || 'Ghi đè') : (t('saveState.save') || 'Lưu')}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleLoadFromSlot(slot)}
+                          disabled={!info || isProcessing}
+                          className="px-3 py-1.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          {isProcessing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : (t('saveState.load') || 'Tải')}
+                        </button>
+                      )}
+
+                      {/* Delete Button */}
+                      {info && (
+                        <button
+                          onClick={() => handleDeleteSlot(slot)}
+                          disabled={isProcessing}
+                          className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-all disabled:opacity-50"
+                          title="Xóa"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       <LoginModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}

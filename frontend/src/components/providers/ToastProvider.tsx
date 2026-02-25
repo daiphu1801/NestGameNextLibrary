@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, ReactNode } from 'react';
 import { X, CheckCircle, AlertCircle, Info, Wifi, WifiOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -22,9 +22,10 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export function ToastProvider({ children }: { children: ReactNode }) {
     const [toasts, setToasts] = useState<Toast[]>([]);
+    const toastCounter = useRef(0);
 
     const showToast = useCallback((message: string, type: ToastType = 'info') => {
-        const id = Date.now().toString();
+        const id = `toast-${++toastCounter.current}-${Date.now()}`;
         setToasts(prev => [...prev, { id, message, type }]);
 
         // Auto remove after 4 seconds

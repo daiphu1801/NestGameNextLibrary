@@ -3,10 +3,11 @@ import { LoginRequest, RegisterRequest, AuthResponse, User } from '@/types/auth'
 const API_URL = 'http://localhost:8080/api/auth';
 
 export const authService = {
-    async login(data: LoginRequest): Promise<AuthResponse> {
+    async login(data: LoginRequest): Promise<{ user: User }> {
         const response = await fetch(`${API_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify(data),
         });
 
@@ -18,10 +19,11 @@ export const authService = {
         return response.json();
     },
 
-    async register(data: RegisterRequest): Promise<AuthResponse> {
+    async register(data: RegisterRequest): Promise<{ user: User }> {
         const response = await fetch(`${API_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify(data),
         });
 
@@ -34,13 +36,10 @@ export const authService = {
     },
 
     async changePassword(data: any): Promise<void> {
-        const token = this.getToken();
         const response = await fetch(`${API_URL}/change-password`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify(data),
         });
 
@@ -95,7 +94,16 @@ export const authService = {
         return response.json();
     },
 
-    logout() {
+    async logout(): Promise<void> {
+        try {
+            await fetch(`${API_URL}/logout`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+        } catch {
+            // Silently fail — cookies may already be cleared
+        }
+        // Clean up any remaining localStorage/sessionStorage data
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
@@ -112,21 +120,37 @@ export const authService = {
         return null;
     },
 
-    getToken(): string | null {
-        return localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+    setLocalUser(user: User | { user: User }) {
+        // Store only non-sensitive fields
+        const u = 'user' in user ? user.user : user;
+        const safeUser = {
+            id: u.id,
+            username: u.username,
+            avatarUrl: u.avatarUrl,
+        };
+        localStorage.setItem('user', JSON.stringify(safeUser));
     },
 
-    setSession(authResponse: AuthResponse, rememberMe: boolean = true) {
-        const storage = rememberMe ? localStorage : sessionStorage;
+    /**
+     * Try to auto-restore session on page load by calling refresh endpoint.
+     * Cookies are sent automatically by the browser.
+     */
+    async tryAutoRefresh(): Promise<User | null> {
+        try {
+            const response = await fetch(`${API_URL}/refresh`, {
+                method: 'POST',
+                credentials: 'include',
+            });
 
-        // Clear other storage to avoid conflict/duplication
-        const otherStorage = rememberMe ? sessionStorage : localStorage;
-        otherStorage.removeItem('accessToken');
-        otherStorage.removeItem('refreshToken');
-        otherStorage.removeItem('user');
+            if (!response.ok) {
+                return null;
+            }
 
-        storage.setItem('accessToken', authResponse.accessToken);
-        storage.setItem('refreshToken', authResponse.refreshToken);
-        storage.setItem('user', JSON.stringify(authResponse.user));
+            const data = await response.json();
+            this.setLocalUser(data);
+            return data.user;
+        } catch {
+            return null;
+        }
     }
 };

@@ -1,8 +1,6 @@
 const API_URL = 'http://localhost:8080/api/users/me';
 const GAMES_API_URL = 'http://localhost:8080/api/games';
 
-const getToken = () => localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
-
 export interface GameComment {
     id: number;
     userId: number;
@@ -15,21 +13,12 @@ export interface GameComment {
 export const userService = {
     // Play History
     async recordPlayHistory(gameId: string | number): Promise<void> {
-        const token = getToken();
-
-        if (!token) {
-            console.warn('User not authenticated, skipping play history');
-            return;
-        }
-
         const numericId = typeof gameId === 'string' ? parseInt(gameId) : gameId;
 
         const response = await fetch(`${API_URL}/history`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ gameId: numericId }),
         });
 
@@ -39,12 +28,9 @@ export const userService = {
     },
 
     async getPlayHistory(): Promise<any[]> {
-        const token = getToken();
-        if (!token) return [];
-
         const response = await fetch(`${API_URL}/history`, {
             method: 'GET',
-            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include',
         });
 
         if (!response.ok) throw new Error('Failed to fetch play history');
@@ -53,14 +39,11 @@ export const userService = {
 
     // Favorites
     async addFavorite(gameId: string | number): Promise<void> {
-        const token = getToken();
-        if (!token) throw new Error('User not authenticated');
-
         const numericId = typeof gameId === 'string' ? parseInt(gameId) : gameId;
 
         const response = await fetch(`${API_URL}/favorites/${numericId}`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include',
         });
 
         if (!response.ok) {
@@ -70,14 +53,11 @@ export const userService = {
     },
 
     async removeFavorite(gameId: string | number): Promise<void> {
-        const token = getToken();
-        if (!token) throw new Error('User not authenticated');
-
         const numericId = typeof gameId === 'string' ? parseInt(gameId) : gameId;
 
         const response = await fetch(`${API_URL}/favorites/${numericId}`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include',
         });
 
         if (!response.ok) {
@@ -87,13 +67,10 @@ export const userService = {
     },
 
     async getFavorites(): Promise<any[]> {
-        const token = getToken();
-        if (!token) return [];
-
         try {
             const response = await fetch(`${API_URL}/favorites`, {
                 method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` },
+                credentials: 'include',
             });
 
             if (!response.ok) {
@@ -110,15 +87,12 @@ export const userService = {
     // =================== PROFILE ===================
 
     async uploadAvatar(file: File): Promise<string> {
-        const token = getToken();
-        if (!token) throw new Error('User not authenticated');
-
         const formData = new FormData();
         formData.append('file', file);
 
         const response = await fetch(`${API_URL}/avatar`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include',
             body: formData,
         });
 
@@ -128,27 +102,33 @@ export const userService = {
     },
 
     async deleteAvatar(): Promise<void> {
-        const token = getToken();
-        if (!token) throw new Error('User not authenticated');
-
         const response = await fetch(`${API_URL}/avatar`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include',
         });
 
         if (!response.ok) throw new Error('Failed to delete avatar');
     },
 
-    async updateBio(bio: string): Promise<void> {
-        const token = getToken();
-        if (!token) throw new Error('User not authenticated');
+    async updateKeybindings(config: string): Promise<void> {
+        const response = await fetch(`${API_URL}/keybindings`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ config }),
+        });
 
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.message || 'Failed to update keybindings');
+        }
+    },
+
+    async updateBio(bio: string): Promise<void> {
         const response = await fetch(`${API_URL}/bio`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ bio }),
         });
 
@@ -159,12 +139,9 @@ export const userService = {
     },
 
     async getProfile(): Promise<any> {
-        const token = getToken();
-        if (!token) throw new Error('User not authenticated');
-
         const response = await fetch(API_URL, {
             method: 'GET',
-            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include',
         });
 
         if (!response.ok) throw new Error('Failed to fetch profile');
@@ -180,11 +157,8 @@ export const userService = {
     },
 
     async getMyRating(gameId: number): Promise<number> {
-        const token = getToken();
-        if (!token) return 0;
-
         const response = await fetch(`${GAMES_API_URL}/${gameId}/ratings/me`, {
-            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include',
         });
 
         if (!response.ok) return 0;
@@ -193,15 +167,10 @@ export const userService = {
     },
 
     async rateGame(gameId: number, rating: number): Promise<{ averageRating: number }> {
-        const token = getToken();
-        if (!token) throw new Error('User not authenticated');
-
         const response = await fetch(`${GAMES_API_URL}/${gameId}/ratings`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ rating }),
         });
 
@@ -218,15 +187,10 @@ export const userService = {
     },
 
     async addComment(gameId: number, content: string): Promise<GameComment> {
-        const token = getToken();
-        if (!token) throw new Error('User not authenticated');
-
         const response = await fetch(`${GAMES_API_URL}/${gameId}/comments`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ content }),
         });
 
@@ -239,12 +203,9 @@ export const userService = {
     },
 
     async deleteComment(gameId: number, commentId: number): Promise<void> {
-        const token = getToken();
-        if (!token) throw new Error('User not authenticated');
-
         const response = await fetch(`${GAMES_API_URL}/${gameId}/comments/${commentId}`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include',
         });
 
         if (!response.ok) {
@@ -253,4 +214,3 @@ export const userService = {
         }
     },
 };
-

@@ -7,34 +7,34 @@
 
 @layer base {
   :root {
-    /* Light Theme */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    /* Light Theme — optimized for readability & visual harmony */
+    --background: 220 20% 97%;
+    --foreground: 220 20% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 220 20% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 220 20% 10%;
 
-    --primary: 186 100% 50%;
-    --primary-foreground: 240 10% 3.9%;
+    --primary: 186 100% 42%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 220 14% 93%;
+    --secondary-foreground: 220 15% 15%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 220 14% 93%;
+    --muted-foreground: 220 10% 40%;
 
-    --accent: 320 100% 60%;
+    --accent: 320 100% 55%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 186 100% 50%;
+    --border: 220 13% 87%;
+    --input: 220 13% 87%;
+    --ring: 186 100% 42%;
 
     --radius: 0.75rem;
   }
@@ -157,7 +157,15 @@
 
   .btn-ghost {
     @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200;
-    @apply text-muted-foreground hover:text-foreground hover:bg-white/5;
+    @apply text-muted-foreground hover:text-foreground;
+  }
+
+  :root .btn-ghost:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  [data-theme="dark"] .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.05);
   }
 }
 
@@ -335,22 +343,50 @@
   animation: drift 20s ease-in-out infinite;
 }
 
-/* Emulator Canvas Override - Force full size */
+/* Emulator Canvas - Fill container width while maintaining aspect ratio */
 .emulator-canvas {
   width: 100% !important;
-  height: 100% !important;
-  max-width: none !important;
-  max-height: none !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
   object-fit: contain !important;
   image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
   display: block !important;
   margin: 0 auto !important;
 }
 
 #emulator-container canvas {
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
   object-fit: contain !important;
+  image-rendering: pixelated;
+}
+
+/* Custom scrollbar for sidebar panels */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
 }
 
 @keyframes gradient {
@@ -391,6 +427,328 @@
   .pause-on-hover:hover {
     animation-play-state: paused;
   }
+}
+
+/* ==========================================
+   AUTH PAGE — Glassmorphism Dark Card System
+   ========================================== */
+
+/* Light flare sweep across the top of auth cards */
+@keyframes auth-flare {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%) skewX(-15deg);
+  }
+
+  20% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+/* Floating particle animation for background */
+@keyframes auth-particle-float {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.3;
+  }
+
+  25% {
+    transform: translateY(-30px) translateX(15px) scale(1.1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateY(-50px) translateX(-10px) scale(0.9);
+    opacity: 0.4;
+  }
+
+  75% {
+    transform: translateY(-20px) translateX(20px) scale(1.05);
+    opacity: 0.5;
+  }
+}
+
+/* Subtle glow pulse for card border */
+@keyframes auth-border-glow {
+
+  0%,
+  100% {
+    border-color: rgba(0, 180, 230, 0.15);
+    box-shadow: 0 0 40px -15px rgba(0, 180, 230, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  }
+
+  50% {
+    border-color: rgba(0, 200, 255, 0.25);
+    box-shadow: 0 0 60px -15px rgba(0, 200, 255, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Auth card — premium glassmorphism */
+@layer utilities {
+  .auth-card {
+    position: relative;
+    background: rgba(8, 14, 28, 0.92);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(0, 180, 230, 0.18);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    animation: auth-border-glow 4s ease-in-out infinite;
+  }
+
+  /* Top-edge light flare */
+  .auth-card::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(180deg,
+        rgba(0, 200, 255, 0.12) 0%,
+        rgba(0, 200, 255, 0.04) 30%,
+        transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Animated sweep flare */
+  .auth-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -50%;
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.6) 40%,
+        rgba(0, 212, 255, 0.8) 50%,
+        rgba(255, 255, 255, 0.6) 60%,
+        transparent 100%);
+    border-radius: 999px;
+    filter: blur(1px);
+    animation: auth-flare 6s ease-in-out infinite;
+    animation-delay: 1s;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Auth input — dark glass input field */
+  .auth-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 0.875rem;
+    background: rgba(15, 22, 40, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.95);
+    outline: none;
+    transition: all 0.25s ease;
+    font-size: 0.9375rem;
+  }
+
+  .auth-input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .auth-input:focus {
+    border-color: rgba(0, 200, 255, 0.4);
+    box-shadow: 0 0 0 3px rgba(0, 200, 255, 0.08), 0 0 20px -5px rgba(0, 200, 255, 0.1);
+    background: rgba(15, 22, 40, 0.85);
+  }
+
+  /* Auth social button */
+  .auth-social-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    border-radius: 0.875rem;
+    background: rgba(15, 22, 40, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+
+  .auth-social-btn:hover:not(:disabled) {
+    background: rgba(20, 30, 55, 0.8);
+    border-color: rgba(0, 200, 255, 0.2);
+  }
+
+  .auth-social-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  /* Auth submit button — gradient glow */
+  .auth-submit-btn {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.875rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: white;
+    background: linear-gradient(135deg, hsl(186, 100%, 45%) 0%, hsl(200, 100%, 50%) 100%);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .auth-submit-btn:hover:not(:disabled) {
+    filter: brightness(1.15);
+    box-shadow: 0 8px 30px -5px rgba(0, 200, 255, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .auth-submit-btn:active:not(:disabled) {
+    transform: scale(0.98) translateY(0);
+  }
+
+  .auth-submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Light mode overrides for auth card */
+[data-theme="light"] .auth-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.12) !important;
+  animation: none !important;
+}
+
+[data-theme="light"] .auth-card::before {
+  background: linear-gradient(180deg,
+      rgba(0, 180, 230, 0.06) 0%,
+      transparent 100%) !important;
+}
+
+[data-theme="light"] .auth-card::after {
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(0, 180, 230, 0.3) 40%,
+      rgba(0, 180, 230, 0.5) 50%,
+      rgba(0, 180, 230, 0.3) 60%,
+      transparent 100%) !important;
+}
+
+[data-theme="light"] .auth-input {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+[data-theme="light"] .auth-input::placeholder {
+  color: rgba(0, 0, 0, 0.45) !important;
+}
+
+[data-theme="light"] .auth-input:focus {
+  border-color: hsl(186, 100%, 42%) !important;
+  box-shadow: 0 0 0 3px hsla(186, 100%, 42%, 0.1) !important;
+  background: rgba(0, 0, 0, 0.02) !important;
+}
+
+[data-theme="light"] .auth-social-btn {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="light"] .auth-social-btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Light mode text overrides for hardcoded white text */
+[data-theme="light"] .auth-card .text-white {
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/80 {
+  color: rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/60 {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/40 {
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/35 {
+  color: rgba(0, 0, 0, 0.45) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/25 {
+  color: rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/20 {
+  color: rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/15,
+[data-theme="light"] .auth-card .text-white\/10,
+[data-theme="light"] .auth-card .text-white\/5 {
+  color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Light mode border/bg overrides for specific utilities used in auth */
+[data-theme="light"] .auth-card .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] .auth-card .bg-white\/8 {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .auth-card .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-theme="light"] .auth-card .border-white\/15 {
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Dark mode explicit */
+[data-theme="dark"] .auth-card {
+  background: rgba(8, 14, 28, 0.92) !important;
+  border: 1px solid rgba(0, 180, 230, 0.18) !important;
+  animation: auth-border-glow 4s ease-in-out infinite !important;
+}
+
+/* Low performance mode */
+.low-performance-mode .auth-card {
+  animation: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.low-performance-mode .auth-card::after {
+  animation: none !important;
+  display: none !important;
 }
 
 /* ==========================================
@@ -520,4 +878,257 @@
 .low-performance-mode [class*="ring-"] {
   box-shadow: none !important;
   outline: none !important;
+}
+
+/* ==========================================
+   LIGHT MODE OVERRIDES
+   Fix dark-mode-oriented utilities for light theme
+   :root applies to light (default), [data-theme="dark"] for dark
+   ========================================== */
+
+/* --- Background Overlays --- */
+/* bg-white/5 on white bg = invisible. Fix: use subtle dark overlay in light mode */
+:root .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+:root .bg-white\/10 {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* --- Border Colors --- */
+:root .border-white\/5 {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+:root .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+:root .border-white\/20 {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+/* --- Hover States --- */
+:root .hover\:bg-white\/5:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+:root .hover\:bg-white\/10:hover {
+  background-color: rgba(0, 0, 0, 0.07) !important;
+}
+
+:root .hover\:border-white\/10:hover {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* --- Dividers / Separators --- */
+:root .bg-white\/10 {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Gradient dividers: from-transparent via-white/10 to-transparent */
+:root .via-white\/10 {
+  --tw-gradient-via: rgba(0, 0, 0, 0.08) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), rgba(0, 0, 0, 0.08), var(--tw-gradient-to) !important;
+}
+
+/* --- Header & Nav --- */
+:root header.sticky {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+:root .bg-background\/80 {
+  background-color: rgba(245, 246, 250, 0.85) !important;
+}
+
+/* --- Shimmer / Shine effect --- */
+:root .via-white\/5 {
+  --tw-gradient-via: rgba(0, 0, 0, 0.03) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), rgba(0, 0, 0, 0.03), var(--tw-gradient-to) !important;
+}
+
+/* --- Black overlays for text readability on images --- */
+:root .bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* --- Glow effects: reduce in light mode --- */
+:root .glow-cyan {
+  box-shadow: 0 0 30px -10px hsl(186 100% 42% / 0.25) !important;
+}
+
+:root .glow-magenta {
+  box-shadow: 0 0 30px -10px hsl(320 100% 55% / 0.2) !important;
+}
+
+/* --- Shadow with primary color: soften for light mode --- */
+:root .shadow-primary\/30 {
+  --tw-shadow-color: hsl(186 100% 42% / 0.15) !important;
+}
+
+:root .shadow-primary\/10 {
+  --tw-shadow-color: hsl(186 100% 42% / 0.08) !important;
+}
+
+/* --- Background glow blobs: reduce intensity in light mode --- */
+:root [style*="filter: blur"] {
+  opacity: 0.25 !important;
+}
+
+/* --- Glass card fix for light mode (reinforce) --- */
+:root .glass-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.08);
+}
+
+:root .glass-card-strong {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 8px 30px -8px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Low performance mode glass fix for light --- */
+/* --- Low performance mode glass fix for light --- */
+[data-theme="light"] .low-performance-mode .glass-card,
+[data-theme="light"] .low-performance-mode .glass-card-strong {
+  background: rgba(255, 255, 255, 0.98) !important;
+}
+
+/* --- Game card: light mode image overlay --- */
+:root .game-card-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 100%) !important;
+}
+
+/* --- Rating badge yellow in light mode --- */
+:root .bg-yellow-500\/10 {
+  background-color: rgba(234, 179, 8, 0.1) !important;
+}
+
+:root .border-yellow-500\/20 {
+  border-color: rgba(234, 179, 8, 0.25) !important;
+}
+
+:root .text-yellow-400 {
+  color: #b45309 !important;
+}
+
+:root .fill-yellow-400 {
+  fill: #b45309 !important;
+}
+
+/* --- Primary/accent alpha backgrounds --- */
+:root .bg-primary\/10 {
+  background-color: hsl(186 100% 42% / 0.1) !important;
+}
+
+:root .bg-primary\/20 {
+  background-color: hsl(186 100% 42% / 0.15) !important;
+}
+
+:root .hover\:bg-primary\/10:hover {
+  background-color: hsl(186 100% 42% / 0.12) !important;
+}
+
+/* --- Grid pattern: lighten for light mode --- */
+:root .bg-grid-pattern {
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px) !important;
+}
+
+/* Restore dark mode defaults (prevent :root overrides bleeding into dark) */
+[data-theme="dark"] .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .border-white\/5 {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-theme="dark"] .hover\:bg-white\/5:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .hover\:bg-white\/10:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .hover\:border-white\/10:hover {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .via-white\/10 {
+  --tw-gradient-via: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .via-white\/5 {
+  --tw-gradient-via: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] header.sticky {
+  background-color: rgba(8, 12, 20, 0.8) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .bg-background\/80 {
+  background-color: hsl(220 20% 4% / 0.8) !important;
+}
+
+[data-theme="dark"] .glass-card {
+  background: rgba(15, 20, 30, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.15) !important;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .glass-card-strong {
+  background: rgba(10, 15, 25, 0.95) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .text-yellow-400 {
+  color: #facc15 !important;
+}
+
+[data-theme="dark"] .fill-yellow-400 {
+  fill: #facc15 !important;
+}
+
+[data-theme="dark"] .bg-yellow-500\/10 {
+  background-color: rgba(234, 179, 8, 0.1) !important;
+}
+
+[data-theme="dark"] .border-yellow-500\/20 {
+  border-color: rgba(234, 179, 8, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-primary\/10 {
+  background-color: hsl(186 100% 50% / 0.1) !important;
+}
+
+[data-theme="dark"] .bg-primary\/20 {
+  background-color: hsl(186 100% 50% / 0.2) !important;
+}
+
+[data-theme="dark"] [style*="filter: blur"] {
+  opacity: 1 !important;
+}
+
+[data-theme="dark"] .game-card-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%) !important;
 }

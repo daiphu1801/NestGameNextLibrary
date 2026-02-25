@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { apiClient } from '@/lib/api';
@@ -8,15 +9,13 @@ import { Game } from '@/types/game';
 import Link from 'next/link';
 import { Trophy, Star, TrendingUp, Medal, Gamepad2 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
-import { GameModal } from '@/components/game/GameModal';
 
 export default function LeaderboardPage() {
+    const router = useRouter();
     const { t } = useLanguage();
     const { isLowPerformanceMode } = usePerformance();
     const [topGames, setTopGames] = useState<Game[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
@@ -34,13 +33,7 @@ export default function LeaderboardPage() {
     }, []);
 
     const handleGameClick = (game: Game) => {
-        setSelectedGame(game);
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setTimeout(() => setSelectedGame(null), 300);
+        router.push(`/games/${game.id}/play`);
     };
 
     const getRankIcon = (index: number) => {
@@ -197,15 +190,6 @@ export default function LeaderboardPage() {
                     </div>
                 )}
             </div>
-
-            {/* Game Modal */}
-            {selectedGame && (
-                <GameModal
-                    game={selectedGame}
-                    isOpen={isModalOpen}
-                    onClose={handleCloseModal}
-                />
-            )}
         </main>
     );
 }

@@ -1,10 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/features/games/store/gameStore';
 import { GameCard } from './GameCard';
-import { GameModal } from './GameModal';
-import { GameDetailsModal } from './GameDetailsModal';
 import { Game } from '@/types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,6 +12,7 @@ import { useLanguage } from '@/components/providers/LanguageProvider';
 
 export function GameGrid() {
   const { t } = useLanguage();
+  const router = useRouter();
   const {
     getCurrentPageGames,
     getTotalPages,
@@ -22,35 +21,15 @@ export function GameGrid() {
     filteredGames
   } = useGameStore();
 
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const [isPlayModalOpen, setIsPlayModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-
   const games = getCurrentPageGames();
   const totalPages = getTotalPages();
 
   const handlePlayClick = (game: Game) => {
-    setSelectedGame(game);
-    setIsPlayModalOpen(true);
+    router.push(`/games/${game.id}/play`);
   };
 
   const handleDetailsClick = (game: Game) => {
-    setSelectedGame(game);
-    setIsDetailsModalOpen(true);
-  };
-
-  const handleClosePlayModal = () => {
-    setIsPlayModalOpen(false);
-    setTimeout(() => setSelectedGame(null), 300);
-  };
-
-  const handleCloseDetailsModal = () => {
-    setIsDetailsModalOpen(false);
-  };
-
-  const handlePlayFromDetails = () => {
-    setIsDetailsModalOpen(false);
-    setIsPlayModalOpen(true);
+    router.push(`/games/${game.id}`);
   };
 
   const handlePrevPage = () => {
@@ -248,25 +227,6 @@ export function GameGrid() {
             </Button>
           </div>
         </div>
-      )}
-
-      {/* Play Modal (Emulator) */}
-      {selectedGame && (
-        <GameModal
-          game={selectedGame}
-          isOpen={isPlayModalOpen}
-          onClose={handleClosePlayModal}
-        />
-      )}
-
-      {/* Details Modal */}
-      {selectedGame && (
-        <GameDetailsModal
-          game={selectedGame}
-          isOpen={isDetailsModalOpen}
-          onClose={handleCloseDetailsModal}
-          onPlayNow={handlePlayFromDetails}
-        />
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import axios, { InternalAxiosRequestConfig } from 'axios';
+import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -7,17 +7,7 @@ export const apiClient = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-});
-
-// Add auth interceptor
-apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-    if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-    }
-    return config;
+    withCredentials: true, // Send HttpOnly cookies with every request
 });
 
 export default apiClient;

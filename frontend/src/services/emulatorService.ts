@@ -9,10 +9,100 @@ interface EmulatorOptions {
   };
 }
 
+import { userService } from './userService';
+
+interface PlayerKeys {
+  up: string;
+  down: string;
+  left: string;
+  right: string;
+  a: string;
+  b: string;
+  start: string;
+  select: string;
+}
+
+export interface KeybindingConfig {
+  p1: PlayerKeys;
+  p2: PlayerKeys;
+}
+
+export const DEFAULT_KEYBINDINGS: KeybindingConfig = {
+  p1: {
+    up: 'w',
+    down: 's',
+    left: 'a',
+    right: 'd',
+    a: 'j',
+    b: 'k',
+    start: 'enter',
+    select: 'rshift',
+  },
+  p2: {
+    up: 'up',
+    down: 'down',
+    left: 'left',
+    right: 'right',
+    a: 'num1',
+    b: 'num2',
+    start: 'num3',
+    select: 'num4',
+  },
+};
+
 class EmulatorService {
   private currentEmulator: any = null;
   private isLoading = false;
   private _isOfflineMode = false;
+  private readonly KEYBINDINGS_KEY = 'nestgame_keybindings';
+
+  /**
+   * Get current keybindings
+   * Priority: LocalStorage -> Default
+   * (User profile sync happens on login/init, so LocalStorage should be up to date)
+   */
+  getKeybindings(): KeybindingConfig {
+    if (typeof window === 'undefined') return DEFAULT_KEYBINDINGS;
+
+    try {
+      const stored = localStorage.getItem(this.KEYBINDINGS_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return {
+          p1: { ...DEFAULT_KEYBINDINGS.p1, ...(parsed.p1 || {}) },
+          p2: { ...DEFAULT_KEYBINDINGS.p2, ...(parsed.p2 || {}) },
+        };
+      }
+    } catch (error) {
+      console.error('Failed to parse keybindings from storage', error);
+    }
+    return DEFAULT_KEYBINDINGS;
+  }
+
+  /**
+   * Save keybindings
+   * Saves to LocalStorage immediately and tries to sync with Backend if logged in
+   */
+  async saveKeybindings(config: KeybindingConfig): Promise<void> {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const jsonConfig = JSON.stringify(config);
+      localStorage.setItem(this.KEYBINDINGS_KEY, jsonConfig);
+
+      // Try to sync with backend
+      try {
+        await userService.updateKeybindings(jsonConfig);
+      } catch (err) {
+        // Silently fail if not logged in or network error - local storage is primary source for now
+        console.warn('Failed to sync keybindings to server:', err);
+      }
+
+    } catch (error) {
+      console.error('Failed to save keybindings:', error);
+      throw error;
+    }
+  }
 
   /**
    * Get the ROM URL - tries local API first, falls back to R2
@@ -80,45 +170,49 @@ class EmulatorService {
       const canvas = document.createElement('canvas');
       canvas.className = 'emulator-canvas';
 
-      // Force canvas to fill container with !important to prevent library overrides
+      // Force canvas to fill container width while maintaining aspect ratio
       canvas.style.cssText = `
         width: 100% !important;
-        height: 100% !important;
+        height: auto !important;
         max-width: 100% !important;
         max-height: 100% !important;
         object-fit: contain !important;
         image-rendering: pixelated;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: crisp-edges;
         display: block !important;
+        margin: 0 auto !important;
       `;
 
       container.appendChild(canvas);
 
+      // Get custom keybindings
+      const keys = this.getKeybindings();
+
       // Launch emulator with canvas and custom keyboard controls
-      // Player 1: WASD + J (A) + K (B) + Enter (Start) + Shift (Select)
-      // Player 2: Arrow keys + 1 (A) + 2 (B) + 3 (Start) + 4 (Select)
       this.currentEmulator = await Nostalgist.nes({
         rom: romUrl,
         element: canvas,
         retroarchConfig: {
-          // Player 1 Controls (WASD + JK)
-          input_player1_up: 'w',
-          input_player1_down: 's',
-          input_player1_left: 'a',
-          input_player1_right: 'd',
-          input_player1_a: 'j',
-          input_player1_b: 'k',
-          input_player1_start: 'enter',
-          input_player1_select: 'rshift',
+          // Player 1 Controls (Custom)
+          input_player1_up: keys.p1.up,
+          input_player1_down: keys.p1.down,
+          input_player1_left: keys.p1.left,
+          input_player1_right: keys.p1.right,
+          input_player1_a: keys.p1.a,
+          input_player1_b: keys.p1.b,
+          input_player1_start: keys.p1.start,
+          input_player1_select: keys.p1.select,
 
-          // Player 2 Controls (Arrow keys + 1/2)
-          input_player2_up: 'up',
-          input_player2_down: 'down',
-          input_player2_left: 'left',
-          input_player2_right: 'right',
-          input_player2_a: 'num1',
-          input_player2_b: 'num2',
-          input_player2_start: 'num3',
-          input_player2_select: 'num4',
+          // Player 2 Controls (Custom)
+          input_player2_up: keys.p2.up,
+          input_player2_down: keys.p2.down,
+          input_player2_left: keys.p2.left,
+          input_player2_right: keys.p2.right,
+          input_player2_a: keys.p2.a,
+          input_player2_b: keys.p2.b,
+          input_player2_start: keys.p2.start,
+          input_player2_select: keys.p2.select,
         },
       });
 
@@ -159,15 +253,16 @@ class EmulatorService {
     }
   }
 
-  saveState(): void {
+  async saveState(): Promise<{ state: Blob; thumbnail?: Blob } | null> {
     if (this.currentEmulator) {
-      this.currentEmulator.saveState();
+      return await this.currentEmulator.saveState();
     }
+    return null;
   }
 
-  loadState(): void {
+  async loadState(state: Blob): Promise<void> {
     if (this.currentEmulator) {
-      this.currentEmulator.loadState();
+      await this.currentEmulator.loadState(state);
     }
   }
 

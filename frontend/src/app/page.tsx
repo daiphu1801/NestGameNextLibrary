@@ -1,34 +1,26 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/features/games/store/gameStore';
 import { gameService } from '@/services/gameService';
 import { Header } from '@/components/layout/Header';
 import { FeaturedGames } from '@/components/game/FeaturedGames';
-import { GameModal } from '@/components/game/GameModal';
 import { validateEnv } from '@/config/env';
 import { Sparkles, Zap, Save, Play, Gamepad2, ArrowRight, Shield, Globe, Users, Star, Github, ExternalLink } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
-import { useState } from 'react';
 import { Game } from '@/types';
 import Link from 'next/link';
 
 export default function LandingPage() {
+  const router = useRouter();
   const { setGames, isLoading, filteredGames, allGames } = useGameStore();
   const { isLowPerformanceMode } = usePerformance();
   const { t } = useLanguage();
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleGameClick = (game: Game) => {
-    setSelectedGame(game);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setTimeout(() => setSelectedGame(null), 300);
+    router.push(`/games/${game.id}/play`);
   };
 
   useEffect(() => {
@@ -330,15 +322,6 @@ export default function LandingPage() {
           </div>
         </section>
       </div>
-
-      {/* Game Modal for Featured Games */}
-      {selectedGame && (
-        <GameModal
-          game={selectedGame}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-        />
-      )}
     </main>
   );
 }

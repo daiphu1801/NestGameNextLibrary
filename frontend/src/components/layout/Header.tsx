@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Moon, Sun, Zap, ZapOff, BookOpen, Gamepad2, X, Star, ArrowUp, Menu, Home, Trophy, Heart, Dices, Sparkles } from 'lucide-react';
+import { Search, Moon, Sun, Zap, ZapOff, BookOpen, Gamepad2, X, Star, ArrowUp, Menu, Home, Trophy, Heart, Dices, Sparkles, ChevronDown } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -11,19 +11,24 @@ import { debounce, cn } from '@/lib/utils';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { LoginModal, RegisterModal, ForgotPasswordModal, UserDropdown } from '@/components/auth';
+import { UserDropdown } from '@/components/auth';
+import { USFlag, VietnamFlag } from '@/components/ui/Flags';
 
 export function Header() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const { locale, setLocale, t } = useLanguage();
-  const { user, login, logout, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuth();
+  const { user, logout, openLoginModal } = useAuth();
   const [searchValue, setSearchValue] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isExploreOpen, setIsExploreOpen] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   // Check if first visit — show disclaimer banner + welcome popup
   useEffect(() => {
@@ -144,10 +149,10 @@ export function Header() {
         showDisclaimer ? 'top-[37px] sm:top-[37px]' : 'top-0'
       )}>
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex h-20 items-center justify-between gap-6">
+          <div className="flex h-16 items-center justify-between gap-4">{/* Giảm từ h-20 xuống h-16, gap-6 xuống gap-4 */}
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group cursor-pointer hover:opacity-90 transition-opacity flex-shrink-0">
-              <div className="relative w-12 h-12 group-hover:scale-105 transition-transform duration-300">
+            <Link href="/" className="flex items-center gap-2.5 group cursor-pointer hover:opacity-90 transition-opacity flex-shrink-0">{/* gap-3 xuống 2.5 */}
+              <div className="relative w-10 h-10 group-hover:scale-105 transition-transform duration-300">{/* w-12 h-12 xuống w-10 h-10 */}
                 <img
                   src="/game-console.png"
                   alt="NestGame Logo"
@@ -155,11 +160,11 @@ export function Header() {
                 />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tight font-mono-tech leading-none">
+                <span className="text-lg font-black tracking-tight font-mono-tech leading-none">{/* text-xl xuống text-lg */}
                   <span className="text-gradient-cyan">NEST</span>
                   <span className="text-foreground">GAME</span>
                 </span>
-                <span className="text-[9px] text-muted-foreground tracking-[0.2em] uppercase font-medium">
+                <span className="text-[8px] text-muted-foreground tracking-[0.2em] uppercase font-medium">{/* text-[9px] xuống [8px] */}
                   Classic NES Emulator
                 </span>
               </div>
@@ -179,27 +184,76 @@ export function Header() {
                   {t('nav.library')}
                 </span>
               </NavLink>
-              <NavLink href="/leaderboard" active={pathname === '/leaderboard'}>
-                <span className="flex items-center gap-1.5">
-                  <Trophy className="w-3 h-3 text-yellow-500" />
-                  {t('nav.leaderboard')}
-                </span>
-              </NavLink>
-              <NavLink href="/random" active={pathname === '/random'}>
-                <span className="flex items-center gap-1.5">
-                  <Dices className="w-3 h-3 text-primary" />
-                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent group-hover:text-primary transition-all font-black">
-                    {t('nav.random')}
-                  </span>
-                </span>
-              </NavLink>
+
+              {/* Explore Dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsExploreOpen(true)}
+                onMouseLeave={() => setIsExploreOpen(false)}
+              >
+                <button
+                  className={cn(
+                    "px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap flex items-center gap-1",
+                    (pathname === '/random' || pathname === '/leaderboard')
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                  )}
+                >
+                  <Sparkles className="w-3 h-3 text-primary" />
+                  {t('nav.explore')}
+                  <ChevronDown className={cn(
+                    "w-3 h-3 transition-transform duration-200",
+                    isExploreOpen && "rotate-180"
+                  )} />
+                </button>
+
+                {/* Dropdown Menu */}
+                {isExploreOpen && (
+                  <div className="absolute top-full left-0 pt-1 w-48 z-50">
+                    <div className="bg-secondary/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl shadow-primary/10 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                      <Link
+                        href="/random"
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all hover:bg-primary/10",
+                          pathname === '/random' ? "text-primary bg-primary/5" : "text-foreground"
+                        )}
+                      >
+                        <Dices className="w-4 h-4" />
+                        <span>{t('nav.random')}</span>
+                      </Link>
+                      <div className="h-px bg-white/5" />
+                      <Link
+                        href="/leaderboard"
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all hover:bg-primary/10",
+                          pathname === '/leaderboard' ? "text-primary bg-primary/5" : "text-foreground"
+                        )}
+                      >
+                        <Trophy className="w-4 h-4 text-yellow-500" />
+                        <span>{t('nav.leaderboard')}</span>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="relative">
-                <NavLink href="/docs" active={pathname === '/docs'}>
+                <Link
+                  href="/docs"
+                  className={cn(
+                    "px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap inline-flex",
+                    pathname === '/docs'
+                      ? "bg-primary/10"
+                      : "hover:bg-white/5"
+                  )}
+                >
                   <span className="flex items-center gap-1.5">
-                    <BookOpen className="w-3 h-3" />
-                    {t('nav.docs')}
+                    <BookOpen className="w-3 h-3 text-primary" />
+                    <span className="bg-gradient-to-r from-primary to-accent bg-clip-text font-black" style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                      {t('nav.docs')}
+                    </span>
                   </span>
-                </NavLink>
+                </Link>
                 {/* Small welcome tooltip */}
                 {showWelcomePopup && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
@@ -257,7 +311,8 @@ export function Header() {
               <button
                 onClick={toggleTheme}
                 className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-all hover:scale-105 active:scale-95"
-                title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+                title={mounted ? (theme === 'dark' ? 'Light mode' : 'Dark mode') : 'Toggle theme'}
+                suppressHydrationWarning
               >
                 <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-orange-400" />
                 <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-cyan-400" />
@@ -267,9 +322,15 @@ export function Header() {
                 onClick={toggleLanguage}
                 className="px-2 sm:px-3 py-1.5 rounded-full hover:bg-white/5 border border-transparent hover:border-white/10 transition-all text-xs font-bold font-mono-tech uppercase flex items-center gap-1.5 sm:gap-2"
               >
-                <span className={locale === 'en' ? 'text-primary' : 'text-muted-foreground'}>EN</span>
+                <div className={cn("flex items-center gap-1.5", locale === 'en' ? 'text-primary opacity-100' : 'text-muted-foreground opacity-50 hover:opacity-100 transition-opacity')}>
+                  <USFlag className="w-3.5 h-3.5 rounded-[2px] object-cover shadow-sm" />
+                  <span>EN</span>
+                </div>
                 <div className="w-[1px] h-3 bg-white/10" />
-                <span className={locale === 'vi' ? 'text-primary' : 'text-muted-foreground'}>VI</span>
+                <div className={cn("flex items-center gap-1.5", locale === 'vi' ? 'text-primary opacity-100' : 'text-muted-foreground opacity-50 hover:opacity-100 transition-opacity')}>
+                  <VietnamFlag className="w-3.5 h-3.5 rounded-[2px] object-cover shadow-sm" />
+                  <span>VI</span>
+                </div>
               </button>
 
               {/* Separator */}
@@ -398,7 +459,7 @@ export function Header() {
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-xl animate-in fade-in duration-200">
-          <div className="container mx-auto px-4 pt-24 pb-8">
+          <div className="container mx-auto px-4 pt-20 pb-8">
             <nav className="flex flex-col gap-2">
               <MobileNavLink
                 href="/"
@@ -416,14 +477,33 @@ export function Header() {
               >
                 {t('nav.library')}
               </MobileNavLink>
-              <MobileNavLink
-                href="/favorites"
-                icon={<Star className="w-5 h-5" />}
-                active={pathname === '/favorites'}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {t('nav.favorites')}
-              </MobileNavLink>
+
+              {/* Explore Section */}
+              <div className="my-2">
+                <div className="flex items-center gap-2 px-4 py-2">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('nav.explore')}</span>
+                </div>
+                <div className="ml-4 flex flex-col gap-1">
+                  <MobileNavLink
+                    href="/random"
+                    icon={<Dices className="w-4 h-4" />}
+                    active={pathname === '/random'}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {t('nav.random')}
+                  </MobileNavLink>
+                  <MobileNavLink
+                    href="/leaderboard"
+                    icon={<Trophy className="w-4 h-4 text-yellow-500" />}
+                    active={pathname === '/leaderboard'}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {t('nav.leaderboard')}
+                  </MobileNavLink>
+                </div>
+              </div>
+
               <MobileNavLink
                 href="/docs"
                 icon={<BookOpen className="w-5 h-5" />}
@@ -461,37 +541,7 @@ export function Header() {
         <ArrowUp className="w-5 h-5" />
       </button>
 
-      {/* Auth Modals */}
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={closeLoginModal}
-        onSwitchToRegister={() => {
-          closeLoginModal();
-          setIsRegisterOpen(true);
-        }}
-        onForgotPassword={() => {
-          closeLoginModal();
-          setIsForgotPasswordOpen(true);
-        }}
-      />
 
-      <RegisterModal
-        isOpen={isRegisterOpen}
-        onClose={() => setIsRegisterOpen(false)}
-        onSwitchToLogin={() => {
-          setIsRegisterOpen(false);
-          openLoginModal();
-        }}
-      />
-
-      <ForgotPasswordModal
-        isOpen={isForgotPasswordOpen}
-        onClose={() => setIsForgotPasswordOpen(false)}
-        onBackToLogin={() => {
-          setIsForgotPasswordOpen(false);
-          openLoginModal();
-        }}
-      />
 
     </>
   );
@@ -502,7 +552,7 @@ function NavLink({ href, children, active }: { href: string; children: React.Rea
     <Link
       href={href}
       className={cn(
-        "px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap",
+        "px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap",
         active
           ? "text-primary bg-primary/10"
           : "text-muted-foreground hover:text-foreground hover:bg-white/5"

@@ -21,6 +21,7 @@
     "home": "Trang chủ",
     "library": "Thư viện",
     "favorites": "Yêu thích",
+    "explore": "Khám phá",
     "leaderboard": "Bảng xếp hạng",
     "random": "Ngẫu nhiên",
     "donate": "Ủng hộ",
@@ -74,7 +75,13 @@
     "selectRom": "Chọn file ROM",
     "runServerHint": "Để tự động tải game, hãy chạy local server:",
     "orSelectManually": "Hoặc chọn file ROM thủ công:",
-    "details": "Chi tiết"
+    "details": "Chi tiết",
+    "ratings": "đánh giá",
+    "rating": "Đánh giá",
+    "information": "Thông tin",
+    "ratingSuccess": "Đánh giá thành công!",
+    "addedToFavorites": "Đã thêm vào yêu thích",
+    "removedFromFavorites": "Đã xóa khỏi yêu thích"
   },
   "stats": {
     "games": "GAMES",
@@ -185,7 +192,21 @@
       "aButton": "Nút A",
       "bButton": "Nút B",
       "start": "Start",
-      "select": "Select"
+      "select": "Select",
+      "common": "Chung"
+    },
+    "customControls": {
+      "title": "Tùy Chỉnh Phím",
+      "description": "Bạn có thể tùy chỉnh phím điều khiển trong trang Cài đặt:",
+      "step1": "Vào Cài đặt → phần Điều khiển game",
+      "step2": "Bấm vào nút bạn muốn đổi phím (ví dụ: A, B, Start)",
+      "step3": "Nhấn phím mới bạn muốn gán",
+      "step4": "Bấm 'Lưu' để áp dụng thay đổi",
+      "note": "Cấu hình phím được lưu vào tài khoản tự động. Nếu đã đăng nhập, phím sẽ đồng bộ qua các thiết bị.",
+      "tips": "Mẹo",
+      "tip1": "Nhấn Escape để hủy khi đang gán phím",
+      "tip2": "Mỗi nút phải gán một phím riêng — phím trùng sẽ được đánh dấu vàng",
+      "tip3": "Bấm 'Mặc định' để khôi phục phím gốc (WASD + JK)"
     },
     "saveStates": {
       "title": "Lưu Trạng Thái",
@@ -273,6 +294,39 @@
     "or": "hoặc",
     "rememberMe": "Ghi nhớ đăng nhập"
   },
+  "authPage": {
+    "loginTitle": "Đăng nhập",
+    "loginDesc": "Đăng nhập để lưu tiến trình và game yêu thích",
+    "registerTitle": "Tạo tài khoản",
+    "registerDesc": "Đăng ký để trải nghiệm đầy đủ tính năng",
+    "backHome": "Trang chủ",
+    "orContinueWith": "hoặc tiếp tục với",
+    "continueWith": "Tiếp tục với",
+    "comingSoon": "Sắp ra mắt",
+    "registerNow": "Đăng ký ngay",
+    "loginNow": "Đăng nhập",
+    "createNewAccount": "Đăng ký tài khoản mới",
+    "forgotPassword": "Quên mật khẩu?",
+    "footerText": "Chơi game kinh điển miễn phí",
+    "emailNote": "Nếu bạn lo về bảo mật email, bạn có thể sử dụng email ảo — nhưng sẽ không đặt lại được mật khẩu nếu quên.",
+    "error": {
+      "invalidCredentials": "Email hoặc mật khẩu không đúng. Vui lòng kiểm tra lại.",
+      "userNotFound": "Email này chưa được đăng ký. Hãy tạo tài khoản mới!",
+      "wrongPassword": "Mật khẩu không đúng. Vui lòng kiểm tra lại.",
+      "network": "Không thể kết nối đến server. Vui lòng thử lại sau.",
+      "generic": "Đăng nhập thất bại. Vui lòng thử lại.",
+      "weakPassword": "Mật khẩu chưa đủ mạnh. Vui lòng kiểm tra các yêu cầu bên dưới.",
+      "passwordMismatch": "Mật khẩu xác nhận không khớp",
+      "registerFailed": "Đăng ký thất bại. Vui lòng thử lại."
+    },
+    "pwd": {
+      "minLength": "Tối thiểu 6 ký tự",
+      "uppercase": "Chữ hoa (A-Z)",
+      "lowercase": "Chữ thường (a-z)",
+      "number": "Số (0-9)",
+      "special": "Ký tự đặc biệt (@$!%*?&)"
+    }
+  },
   "settings": {
     "title": "Cài đặt tài khoản",
     "profile": "Hồ sơ cá nhân",
@@ -285,9 +339,43 @@
     "passwordUpdated": "Đổi mật khẩu thành công",
     "username": "Tên hiển thị",
     "email": "Email",
+    "subtitle": "Quản lý thông tin hồ sơ và bảo mật của bạn",
+    "bio": "GIỚI THIỆU",
+    "setNewPassword": "Đặt mật khẩu mới",
     "role": "Vai trò",
     "joined": "Tham gia ngày",
-    "changeAvatar": "Đổi Avatar"
+    "changeAvatar": "Đổi Avatar",
+    "controls": "Điều khiển game",
+    "controlsDesc": "Tùy chỉnh phím điều khiển cho từng nút trên tay cầm NES. Bấm vào nút rồi nhấn phím bạn muốn gán.",
+    "controllerLayout": "Người chơi 1",
+    "player1": "Người chơi 1",
+    "player2": "Người chơi 2",
+    "controlsHint": "Bấm vào ô phím → nhấn phím mới trên bàn phím → Lưu. Nhấn Esc để hủy.",
+    "pressKey": "⌨ Nhấn phím...",
+    "keyUp": "Lên",
+    "keyDown": "Xuống",
+    "keyLeft": "Trái",
+    "keyRight": "Phải",
+    "keyA": "Nút A",
+    "keyB": "Nút B",
+    "keyStart": "Start",
+    "keySelect": "Select",
+    "saveControls": "Lưu cấu hình",
+    "resetDefault": "Mặc định",
+    "controlsSaved": "Đã lưu cấu hình phím!",
+    "controlsSaveError": "Không thể lưu cấu hình",
+    "controlsReset": "Đã khôi phục mặc định. Bấm Lưu để áp dụng.",
+    "controlsConflict": "Có phím bị trùng! Mỗi nút phải gán một phím riêng.",
+    "controlsConflictError": "Có phím bị trùng! Vui lòng sửa trước khi lưu.",
+    "unsavedChanges": "● Có thay đổi chưa lưu",
+    "loginRequiredDesc": "Vui lòng đăng nhập để truy cập cài đặt tài khoản của bạn.",
+    "readOnly": "Chỉ xem",
+    "updating": "Đang cập nhật...",
+    "reqMinLength": "Tối thiểu 8 ký tự",
+    "reqUppercase": "Chữ hoa (A-Z)",
+    "reqLowercase": "Chữ thường (a-z)",
+    "reqNumber": "Số (0-9)",
+    "reqSpecial": "Ký tự đặc biệt (@$!%*?&)"
   },
   "user": {
     "history": "Lịch sử chơi",
@@ -328,7 +416,9 @@
   },
   "common": {
     "classic": "Cổ điển",
-    "universal": "Quốc tế"
+    "universal": "Quốc tế",
+    "back": "Quay lại",
+    "linkCopied": "Đã sao chép link"
   },
   "leaderboard": {
     "title": "BẢNG XẾP HẠNG",
@@ -362,5 +452,71 @@
     "recentSpins": "Đã quay gần đây",
     "tip": "Mẹo: Bạn cũng có thể truy cập",
     "tipEnd": "để tìm kiếm game theo tên hoặc danh mục."
+  },
+  "saveState": {
+    "saveGame": "Lưu Game",
+    "loadGame": "Tải Game",
+    "save": "Lưu",
+    "load": "Tải",
+    "slot": "Slot",
+    "empty": "Trống",
+    "overwrite": "Ghi đè",
+    "delete": "Xóa",
+    "saved": "Đã lưu vào Slot {slot}!",
+    "loaded": "Đã tải Slot {slot}!",
+    "deleted": "Đã xóa Slot {slot}",
+    "saveFailed": "Lưu thất bại",
+    "loadFailed": "Tải thất bại",
+    "deleteFailed": "Xóa thất bại",
+    "emulatorNotReady": "Emulator chưa sẵn sàng",
+    "quickSave": "Lưu nhanh",
+    "quickLoad": "Tải nhanh"
+  },
+  "tutorial": {
+    "stepOf": "Bước {current} / {total}",
+    "next": "Tiếp",
+    "skip": "Bỏ qua",
+    "start": "Chơi thôi!",
+    "step1": {
+      "title": "Di chuyển",
+      "desc": "Sử dụng phím W, A, S, D để di chuyển nhân vật. W = Lên, S = Xuống, A = Trái, D = Phải."
+    },
+    "step2": {
+      "title": "Nút hành động",
+      "desc": "Nhấn J cho Nút A và K cho Nút B. Vai trò của mỗi nút (nhảy, đánh, v.v.) tùy thuộc vào từng game."
+    },
+    "step3": {
+      "title": "Start & Select",
+      "desc": "Nhấn Enter để bắt đầu game hoặc tạm dừng. Nhấn Shift cho nút Select."
+    },
+    "step4": {
+      "title": "Lưu & Tải",
+      "desc": "Lưu tiến trình lên đám mây và tải lại bất cứ lúc nào. Đăng ký hoặc đăng nhập để sử dụng tính năng này."
+    },
+    "step5": {
+      "title": "Mẹo nhỏ",
+      "desc": "Nhấn ESC để thoát game. Nhấn nút phóng to để chơi toàn màn hình. Bạn cũng có thể cấu hình bàn phím ở trang Cài đặt khi đã đăng nhập."
+    }
+  },
+  "errors": {
+    "gameNotFound": "Không tìm thấy game",
+    "ratingFailed": "Không thể đánh giá. Vui lòng thử lại",
+    "favoriteToggleFailed": "Không thể cập nhật yêu thích. Vui lòng thử lại"
+  },
+  "play": {
+    "confirmExit": "Bạn có chắc muốn thoát? Tiến trình chưa lưu sẽ mất.",
+    "hotGames": "🔥 Games Hot",
+    "newGames": "✨ Mới Nhất",
+    "topGames": "⭐ Đánh Giá Cao",
+    "hotGamesDesc": "Chuyển nhanh sang game khác",
+    "noHotGames": "Chưa có game hot",
+    "expandTutorial": "Mở rộng hướng dẫn",
+    "collapseTutorial": "Thu gọn hướng dẫn",
+    "controlsDesc": "Bảng phím tắt điều khiển",
+    "tips": "Mẹo hay",
+    "tip1": "Nhấn ESC để tạm dừng và quay lại trang chi tiết game",
+    "tip2": "Dùng Save State để lưu tiến trình bất cứ lúc nào",
+    "tip3": "Các nút điều khiển tự ẩn sau 3 giây không hoạt động",
+    "tip4": "Thử chế độ Fullscreen để trải nghiệm chân thật hơn"
   }
 }

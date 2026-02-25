@@ -41,6 +41,9 @@ public class User implements UserDetails {
     @Column(columnDefinition = "TEXT")
     private String bio;
 
+    @Column(name = "keybinding_config", columnDefinition = "TEXT")
+    private String keybindingConfig;
+
     @Builder.Default
     private String role = "USER";
 

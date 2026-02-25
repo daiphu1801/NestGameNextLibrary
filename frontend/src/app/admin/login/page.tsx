@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ShieldCheck, Mail, Lock, Eye, EyeOff, Loader2, Gamepad2 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
 import { useRouter } from 'next/navigation';
@@ -14,10 +14,11 @@ export default function AdminLoginPage() {
     const [error, setError] = useState('');
 
     // If already authenticated, redirect to dashboard
-    if (typeof window !== 'undefined' && adminService.isAuthenticated()) {
-        router.replace('/admin');
-        return null;
-    }
+    useEffect(() => {
+        if (adminService.isAuthenticated()) {
+            router.replace('/admin');
+        }
+    }, [router]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();

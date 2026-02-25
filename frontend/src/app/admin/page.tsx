@@ -6,10 +6,18 @@ import {
     Crown, Clock, BarChart3, ArrowUpRight, ArrowDownRight, Eye
 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
+import Link from 'next/link';
 import {
     AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
     XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
+
+const getGreeting = () => {
+    const h = new Date().getHours();
+    if (h < 12) return { text: 'Chào buổi sáng', emoji: '☀️' };
+    if (h < 18) return { text: 'Chào buổi chiều', emoji: '🌤️' };
+    return { text: 'Chào buổi tối', emoji: '🌙' };
+};
 
 interface Stats {
     totalUsers: number;
@@ -98,6 +106,37 @@ export default function AdminDashboardPage() {
 
     return (
         <div className="space-y-6">
+
+            {/* ═══ Welcome Banner ═══ */}
+            {(() => {
+                const greeting = getGreeting();
+                const admin = adminService.getCurrentAdmin();
+                const today = new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                return (
+                    <div className="rounded-[10px] p-6 border relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1C2434 0%, #24303F 50%, #1C2434 100%)', borderColor: '#2E3A47' }}>
+                        {/* Decorative gradient orbs */}
+                        <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-[0.07]" style={{ background: 'radial-gradient(circle, #3C50E0, transparent 70%)', transform: 'translate(30%, -40%)' }} />
+                        <div className="absolute bottom-0 left-1/2 w-48 h-48 rounded-full opacity-[0.05]" style={{ background: 'radial-gradient(circle, #10B981, transparent 70%)', transform: 'translate(-50%, 40%)' }} />
+
+                        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div>
+                                <h2 className="text-2xl font-bold text-white mb-1">
+                                    {greeting.emoji} {greeting.text}, <span style={{ color: '#3C50E0' }}>{admin?.username || 'Admin'}</span>!
+                                </h2>
+                                <p className="text-[#A5B4CB] text-sm">{today}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Link href="/admin/games" className="flex items-center gap-2 px-4 py-2.5 rounded-md text-white text-sm font-medium hover:brightness-110 transition-all" style={{ background: '#3C50E0' }}>
+                                    <Gamepad2 className="w-4 h-4" /> Quản lý Games
+                                </Link>
+                                <Link href="/admin/activity" className="flex items-center gap-2 px-4 py-2.5 rounded-md text-[#A5B4CB] text-sm font-medium border hover:text-white hover:border-[#3C50E0]/50 transition-all" style={{ borderColor: '#2E3A47' }}>
+                                    <Activity className="w-4 h-4" /> Lịch sử
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                );
+            })()}
 
             {/* ═══ Stat Cards ═══ */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">

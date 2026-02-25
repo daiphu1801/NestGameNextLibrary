@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { X, Mail, Lock, User, Eye, EyeOff, UserPlus, Loader2, Check, X as XIcon } from 'lucide-react';
+import { Eye, EyeOff, UserPlus, Lock, Mail, User, Loader2, Check, X as XIcon, Gamepad2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { validatePassword, getStrengthColor, getStrengthLabel } from '@/lib/passwordValidation';
 import { useLanguage } from '@/components/providers/LanguageProvider';
@@ -24,160 +24,90 @@ export function RegisterModal({ isOpen, onClose, onSwitchToLogin }: RegisterModa
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // Password validation
     const passwordValidation = useMemo(() => validatePassword(password), [password]);
+
+    if (!isOpen) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-
-        // Validate password strength
-        if (!passwordValidation.isValid) {
-            setError('Mật khẩu chưa đủ mạnh. Vui lòng kiểm tra các yêu cầu bên dưới.');
-            return;
-        }
-
-        // Validate passwords match
-        if (password !== confirmPassword) {
-            setError('Mật khẩu xác nhận không khớp');
-            return;
-        }
-
+        if (!passwordValidation.isValid) { setError(t('authPage.error.weakPassword') || 'Mật khẩu chưa đủ mạnh.'); return; }
+        if (password !== confirmPassword) { setError(t('authPage.error.passwordMismatch') || 'Mật khẩu không khớp'); return; }
         setIsLoading(true);
-
         try {
             await register({ username, email, password });
             onClose();
         } catch (err: any) {
-            setError(err.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+            setError(err.message || t('authPage.error.registerFailed') || 'Đăng ký thất bại.');
         } finally {
             setIsLoading(false);
         }
     };
 
-    if (!isOpen) return null;
-
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <div
-                className="absolute inset-0 bg-background/80 backdrop-blur-xl animate-in fade-in duration-300"
-                onClick={onClose}
-            />
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
-            {/* Modal */}
-            <div className="relative w-full max-w-md animate-in fade-in slide-in-from-bottom-4 zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
-                <div className="glass-card-strong rounded-3xl p-8 shadow-2xl shadow-accent/10">
-                    {/* Close Button */}
-                    <button
-                        onClick={onClose}
-                        className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-
-                    {/* Header */}
-                    <div className="text-center mb-6">
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
-                            <UserPlus className="w-8 h-8 text-accent" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-gradient-magic">
-                            {t('auth.register') || 'Đăng ký'}
-                        </h2>
-                        <p className="text-sm text-muted-foreground mt-2">
-                            {t('auth.registerDesc') || 'Tạo tài khoản để trải nghiệm đầy đủ'}
-                        </p>
-                    </div>
-
-                    {/* Error Message */}
-                    {error && (
-                        <div className="mb-4 p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm">
-                            {error}
-                        </div>
-                    )}
-
-                    {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* Username Field */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">
-                                {t('auth.username') || 'Tên người dùng'}
-                            </label>
-                            <div className="relative">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                <input
-                                    type="text"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    placeholder="gamer2024"
-                                    required
-                                    minLength={3}
-                                    maxLength={50}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-accent/50 focus:ring-2 focus:ring-accent/20 outline-none transition-all text-foreground placeholder:text-muted-foreground"
-                                />
+            <div className="relative w-full max-w-[420px] max-h-[90vh] overflow-y-auto scrollbar-hide animate-in fade-in zoom-in-95 duration-300">
+                <div className="auth-card p-6 md:p-7">
+                    <div className="relative z-10">
+                        {/* Header — compact inline */}
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center flex-shrink-0">
+                                <Gamepad2 className="w-5 h-5 text-violet-400" />
+                            </div>
+                            <div>
+                                <h2 className="text-lg font-bold text-white">{t('authPage.registerTitle') || 'Tạo tài khoản'}</h2>
+                                <p className="text-[11px] text-white/40">{t('authPage.registerDesc') || 'Đăng ký để trải nghiệm đầy đủ'}</p>
                             </div>
                         </div>
 
-                        {/* Email Field */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">
-                                {t('auth.email') || 'Email'}
-                            </label>
-                            <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="your@email.com"
-                                    required
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-accent/50 focus:ring-2 focus:ring-accent/20 outline-none transition-all text-foreground placeholder:text-muted-foreground"
-                                />
+                        {/* Error */}
+                        {error && (
+                            <div className="mb-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs animate-in fade-in duration-200">
+                                {error}
                             </div>
-                        </div>
+                        )}
 
-                        {/* Password Field */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">
-                                {t('auth.password') || 'Mật khẩu'}
-                            </label>
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            {/* Username */}
                             <div className="relative">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                    required
-                                    className="w-full pl-12 pr-12 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-accent/50 focus:ring-2 focus:ring-accent/20 outline-none transition-all text-foreground placeholder:text-muted-foreground"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                                >
-                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}
+                                    placeholder={t('auth.username') || 'Username'} required minLength={3} maxLength={50}
+                                    className="auth-input !py-2.5 !pl-9 !text-sm" />
+                            </div>
+
+                            {/* Email */}
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                                    placeholder={t('auth.email') || 'Email'} required
+                                    className="auth-input !py-2.5 !pl-9 !text-sm" />
+                            </div>
+
+                            {/* Password */}
+                            <div className="relative">
+                                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                                <input type={showPassword ? 'text' : 'password'} value={password}
+                                    onChange={(e) => setPassword(e.target.value)} placeholder={t('auth.password') || 'Mật khẩu'} required
+                                    className="auth-input !py-2.5 !pl-10 !pr-10 !text-sm" />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60 transition-colors cursor-pointer">
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
                             </div>
 
-                            {/* Password Strength Indicator */}
+                            {/* Password Strength — compact */}
                             {password.length > 0 && (
-                                <div className="mt-3 space-y-2">
-                                    {/* Strength Bar */}
+                                <div className="space-y-1.5">
                                     <div className="flex items-center gap-2">
-                                        <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                                            <div
-                                                className={cn(
-                                                    "h-full transition-all duration-300",
-                                                    getStrengthColor(passwordValidation.strength)
-                                                )}
-                                                style={{
-                                                    width: `${Object.values(passwordValidation.checks).filter(Boolean).length * 20}%`
-                                                }}
-                                            />
+                                        <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                                            <div className={cn("h-full transition-all duration-300 rounded-full", getStrengthColor(passwordValidation.strength))}
+                                                style={{ width: `${Object.values(passwordValidation.checks).filter(Boolean).length * 20}%` }} />
                                         </div>
-                                        <span className={cn(
-                                            "text-xs font-medium",
+                                        <span className={cn("text-[9px] font-bold uppercase tracking-wider",
                                             passwordValidation.strength === 'very-strong' && 'text-green-400',
                                             passwordValidation.strength === 'strong' && 'text-blue-400',
                                             passwordValidation.strength === 'medium' && 'text-yellow-400',
@@ -186,113 +116,59 @@ export function RegisterModal({ isOpen, onClose, onSwitchToLogin }: RegisterModa
                                             {getStrengthLabel(passwordValidation.strength)}
                                         </span>
                                     </div>
-
-                                    {/* Requirements Checklist */}
-                                    <div className="grid grid-cols-2 gap-1.5 text-xs">
-                                        <div className={cn("flex items-center gap-1", passwordValidation.checks.minLength ? 'text-green-400' : 'text-muted-foreground')}>
-                                            {passwordValidation.checks.minLength ? <Check className="w-3 h-3" /> : <XIcon className="w-3 h-3" />}
-                                            Tối thiểu 8 ký tự
-                                        </div>
-                                        <div className={cn("flex items-center gap-1", passwordValidation.checks.hasUppercase ? 'text-green-400' : 'text-muted-foreground')}>
-                                            {passwordValidation.checks.hasUppercase ? <Check className="w-3 h-3" /> : <XIcon className="w-3 h-3" />}
-                                            Chữ hoa (A-Z)
-                                        </div>
-                                        <div className={cn("flex items-center gap-1", passwordValidation.checks.hasLowercase ? 'text-green-400' : 'text-muted-foreground')}>
-                                            {passwordValidation.checks.hasLowercase ? <Check className="w-3 h-3" /> : <XIcon className="w-3 h-3" />}
-                                            Chữ thường (a-z)
-                                        </div>
-                                        <div className={cn("flex items-center gap-1", passwordValidation.checks.hasNumber ? 'text-green-400' : 'text-muted-foreground')}>
-                                            {passwordValidation.checks.hasNumber ? <Check className="w-3 h-3" /> : <XIcon className="w-3 h-3" />}
-                                            Số (0-9)
-                                        </div>
-                                        <div className={cn("flex items-center gap-1 col-span-2", passwordValidation.checks.hasSpecialChar ? 'text-green-400' : 'text-muted-foreground')}>
-                                            {passwordValidation.checks.hasSpecialChar ? <Check className="w-3 h-3" /> : <XIcon className="w-3 h-3" />}
-                                            Ký tự đặc biệt (@$!%*?&)
-                                        </div>
+                                    <div className="grid grid-cols-3 gap-x-2 gap-y-0.5 text-[10px]">
+                                        {[
+                                            { key: 'minLength', label: t('authPage.pwd.minLength') || '8+ chars' },
+                                            { key: 'hasUppercase', label: t('authPage.pwd.uppercase') || 'A-Z' },
+                                            { key: 'hasLowercase', label: t('authPage.pwd.lowercase') || 'a-z' },
+                                            { key: 'hasNumber', label: t('authPage.pwd.number') || '0-9' },
+                                            { key: 'hasSpecialChar', label: t('authPage.pwd.special') || '@$!%' },
+                                        ].map(({ key, label }) => (
+                                            <div key={key} className={cn("flex items-center gap-1", passwordValidation.checks[key as keyof typeof passwordValidation.checks] ? 'text-green-400/80' : 'text-white/20')}>
+                                                {passwordValidation.checks[key as keyof typeof passwordValidation.checks] ? <Check className="w-2.5 h-2.5" /> : <XIcon className="w-2.5 h-2.5" />}
+                                                {label}
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             )}
-                        </div>
 
-                        {/* Confirm Password Field */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">
-                                {t('auth.confirmPassword') || 'Xác nhận mật khẩu'}
-                            </label>
+                            {/* Confirm Password */}
                             <div className="relative">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                    required
-                                    className={cn(
-                                        "w-full pl-12 pr-10 py-3 rounded-xl bg-white/5 border outline-none transition-all text-foreground placeholder:text-muted-foreground",
-                                        confirmPassword && password !== confirmPassword
-                                            ? "border-red-500/50 focus:border-red-500"
-                                            : confirmPassword && password === confirmPassword
-                                                ? "border-green-500/50 focus:border-green-500"
-                                                : "border-white/10 focus:border-accent/50 focus:ring-2 focus:ring-accent/20"
-                                    )}
-                                />
+                                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                                <input type={showPassword ? 'text' : 'password'} value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)} placeholder={t('auth.confirmPassword') || 'Xác nhận mật khẩu'} required
+                                    className={cn("auth-input !py-2.5 !pl-10 !pr-10 !text-sm",
+                                        confirmPassword && password !== confirmPassword && "!border-red-500/40",
+                                        confirmPassword && password === confirmPassword && "!border-green-500/40"
+                                    )} />
                                 {confirmPassword && (
-                                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                                        {password === confirmPassword ? (
-                                            <Check className="w-5 h-5 text-green-400" />
-                                        ) : (
-                                            <XIcon className="w-5 h-5 text-red-400" />
-                                        )}
+                                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
+                                        {password === confirmPassword ? <Check className="w-4 h-4 text-green-400" /> : <XIcon className="w-4 h-4 text-red-400" />}
                                     </div>
                                 )}
                             </div>
-                        </div>
 
-                        {/* Submit Button */}
-                        <button
-                            type="submit"
-                            disabled={isLoading || !passwordValidation.isValid}
-                            className={cn(
-                                "w-full py-3.5 rounded-xl font-bold text-sm uppercase tracking-wider transition-all duration-300 mt-4",
-                                "bg-gradient-to-r from-accent to-primary text-white",
-                                "hover:brightness-110 hover:shadow-lg hover:shadow-accent/30",
-                                "active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed",
-                                "flex items-center justify-center gap-2"
-                            )}
-                        >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                    {t('auth.registering') || 'Đang đăng ký...'}
-                                </>
-                            ) : (
-                                <>
-                                    <UserPlus className="w-5 h-5" />
-                                    {t('auth.createAccount') || 'Tạo tài khoản'}
-                                </>
-                            )}
-                        </button>
-                    </form>
+                            <button type="submit" disabled={isLoading || !passwordValidation.isValid}
+                                className="auth-submit-btn !py-2.5 !text-xs !mt-4 cursor-pointer"
+                                style={{ background: 'linear-gradient(135deg, hsl(270, 80%, 55%) 0%, hsl(200, 100%, 50%) 100%)' }}>
+                                {isLoading ? (
+                                    <><Loader2 className="w-4 h-4 animate-spin" />{t('auth.registering') || 'Đang đăng ký...'}</>
+                                ) : (
+                                    <><UserPlus className="w-4 h-4" />{t('auth.createAccount') || 'Tạo tài khoản'}</>
+                                )}
+                            </button>
+                        </form>
 
-                    {/* Divider */}
-                    <div className="flex items-center gap-4 my-5">
-                        <div className="flex-1 h-px bg-white/10" />
-                        <span className="text-xs text-muted-foreground uppercase tracking-wider">
-                            {t('auth.or') || 'hoặc'}
-                        </span>
-                        <div className="flex-1 h-px bg-white/10" />
+                        {/* Switch to Login */}
+                        <p className="text-center text-xs text-white/35 mt-4">
+                            {t('auth.hasAccount') || 'Đã có tài khoản?'}{' '}
+                            <button onClick={onSwitchToLogin}
+                                className="text-violet-400 hover:text-violet-300 font-semibold transition-colors cursor-pointer">
+                                {t('authPage.loginNow') || 'Đăng nhập'}
+                            </button>
+                        </p>
                     </div>
-
-                    {/* Switch to Login */}
-                    <p className="text-center text-sm text-muted-foreground">
-                        {t('auth.hasAccount') || 'Đã có tài khoản?'}{' '}
-                        <button
-                            onClick={onSwitchToLogin}
-                            className="text-accent hover:text-accent/80 font-semibold transition-colors"
-                        >
-                            {t('auth.login') || 'Đăng nhập'}
-                        </button>
-                    </p>
                 </div>
             </div>
         </div>

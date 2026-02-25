@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, Loader2, FolderTree } from 'lucide-react';
 import { adminService } from '@/services/adminService';
+import { useToast } from '../components/ToastProvider';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ActionButton } from '../components/ActionButton';
 
@@ -14,6 +15,7 @@ export default function AdminCategoriesPage() {
     const [saving, setSaving] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<any>(null);
     const [form, setForm] = useState({ name: '', displayName: '', icon: '' });
+    const { showToast } = useToast();
 
     const loadCategories = async () => {
         setLoading(true);
@@ -40,18 +42,18 @@ export default function AdminCategoriesPage() {
         e.preventDefault();
         setSaving(true);
         try {
-            if (editing) { await adminService.updateCategory(editing.id, form); }
-            else { await adminService.createCategory(form); }
+            if (editing) { await adminService.updateCategory(editing.id, form); showToast('success', 'Cập nhật danh mục thành công!'); }
+            else { await adminService.createCategory(form); showToast('success', 'Tạo danh mục mới thành công!'); }
             setModalOpen(false);
             loadCategories();
-        } catch (err: any) { alert(err.message); }
+        } catch (err: any) { showToast('error', err.message); }
         finally { setSaving(false); }
     };
 
     const handleDelete = async () => {
         if (!deleteTarget) return;
-        try { await adminService.deleteCategory(deleteTarget.id); setDeleteTarget(null); loadCategories(); }
-        catch (err: any) { alert(err.message); }
+        try { await adminService.deleteCategory(deleteTarget.id); setDeleteTarget(null); loadCategories(); showToast('success', 'Đã xóa danh mục thành công!'); }
+        catch (err: any) { showToast('error', err.message); }
     };
 
     return (

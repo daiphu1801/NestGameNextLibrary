@@ -1,8 +1,11 @@
 package com.nestgame.repository;
 
 import com.nestgame.entity.GameRating;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,4 +27,11 @@ public interface GameRatingRepository extends JpaRepository<GameRating, Long> {
     Long countByGameId(Long gameId);
 
     void deleteByUserIdAndGameId(Long userId, Long gameId);
+
+    // Admin queries
+    Page<GameRating> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    @Query("SELECT r FROM GameRating r WHERE LOWER(r.user.username) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "OR LOWER(r.game.name) LIKE LOWER(CONCAT('%', :search, '%')) ORDER BY r.createdAt DESC")
+    Page<GameRating> searchRatings(@Param("search") String search, Pageable pageable);
 }

@@ -16,28 +16,28 @@ export interface PasswordValidation {
 /**
  * Validate password strength
  * Requirements:
- * - Minimum 8 characters
+ * - Minimum 6 characters
  * - At least 1 uppercase letter
  * - At least 1 lowercase letter
  * - At least 1 number
- * - At least 1 special character (@$!%*?&)
+ * - At least 1 special character (.@$!%*?&)
  */
 export function validatePassword(password: string): PasswordValidation {
     const checks = {
-        minLength: password.length >= 8,
+        minLength: password.length >= 6,
         hasUppercase: /[A-Z]/.test(password),
         hasLowercase: /[a-z]/.test(password),
         hasNumber: /\d/.test(password),
-        hasSpecialChar: /[@$!%*?&]/.test(password),
+        hasSpecialChar: /[.@$!%*?&]/.test(password),
     };
 
     const errors: string[] = [];
 
-    if (!checks.minLength) errors.push('Tối thiểu 8 ký tự');
+    if (!checks.minLength) errors.push('Tối thiểu 6 ký tự');
     if (!checks.hasUppercase) errors.push('Ít nhất 1 chữ hoa (A-Z)');
     if (!checks.hasLowercase) errors.push('Ít nhất 1 chữ thường (a-z)');
     if (!checks.hasNumber) errors.push('Ít nhất 1 số (0-9)');
-    if (!checks.hasSpecialChar) errors.push('Ít nhất 1 ký tự đặc biệt (@$!%*?&)');
+    if (!checks.hasSpecialChar) errors.push('Ít nhất 1 ký tự đặc biệt (.@$!%*?&)');
 
     const passedChecks = Object.values(checks).filter(Boolean).length;
 

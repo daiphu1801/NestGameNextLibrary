@@ -7,8 +7,11 @@ import com.nestgame.dto.request.AdminGameRequest;
 import com.nestgame.dto.request.LoginRequest;
 import com.nestgame.dto.response.AuthResponse;
 import com.nestgame.service.AdminService;
+import com.nestgame.util.CookieUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,12 +27,30 @@ import java.util.Map;
 public class AdminController {
 
     private final AdminService adminService;
+    private final CookieUtil cookieUtil;
+
+    @Value("${jwt.expiration:86400000}")
+    private long accessTokenExpiration;
+
+    @Value("${jwt.refresh-token.expiration:604800000}")
+    private long refreshTokenExpiration;
 
     // ==================== AUTH ====================
 
     @PostMapping("/auth/login")
-    public ResponseEntity<AuthResponse> adminLogin(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(adminService.adminLogin(request.getLogin(), request.getPassword()));
+    public ResponseEntity<?> adminLogin(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
+        AuthResponse authResponse = adminService.adminLogin(request.getLogin(), request.getPassword());
+        int accessMaxAge = (int) (accessTokenExpiration / 1000);
+        int refreshMaxAge = (int) (refreshTokenExpiration / 1000);
+        cookieUtil.setAccessTokenCookie(response, authResponse.getAccessToken(), accessMaxAge);
+        cookieUtil.setRefreshTokenCookie(response, authResponse.getRefreshToken(), refreshMaxAge);
+        return ResponseEntity.ok(Map.of("user", authResponse.getUser()));
+    }
+
+    @PostMapping("/auth/logout")
+    public ResponseEntity<?> adminLogout(HttpServletResponse response) {
+        cookieUtil.clearAuthCookies(response);
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
     // ==================== DASHBOARD ====================
@@ -162,5 +183,57 @@ public class AdminController {
     public ResponseEntity<Map<String, String>> deleteComment(@PathVariable Long id) {
         adminService.deleteComment(id);
         return ResponseEntity.ok(Map.of("message", "Xóa bình luận thành công"));
+    }
+
+    // ==================== ACTIVITY LOG ====================
+
+    @GetMapping("/activity")
+    public ResponseEntity<?> getActivityLogs(
+            @RequestParam(required = false) String targetType,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(adminService.getActivityLogs(targetType, PageRequest.of(page, size)));
+    }
+
+    // ==================== ADMIN SETTINGS ====================
+
+    @GetMapping("/settings/profile")
+    public ResponseEntity<?> getAdminProfile(@RequestParam String username) {
+        return ResponseEntity.ok(adminService.getAdminProfile(username));
+    }
+
+    @PutMapping("/settings/profile")
+    public ResponseEntity<?> updateAdminProfile(@RequestBody Map<String, String> body) {
+        String currentUsername = body.remove("currentUsername");
+        return ResponseEntity.ok(adminService.updateAdminProfile(currentUsername, body));
+    }
+
+    @PutMapping("/settings/password")
+    public ResponseEntity<Map<String, String>> changeAdminPassword(@RequestBody Map<String, String> body) {
+        adminService.changeAdminPassword(body.get("username"), body.get("currentPassword"), body.get("newPassword"));
+        return ResponseEntity.ok(Map.of("message", "Đổi mật khẩu thành công"));
+    }
+
+    // ==================== NOTIFICATIONS ====================
+
+    @GetMapping("/notifications")
+    public ResponseEntity<?> getNotifications() {
+        return ResponseEntity.ok(adminService.getNotifications());
+    }
+
+    // ==================== RATINGS ====================
+
+    @GetMapping("/ratings")
+    public ResponseEntity<?> getRatings(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(adminService.getRatings(search, PageRequest.of(page, size)));
+    }
+
+    @DeleteMapping("/ratings/{id}")
+    public ResponseEntity<Map<String, String>> deleteRating(@PathVariable Long id) {
+        adminService.deleteRating(id);
+        return ResponseEntity.ok(Map.of("message", "Xóa đánh giá thành công"));
     }
 }

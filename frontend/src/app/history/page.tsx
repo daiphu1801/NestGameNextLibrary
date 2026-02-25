@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/features/games/store/gameStore';
 import { gameService } from '@/services/gameService';
 import { storageService } from '@/services/storageService';
@@ -12,16 +13,14 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { History, Clock, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { GameCard } from '@/components/game/GameCard';
-import { GameModal } from '@/components/game/GameModal';
 
 export default function HistoryPage() {
+    const router = useRouter();
     const { allGames, setGames, isLoading: isStoreLoading } = useGameStore();
     const { t } = useLanguage();
     const { user } = useAuth();
     const [recentGames, setRecentGames] = useState<Game[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const loadHistory = async () => {
@@ -57,13 +56,7 @@ export default function HistoryPage() {
     }, [allGames, setGames, user]);
 
     const handleGameClick = (game: Game) => {
-        setSelectedGame(game);
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setTimeout(() => setSelectedGame(null), 300);
+        router.push(`/games/${game.id}/play`);
     };
 
     return (
@@ -139,15 +132,6 @@ export default function HistoryPage() {
                     </div>
                 )}
             </div>
-
-            {/* Game Modal */}
-            {selectedGame && (
-                <GameModal
-                    game={selectedGame}
-                    isOpen={isModalOpen}
-                    onClose={handleCloseModal}
-                />
-            )}
         </main>
     );
 }

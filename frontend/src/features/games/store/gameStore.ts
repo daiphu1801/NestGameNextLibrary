@@ -44,7 +44,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
   isLoading: true,
 
   // Actions
-  setGames: (games) => set({ allGames: games, filteredGames: games, isLoading: false }),
+  setGames: (games) => {
+    // Sort hot/featured games to top on initial load
+    const isHot = (g: Game) => g.isFeatured || (g.rating && g.rating >= 4.5);
+    const sorted = [...games].sort((a, b) => {
+      const aHot = isHot(a) ? 1 : 0;
+      const bHot = isHot(b) ? 1 : 0;
+      if (aHot !== bHot) return bHot - aHot; // hot first
+      return a.name.localeCompare(b.name); // then alphabetical
+    });
+    set({ allGames: games, filteredGames: sorted, isLoading: false });
+  },
 
   setFilteredGames: (games) => set({ filteredGames: games, currentPage: 1 }),
 

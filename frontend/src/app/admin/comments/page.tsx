@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Trash2, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 import { adminService } from '@/services/adminService';
+import { useToast } from '../components/ToastProvider';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ActionButton } from '../components/ActionButton';
 
@@ -15,6 +16,7 @@ export default function AdminCommentsPage() {
     const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(true);
     const [deleteTarget, setDeleteTarget] = useState<any>(null);
+    const { showToast } = useToast();
     const SIZE = 20;
 
     const loadComments = useCallback(async () => {
@@ -34,8 +36,8 @@ export default function AdminCommentsPage() {
 
     const handleDelete = async () => {
         if (!deleteTarget) return;
-        try { await adminService.deleteComment(deleteTarget.id); setDeleteTarget(null); loadComments(); }
-        catch (err: any) { alert(err.message); }
+        try { await adminService.deleteComment(deleteTarget.id); setDeleteTarget(null); loadComments(); showToast('success', 'Đã xóa bình luận thành công!'); }
+        catch (err: any) { showToast('error', err.message); }
     };
 
     const totalPages = Math.ceil(total / SIZE);

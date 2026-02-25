@@ -1,13 +1,98 @@
 import { Game, GameCategoryKey, SortOption } from '@/types';
+import apiClient from '@/lib/api';
 import gamesData from '@/data/games.json';
+
+// Backend GameDTO type
+interface GameDTO {
+  id: number;
+  name: string;
+  fileName: string;
+  path: string;
+  category: string;
+  categoryId: number;
+  categoryName: string;
+  description?: string;
+  rating?: number;
+  year?: number;
+  region?: string;
+  isFeatured?: boolean;
+  imageUrl?: string;
+  imageSnap?: string;
+  imageTitle?: string;
+  playCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 class GameService {
   private games: Game[] = [];
+  private useBackend: boolean = true;
+
+  // Map backend GameDTO to frontend Game type
+  private mapGameDTO(dto: GameDTO): Game {
+    return {
+      id: dto.id.toString(), // Convert number to string
+      name: dto.name,
+      fileName: dto.fileName,
+      path: dto.path,
+      category: this.normalizeCategoryKey(dto.category || dto.categoryName || 'other'),
+      categoryName: dto.categoryName,
+      description: dto.description,
+      rating: dto.rating,
+      year: dto.year,
+      region: dto.region,
+      isFeatured: dto.isFeatured,
+      imageUrl: dto.imageUrl,
+      image: dto.imageUrl, // Use imageUrl as image
+      imageSnap: dto.imageSnap,
+      imageTitle: dto.imageTitle,
+      thumbnail: dto.imageUrl, // Use imageUrl as thumbnail
+      playCount: dto.playCount,
+      createdAt: dto.createdAt,
+      updatedAt: dto.updatedAt,
+    };
+  }
+
+  // Normalize category to match frontend keys
+  private normalizeCategoryKey(category: string): GameCategoryKey {
+    const normalized = category.toLowerCase().trim();
+    const validCategories = [
+      'platformer', 'rpg', 'sports', 'fighting', 'puzzle', 'racing',
+      'shooter', 'strategy', 'adventure', 'action', 'arcade', 'simulation'
+    ];
+
+    if (validCategories.includes(normalized)) {
+      return normalized as GameCategoryKey;
+    }
+    return 'other';
+  }
 
   async loadGames(): Promise<Game[]> {
     try {
-      // In production, this could be an API call
+      // Try to load from backend API
+      if (this.useBackend) {
+        try {
+          const response = await apiClient.get<{ content: GameDTO[]; totalElements: number }>('/games', {
+            params: {
+              page: 0,
+              size: 9999, // Load all games
+              sortBy: 'name',
+              sortDir: 'asc'
+            }
+          });
+
+          this.games = response.data.content.map(dto => this.mapGameDTO(dto));
+          console.log(`✅ Loaded ${this.games.length} games from backend`);
+          return this.games;
+        } catch (apiError) {
+          console.warn('⚠️ Backend API not available, falling back to JSON:', apiError);
+          this.useBackend = false;
+        }
+      }
+
+      // Fallback to JSON
       this.games = gamesData as unknown as Game[];
+      console.log(`📦 Loaded ${this.games.length} games from JSON fallback`);
       return this.games;
     } catch (error) {
       console.error('Failed to load games:', error);
@@ -19,7 +104,18 @@ class GameService {
     return this.games;
   }
 
-  getGameById(id: string): Game | undefined {
+  async getGameById(id: string): Promise<Game | undefined> {
+    // Try backend API first
+    if (this.useBackend) {
+      try {
+        const response = await apiClient.get<GameDTO>(`/games/${id}`);
+        return this.mapGameDTO(response.data);
+      } catch (error) {
+        console.warn(`⚠️ Failed to fetch game ${id} from backend, falling back to local cache`);
+      }
+    }
+
+    // Fallback to local cache
     return this.games.find(game => game.id === id);
   }
 
@@ -96,6 +192,45 @@ class GameService {
     const regularGames = result.filter(g => !isHot(g));
 
     return [...hotGames, ...regularGames];
+  }
+
+  async getTopGames(type: 'hot' | 'new' | 'top', limit: number = 5): Promise<Game[]> {
+    if (this.useBackend) {
+      try {
+        let sortBy = 'playCount';
+        let sortDir = 'desc';
+
+        if (type === 'new') {
+          sortBy = 'createdAt';
+        } else if (type === 'top') {
+          sortBy = 'rating';
+        }
+
+        const response = await apiClient.get<{ content: GameDTO[]; totalElements: number }>('/games', {
+          params: {
+            page: 0,
+            size: limit,
+            sortBy,
+            sortDir
+          }
+        });
+        return response.data.content.map(dto => this.mapGameDTO(dto));
+      } catch (error) {
+        console.warn(`⚠️ Failed to fetch top ${type} games from backend, falling back to local cache`);
+      }
+    }
+
+    // Fallback to local cache
+    let sorted = [...this.games];
+    if (type === 'hot') {
+      sorted.sort((a, b) => (b.playCount || 0) - (a.playCount || 0));
+    } else if (type === 'new') {
+      sorted.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+    } else if (type === 'top') {
+      sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    }
+
+    return sorted.slice(0, limit);
   }
 
   getFeaturedGames(limit: number = 10): Game[] {

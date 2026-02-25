@@ -2,7 +2,7 @@
 
 import { Header } from '@/components/layout/Header';
 import { useLanguage } from '@/components/providers/LanguageProvider';
-import { ArrowLeft, Book, Gamepad2, Keyboard, Zap } from 'lucide-react';
+import { ArrowLeft, Book, Gamepad2, Keyboard, Zap, Settings, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DocsPage() {
@@ -188,6 +188,49 @@ export default function DocsPage() {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Custom Controls */}
+                    <section className="glass-card rounded-2xl p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Settings className="w-6 h-6 text-emerald-400" />
+                            <h2 className="text-2xl font-bold">{t('docs.customControls.title')}</h2>
+                        </div>
+                        <div className="space-y-4 text-muted-foreground">
+                            <p>{t('docs.customControls.description')}</p>
+                            <ol className="list-decimal list-inside space-y-2 ml-4">
+                                <li>{t('docs.customControls.step1')}</li>
+                                <li>{t('docs.customControls.step2')}</li>
+                                <li>{t('docs.customControls.step3')}</li>
+                                <li>{t('docs.customControls.step4')}</li>
+                            </ol>
+
+                            <div className="mt-4 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                                <p className="text-sm text-emerald-400">{t('docs.customControls.note')}</p>
+                            </div>
+
+                            <div className="mt-4">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <Lightbulb className="w-4 h-4 text-yellow-400" />
+                                    <h3 className="font-semibold text-foreground text-sm">{t('docs.customControls.tips')}</h3>
+                                </div>
+                                <ul className="list-disc list-inside space-y-2 ml-4 text-sm">
+                                    <li>{t('docs.customControls.tip1')}</li>
+                                    <li>{t('docs.customControls.tip2')}</li>
+                                    <li>{t('docs.customControls.tip3')}</li>
+                                </ul>
+                            </div>
+
+                            <div className="mt-4">
+                                <Link
+                                    href="/settings"
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors text-sm font-medium"
+                                >
+                                    <Settings className="w-4 h-4" />
+                                    {t('settings.controls') || 'Game Controls'}
+                                </Link>
                             </div>
                         </div>
                     </section>

@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/features/games/store/gameStore';
 import { userService } from '@/services/userService';
 import { Header } from '@/components/layout/Header';
-import { GameModal } from '@/components/game/GameModal';
 import { FavoriteGameCard } from '@/components/game/FavoriteGameCard';
 import { Game } from '@/types';
 import { useLanguage } from '@/components/providers/LanguageProvider';
@@ -16,14 +16,13 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 export default function FavoritesPage() {
+    const router = useRouter();
     const { t } = useLanguage();
     const { user, openLoginModal } = useAuth();
     const { isLowPerformanceMode } = usePerformance();
     const { favorites, isLoading: isFavoritesLoading, toggleFavorite, refreshFavorites } = useFavorites();
     const [favoriteGames, setFavoriteGames] = useState<Game[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const loadFavoriteGames = async () => {
@@ -49,13 +48,7 @@ export default function FavoritesPage() {
     }, [user, favorites]); // Re-fetch when favorites Set changes
 
     const handleGameClick = (game: Game) => {
-        setSelectedGame(game);
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setTimeout(() => setSelectedGame(null), 300);
+        router.push(`/games/${game.id}/play`);
     };
 
     const handleRemoveFavorite = (gameId: string | number) => {
@@ -193,15 +186,6 @@ export default function FavoritesPage() {
                 )}
 
             </div>
-
-            {/* Game Modal */}
-            {selectedGame && (
-                <GameModal
-                    game={selectedGame}
-                    isOpen={isModalOpen}
-                    onClose={handleCloseModal}
-                />
-            )}
         </main>
     );
 }

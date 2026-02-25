@@ -12,6 +12,8 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { AvatarUpload } from '@/components/profile/AvatarUpload';
 import { BioEditor } from '@/components/profile/BioEditor';
+import { KeybindingSelector } from '@/components/settings/KeybindingSelector';
+import { Gamepad2 } from 'lucide-react';
 
 export default function SettingsPage() {
     const { user } = useAuth();
@@ -73,7 +75,7 @@ export default function SettingsPage() {
                             {t('trial.loginRequired') || 'Yêu cầu đăng nhập'}
                         </h1>
                         <p className="text-muted-foreground mb-8">
-                            Vui lòng đăng nhập để truy cập cài đặt tài khoản của bạn.
+                            {t('settings.loginRequiredDesc') || 'Vui lòng đăng nhập để truy cập cài đặt tài khoản của bạn.'}
                         </p>
                     </div>
                 </div>
@@ -131,7 +133,7 @@ export default function SettingsPage() {
                             {t('settings.title') || 'Cài đặt tài khoản'}
                         </h1>
                         <p className="text-muted-foreground mt-2 text-lg">
-                            Quản lý thông tin hồ sơ và bảo mật của bạn
+                            {t('settings.subtitle') || 'Quản lý thông tin hồ sơ và bảo mật của bạn'}
                         </p>
                     </div>
                 </div>
@@ -158,7 +160,7 @@ export default function SettingsPage() {
 
                                 {/* Bio Section */}
                                 <div className="mt-4 p-4 bg-black/20 rounded-xl border border-white/5 text-left">
-                                    <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold mb-2">Giới thiệu</p>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold mb-2">{t('settings.bio') || 'Giới thiệu'}</p>
                                     <BioEditor currentBio={user.bio || ''} />
                                 </div>
 
@@ -199,7 +201,7 @@ export default function SettingsPage() {
                                     <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white opacity-60">
                                         <User className="w-4 h-4 text-muted-foreground" />
                                         {user.username}
-                                        <span className="ml-auto text-xs bg-white/10 px-2 py-0.5 rounded text-muted-foreground">Read-only</span>
+                                        <span className="ml-auto text-xs bg-white/10 px-2 py-0.5 rounded text-muted-foreground">{t('settings.readOnly') || 'Read-only'}</span>
                                     </div>
                                 </div>
                                 <div className="space-y-2">
@@ -207,7 +209,7 @@ export default function SettingsPage() {
                                     <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white opacity-60">
                                         <Mail className="w-4 h-4 text-muted-foreground" />
                                         {user.email}
-                                        <span className="ml-auto text-xs bg-white/10 px-2 py-0.5 rounded text-muted-foreground">Read-only</span>
+                                        <span className="ml-auto text-xs bg-white/10 px-2 py-0.5 rounded text-muted-foreground">{t('settings.readOnly') || 'Read-only'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -244,7 +246,7 @@ export default function SettingsPage() {
                                 <div className="p-6 rounded-2xl bg-white/5 border border-white/5 space-y-4">
                                     <div className="flex items-center gap-2 text-sm text-yellow-500/80 mb-2">
                                         <Sparkles className="w-4 h-4" />
-                                        <span className="font-semibold">Đặt mật khẩu mới</span>
+                                        <span className="font-semibold">{t('settings.setNewPassword') || 'Đặt mật khẩu mới'}</span>
                                     </div>
 
                                     {/* New Password */}
@@ -290,23 +292,23 @@ export default function SettingsPage() {
                                                 <div className="grid grid-cols-2 gap-1.5 text-xs">
                                                     <div className={cn("flex items-center gap-1", passwordValidation.checks.minLength ? 'text-green-400' : 'text-muted-foreground')}>
                                                         {passwordValidation.checks.minLength ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
-                                                        Tối thiểu 8 ký tự
+                                                        {t('settings.reqMinLength') || 'Tối thiểu 8 ký tự'}
                                                     </div>
                                                     <div className={cn("flex items-center gap-1", passwordValidation.checks.hasUppercase ? 'text-green-400' : 'text-muted-foreground')}>
                                                         {passwordValidation.checks.hasUppercase ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
-                                                        Chữ hoa (A-Z)
+                                                        {t('settings.reqUppercase') || 'Chữ hoa (A-Z)'}
                                                     </div>
                                                     <div className={cn("flex items-center gap-1", passwordValidation.checks.hasLowercase ? 'text-green-400' : 'text-muted-foreground')}>
                                                         {passwordValidation.checks.hasLowercase ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
-                                                        Chữ thường (a-z)
+                                                        {t('settings.reqLowercase') || 'Chữ thường (a-z)'}
                                                     </div>
                                                     <div className={cn("flex items-center gap-1", passwordValidation.checks.hasNumber ? 'text-green-400' : 'text-muted-foreground')}>
                                                         {passwordValidation.checks.hasNumber ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
-                                                        Số (0-9)
+                                                        {t('settings.reqNumber') || 'Số (0-9)'}
                                                     </div>
                                                     <div className={cn("flex items-center gap-1 col-span-2", passwordValidation.checks.hasSpecialChar ? 'text-green-400' : 'text-muted-foreground')}>
                                                         {passwordValidation.checks.hasSpecialChar ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
-                                                        Ký tự đặc biệt (@$!%*?&)
+                                                        {t('settings.reqSpecial') || 'Ký tự đặc biệt (@$!%*?&)'}
                                                     </div>
                                                 </div>
                                             </div>
@@ -368,7 +370,7 @@ export default function SettingsPage() {
                                         {isLoading ? (
                                             <>
                                                 <Loader2 className="w-5 h-5 animate-spin" />
-                                                Updating...
+                                                {t('settings.updating') || 'Updating...'}
                                             </>
                                         ) : (
                                             <>
@@ -379,6 +381,27 @@ export default function SettingsPage() {
                                     </button>
                                 </div>
                             </form>
+                        </div>
+
+                        {/* Game Controls */}
+                        <div className="glass-card rounded-3xl p-8 border border-white/10 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-8 opacity-5">
+                                <Gamepad2 className="w-32 h-32" />
+                            </div>
+                            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+                                <span className="p-2 rounded-lg bg-emerald-500/20 text-emerald-500">
+                                    <Gamepad2 className="w-5 h-5" />
+                                </span>
+                                {t('settings.controls') || 'Điều khiển game'}
+                            </h2>
+
+                            <p className="text-sm text-muted-foreground mb-6 relative z-10">
+                                {t('settings.controlsDesc') || 'Tùy chỉnh phím điều khiển cho từng nút trên tay cầm NES. Bấm vào nút rồi nhấn phím bạn muốn gán.'}
+                            </p>
+
+                            <div className="relative z-10">
+                                <KeybindingSelector />
+                            </div>
                         </div>
                     </div>
                 </div>

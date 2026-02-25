@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Trash2, ToggleLeft, ToggleRight, ChevronLeft, ChevronRight, Download, X, Eye, Gamepad2, MessageSquare, Heart, Clock } from 'lucide-react';
 import { adminService } from '@/services/adminService';
+import { useToast } from '../components/ToastProvider';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ActionButton } from '../components/ActionButton';
 
@@ -17,6 +18,7 @@ export default function AdminUsersPage() {
     const [deleteTarget, setDeleteTarget] = useState<any>(null);
     const [detailUser, setDetailUser] = useState<any>(null);
     const [detailLoading, setDetailLoading] = useState(false);
+    const { showToast } = useToast();
     const SIZE = 15;
 
     const loadUsers = useCallback(async () => {
@@ -35,19 +37,19 @@ export default function AdminUsersPage() {
 
 
     const handleRoleChange = async (userId: number, newRole: string) => {
-        try { await adminService.updateUserRole(userId, newRole); loadUsers(); }
-        catch (err: any) { alert(err.message); }
+        try { await adminService.updateUserRole(userId, newRole); loadUsers(); showToast('success', 'Cập nhật role thành công!'); }
+        catch (err: any) { showToast('error', err.message); }
     };
 
     const handleStatusToggle = async (userId: number, currentActive: boolean) => {
-        try { await adminService.updateUserStatus(userId, !currentActive); loadUsers(); }
-        catch (err: any) { alert(err.message); }
+        try { await adminService.updateUserStatus(userId, !currentActive); loadUsers(); showToast('success', 'Cập nhật trạng thái thành công!'); }
+        catch (err: any) { showToast('error', err.message); }
     };
 
     const handleDelete = async () => {
         if (!deleteTarget) return;
-        try { await adminService.deleteUser(deleteTarget.id); setDeleteTarget(null); loadUsers(); }
-        catch (err: any) { alert(err.message); }
+        try { await adminService.deleteUser(deleteTarget.id); setDeleteTarget(null); loadUsers(); showToast('success', 'Đã xóa người dùng thành công!'); }
+        catch (err: any) { showToast('error', err.message); }
     };
 
     const openDetail = async (userId: number) => {
@@ -56,7 +58,7 @@ export default function AdminUsersPage() {
         try {
             const detail = await adminService.getUserDetail(userId);
             setDetailUser(detail);
-        } catch (err: any) { alert(err.message); }
+        } catch (err: any) { showToast('error', err.message); }
         finally { setDetailLoading(false); }
     };
 

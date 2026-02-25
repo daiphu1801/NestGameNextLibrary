@@ -7,11 +7,8 @@ import { Header } from '@/components/layout/Header';
 import { CategoryFilter } from '@/components/search/CategoryFilter';
 import { FilterToolbar } from '@/components/search/FilterToolbar';
 import { GameGrid } from '@/components/game/GameGrid';
-import { GameModal } from '@/components/game/GameModal';
 import { validateEnv } from '@/config/env';
 import { useLanguage } from '@/components/providers/LanguageProvider';
-import { useState } from 'react';
-import { Game } from '@/types';
 import { X, Search, RotateCcw } from 'lucide-react';
 
 // Search Indicator Component - Shows when filters are active
@@ -117,18 +114,6 @@ function SearchIndicator() {
 export default function LibraryPage() {
     const { setGames, isLoading, filteredGames, allGames } = useGameStore();
     const { t } = useLanguage();
-    const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleGameClick = (game: Game) => {
-        setSelectedGame(game);
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setTimeout(() => setSelectedGame(null), 300);
-    };
 
     useEffect(() => {
         validateEnv();
@@ -223,15 +208,6 @@ export default function LibraryPage() {
                 {/* Game Grid */}
                 <GameGrid />
             </div>
-
-            {/* Game Modal */}
-            {selectedGame && (
-                <GameModal
-                    game={selectedGame}
-                    isOpen={isModalOpen}
-                    onClose={handleCloseModal}
-                />
-            )}
         </main>
     );
 }

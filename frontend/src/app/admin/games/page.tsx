@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Plus, Pencil, Trash2, X, Star, ChevronLeft, ChevronRight, Loader2, Download } from 'lucide-react';
 import { adminService } from '@/services/adminService';
+import { useToast } from '../components/ToastProvider';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ActionButton } from '../components/ActionButton';
 
@@ -20,6 +21,7 @@ export default function AdminGamesPage() {
     const [saving, setSaving] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<any>(null);
     const [togglingFeatured, setTogglingFeatured] = useState<number | null>(null);
+    const { showToast } = useToast();
     const SIZE = 15;
 
     const [form, setForm] = useState({
@@ -65,18 +67,18 @@ export default function AdminGamesPage() {
         setSaving(true);
         try {
             const payload = { ...form, categoryId: form.categoryId ? Number(form.categoryId) : null, rating: form.rating ? Number(form.rating) : null, year: form.year ? Number(form.year) : null };
-            if (editingGame) { await adminService.updateGame(editingGame.id, payload); }
-            else { await adminService.createGame(payload); }
+            if (editingGame) { await adminService.updateGame(editingGame.id, payload); showToast('success', 'Cập nhật game thành công!'); }
+            else { await adminService.createGame(payload); showToast('success', 'Tạo game mới thành công!'); }
             setModalOpen(false);
             loadGames();
-        } catch (err: any) { alert(err.message); }
+        } catch (err: any) { showToast('error', err.message); }
         finally { setSaving(false); }
     };
 
     const handleDelete = async () => {
         if (!deleteTarget) return;
-        try { await adminService.deleteGame(deleteTarget.id); setDeleteTarget(null); loadGames(); }
-        catch (err: any) { alert(err.message); }
+        try { await adminService.deleteGame(deleteTarget.id); setDeleteTarget(null); loadGames(); showToast('success', 'Đã xóa game thành công!'); }
+        catch (err: any) { showToast('error', err.message); }
     };
 
     const handleToggleFeatured = async (gameId: number) => {
@@ -84,7 +86,7 @@ export default function AdminGamesPage() {
         try {
             await adminService.toggleFeatured(gameId);
             setGames(prev => prev.map(g => g.id === gameId ? { ...g, isFeatured: !g.isFeatured } : g));
-        } catch (err: any) { alert(err.message); }
+        } catch (err: any) { showToast('error', err.message); }
         finally { setTogglingFeatured(null); }
     };
 
