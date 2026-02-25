@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Trash2, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 import { adminService } from '@/services/adminService';
@@ -8,7 +8,7 @@ import { useToast } from '../components/ToastProvider';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ActionButton } from '../components/ActionButton';
 
-export default function AdminCommentsPage() {
+function AdminCommentsContent() {
     const [comments, setComments] = useState<any[]>([]);
     const searchParams = useSearchParams();
     const search = searchParams.get('q') || '';
@@ -110,5 +110,13 @@ export default function AdminCommentsPage() {
                 onCancel={() => setDeleteTarget(null)}
             />
         </div>
+    );
+}
+
+export default function AdminCommentsPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center h-48"><div className="w-6 h-6 border-2 border-[#3C50E0] border-t-transparent rounded-full animate-spin" /></div>}>
+            <AdminCommentsContent />
+        </Suspense>
     );
 }

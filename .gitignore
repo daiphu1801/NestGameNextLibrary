@@ -34,3 +34,6 @@ Thumbs.db
 # Compiled
 *.jar
 *.war
+
+# Render deployment (contains secrets, DO NOT COMMIT)
+render-backend.env

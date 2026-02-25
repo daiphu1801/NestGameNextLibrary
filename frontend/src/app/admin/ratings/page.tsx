@@ -1,15 +1,13 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState, useCallback, Suspense } from 'react';
 import { Star, Trash2, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { adminService } from '@/services/adminService';
 import { useToast } from '../components/ToastProvider';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ActionButton } from '../components/ActionButton';
 
-export default function RatingsPage() {
-    const searchParams = useSearchParams();
+function RatingsContent() {
     const [ratings, setRatings] = useState<any[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(0);
@@ -146,5 +144,13 @@ export default function RatingsPage() {
                 variant="danger"
             />
         </div>
+    );
+}
+
+export default function RatingsPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center h-48"><div className="w-6 h-6 border-2 border-[#3C50E0] border-t-transparent rounded-full animate-spin" /></div>}>
+            <RatingsContent />
+        </Suspense>
     );
 }

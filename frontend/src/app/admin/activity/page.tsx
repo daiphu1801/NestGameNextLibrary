@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState, useCallback, Suspense } from 'react';
 import { Clock, ChevronLeft, ChevronRight, Filter, Gamepad2, Users, FolderTree, MessageSquare, Star, Settings } from 'lucide-react';
 import { adminService } from '@/services/adminService';
 import { useToast } from '../components/ToastProvider';
@@ -23,8 +22,7 @@ const typeIcons: Record<string, any> = {
     SETTINGS: Settings,
 };
 
-export default function ActivityPage() {
-    const searchParams = useSearchParams();
+function ActivityContent() {
     const [logs, setLogs] = useState<any[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(0);
@@ -135,5 +133,13 @@ export default function ActivityPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function ActivityPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-2 border-[#3C50E0] border-t-transparent rounded-full animate-spin" /></div>}>
+            <ActivityContent />
+        </Suspense>
     );
 }

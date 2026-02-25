@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Plus, Pencil, Trash2, X, Star, ChevronLeft, ChevronRight, Loader2, Download } from 'lucide-react';
 import { adminService } from '@/services/adminService';
@@ -8,7 +8,7 @@ import { useToast } from '../components/ToastProvider';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ActionButton } from '../components/ActionButton';
 
-export default function AdminGamesPage() {
+function AdminGamesContent() {
     const [games, setGames] = useState<any[]>([]);
     const [categories, setCategories] = useState<any[]>([]);
     const searchParams = useSearchParams();
@@ -272,5 +272,13 @@ export default function AdminGamesPage() {
                 onCancel={() => setDeleteTarget(null)}
             />
         </div>
+    );
+}
+
+export default function AdminGamesPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center h-48"><div className="w-6 h-6 border-2 border-[#3C50E0] border-t-transparent rounded-full animate-spin" /></div>}>
+            <AdminGamesContent />
+        </Suspense>
     );
 }

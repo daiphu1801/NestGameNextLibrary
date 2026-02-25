@@ -1,0 +1,14 @@
+# ===========================================
+# PRODUCTION PROFILE
+# Loaded when SPRING_PROFILE=prod
+# All secrets are passed via environment variables
+# DO NOT put actual values here - commit this file to Git
+# ===========================================
+
+spring:
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+  # Disable open-in-view to reduce memory usage on free tier
+  jpa.open-in-view: false
