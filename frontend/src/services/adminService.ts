@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api/admin';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/admin`;
 
 const ADMIN_USER_KEY = 'admin_user';
 

@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api/users/me/save-states';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/users/me/save-states`;
 
 export interface SaveSlotInfo {
     id: number;

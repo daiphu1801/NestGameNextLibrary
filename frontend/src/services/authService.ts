@@ -1,6 +1,7 @@
 import { LoginRequest, RegisterRequest, AuthResponse, User } from '@/types/auth';
 
-const API_URL = 'http://localhost:8080/api/auth';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/auth`;
+
 
 export const authService = {
     async login(data: LoginRequest): Promise<{ user: User }> {

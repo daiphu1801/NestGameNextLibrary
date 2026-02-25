@@ -1,5 +1,7 @@
-const API_URL = 'http://localhost:8080/api/users/me';
-const GAMES_API_URL = 'http://localhost:8080/api/games';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+const API_URL = `${BASE_URL}/users/me`;
+const GAMES_API_URL = `${BASE_URL}/games`;
+
 
 export interface GameComment {
     id: number;
