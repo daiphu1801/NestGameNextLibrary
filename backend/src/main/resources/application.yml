@@ -38,7 +38,7 @@ jwt:
     expiration: ${JWT_REFRESH_EXPIRATION:604800000}
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${PORT:${SERVER_PORT:8080}}
   servlet:
     context-path: /api
 
