@@ -2,6 +2,31 @@ import { LoginRequest, RegisterRequest, AuthResponse, User } from '@/types/auth'
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/auth`;
 
+// ── Token helpers ──────────────────────────────────────────────────────────
+const TOKEN_KEY = 'accessToken';
+const REFRESH_KEY = 'refreshToken';
+
+export function getAccessToken(): string | null {
+    return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
+}
+
+export function saveTokens(accessToken: string, refreshToken: string) {
+    localStorage.setItem(TOKEN_KEY, accessToken);
+    localStorage.setItem(REFRESH_KEY, refreshToken);
+}
+
+export function clearTokens() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(REFRESH_KEY);
+}
+
+export function getAuthHeaders(): Record<string, string> {
+    const token = getAccessToken();
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+}
+// ──────────────────────────────────────────────────────────────────────────
 
 export const authService = {
     async login(data: LoginRequest): Promise<{ user: User }> {
@@ -17,7 +42,9 @@ export const authService = {
             throw new Error(errorData.message || 'Login failed');
         }
 
-        return response.json();
+        const result = await response.json();
+        if (result.accessToken) saveTokens(result.accessToken, result.refreshToken);
+        return result;
     },
 
     async register(data: RegisterRequest): Promise<{ user: User }> {
@@ -33,7 +60,9 @@ export const authService = {
             throw new Error(errorData.message || 'Registration failed');
         }
 
-        return response.json();
+        const result = await response.json();
+        if (result.accessToken) saveTokens(result.accessToken, result.refreshToken);
+        return result;
     },
 
     async changePassword(data: any): Promise<void> {

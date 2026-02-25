@@ -38,15 +38,20 @@ public class AuthController {
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request, HttpServletResponse response) {
         AuthResponse authResponse = authService.register(request);
         setAuthCookies(response, authResponse);
-        // Return user info only, tokens are in HttpOnly cookies
-        return ResponseEntity.ok(Map.of("user", authResponse.getUser()));
+        return ResponseEntity.ok(Map.of(
+                "user", authResponse.getUser(),
+                "accessToken", authResponse.getAccessToken(),
+                "refreshToken", authResponse.getRefreshToken()));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
         AuthResponse authResponse = authService.login(request);
         setAuthCookies(response, authResponse);
-        return ResponseEntity.ok(Map.of("user", authResponse.getUser()));
+        return ResponseEntity.ok(Map.of(
+                "user", authResponse.getUser(),
+                "accessToken", authResponse.getAccessToken(),
+                "refreshToken", authResponse.getRefreshToken()));
     }
 
     @PostMapping("/refresh")

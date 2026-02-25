@@ -1,3 +1,5 @@
+import { getAuthHeaders } from './authService';
+
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/users/me/save-states`;
 
 export interface SaveSlotInfo {
@@ -32,6 +34,7 @@ export const saveStateService = {
         const response = await fetch(`${API_URL}/${numericId}/slot/${slot}`, {
             method: 'POST',
             credentials: 'include',
+            headers: { ...getAuthHeaders() },
             body: formData,
         });
 
@@ -52,6 +55,7 @@ export const saveStateService = {
         const response = await fetch(`${API_URL}/${numericId}/slot/${slot}`, {
             method: 'GET',
             credentials: 'include',
+            headers: { ...getAuthHeaders() },
         });
 
         if (!response.ok) {
@@ -71,6 +75,7 @@ export const saveStateService = {
             const response = await fetch(`${API_URL}/${numericId}/slot/${slot}/thumbnail`, {
                 method: 'GET',
                 credentials: 'include',
+                headers: { ...getAuthHeaders() },
             });
 
             if (!response.ok) return null;
@@ -92,6 +97,7 @@ export const saveStateService = {
             const response = await fetch(`${API_URL}/${numericId}`, {
                 method: 'GET',
                 credentials: 'include',
+                headers: { ...getAuthHeaders() },
             });
 
             if (!response.ok) return [];
@@ -110,6 +116,7 @@ export const saveStateService = {
         const response = await fetch(`${API_URL}/${numericId}/slot/${slot}`, {
             method: 'DELETE',
             credentials: 'include',
+            headers: { ...getAuthHeaders() },
         });
 
         if (!response.ok) {

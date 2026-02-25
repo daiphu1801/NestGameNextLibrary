@@ -12,3 +12,7 @@ spring:
       ddl-auto: update
   # Disable open-in-view to reduce memory usage on free tier
   jpa.open-in-view: false
+
+app:
+  cookie:
+    secure: true   # Required for SameSite=None cross-domain cookies (HTTPS only)

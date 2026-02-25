@@ -1,7 +1,8 @@
+import { getAuthHeaders } from './authService';
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 const API_URL = `${BASE_URL}/users/me`;
 const GAMES_API_URL = `${BASE_URL}/games`;
-
 
 export interface GameComment {
     id: number;
@@ -19,7 +20,7 @@ export const userService = {
 
         const response = await fetch(`${API_URL}/history`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
             credentials: 'include',
             body: JSON.stringify({ gameId: numericId }),
         });
@@ -32,6 +33,7 @@ export const userService = {
     async getPlayHistory(): Promise<any[]> {
         const response = await fetch(`${API_URL}/history`, {
             method: 'GET',
+            headers: { ...getAuthHeaders() },
             credentials: 'include',
         });
 
@@ -45,6 +47,7 @@ export const userService = {
 
         const response = await fetch(`${API_URL}/favorites/${numericId}`, {
             method: 'POST',
+            headers: { ...getAuthHeaders() },
             credentials: 'include',
         });
 
@@ -59,6 +62,7 @@ export const userService = {
 
         const response = await fetch(`${API_URL}/favorites/${numericId}`, {
             method: 'DELETE',
+            headers: { ...getAuthHeaders() },
             credentials: 'include',
         });
 
@@ -72,6 +76,7 @@ export const userService = {
         try {
             const response = await fetch(`${API_URL}/favorites`, {
                 method: 'GET',
+                headers: { ...getAuthHeaders() },
                 credentials: 'include',
             });
 
@@ -94,6 +99,7 @@ export const userService = {
 
         const response = await fetch(`${API_URL}/avatar`, {
             method: 'POST',
+            headers: { ...getAuthHeaders() },
             credentials: 'include',
             body: formData,
         });
@@ -106,6 +112,7 @@ export const userService = {
     async deleteAvatar(): Promise<void> {
         const response = await fetch(`${API_URL}/avatar`, {
             method: 'DELETE',
+            headers: { ...getAuthHeaders() },
             credentials: 'include',
         });
 
@@ -115,7 +122,7 @@ export const userService = {
     async updateKeybindings(config: string): Promise<void> {
         const response = await fetch(`${API_URL}/keybindings`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
             credentials: 'include',
             body: JSON.stringify({ config }),
         });
@@ -129,7 +136,7 @@ export const userService = {
     async updateBio(bio: string): Promise<void> {
         const response = await fetch(`${API_URL}/bio`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
             credentials: 'include',
             body: JSON.stringify({ bio }),
         });
@@ -143,6 +150,7 @@ export const userService = {
     async getProfile(): Promise<any> {
         const response = await fetch(API_URL, {
             method: 'GET',
+            headers: { ...getAuthHeaders() },
             credentials: 'include',
         });
 
@@ -160,6 +168,7 @@ export const userService = {
 
     async getMyRating(gameId: number): Promise<number> {
         const response = await fetch(`${GAMES_API_URL}/${gameId}/ratings/me`, {
+            headers: { ...getAuthHeaders() },
             credentials: 'include',
         });
 
@@ -171,7 +180,7 @@ export const userService = {
     async rateGame(gameId: number, rating: number): Promise<{ averageRating: number }> {
         const response = await fetch(`${GAMES_API_URL}/${gameId}/ratings`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
             credentials: 'include',
             body: JSON.stringify({ rating }),
         });
@@ -191,7 +200,7 @@ export const userService = {
     async addComment(gameId: number, content: string): Promise<GameComment> {
         const response = await fetch(`${GAMES_API_URL}/${gameId}/comments`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
             credentials: 'include',
             body: JSON.stringify({ content }),
         });
@@ -207,6 +216,7 @@ export const userService = {
     async deleteComment(gameId: number, commentId: number): Promise<void> {
         const response = await fetch(`${GAMES_API_URL}/${gameId}/comments/${commentId}`, {
             method: 'DELETE',
+            headers: { ...getAuthHeaders() },
             credentials: 'include',
         });
 

@@ -1,3 +1,5 @@
+import { getAuthHeaders } from './authService';
+
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/admin`;
 
 const ADMIN_USER_KEY = 'admin_user';
@@ -33,13 +35,14 @@ interface PageResponse<T> {
 async function apiRequest(endpoint: string, options: RequestInit = {}) {
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
+        ...getAuthHeaders(),
         ...(options.headers as Record<string, string> || {}),
     };
 
     const response = await fetch(`${API_URL}${endpoint}`, {
         ...options,
         headers,
-        credentials: 'include', // Send HttpOnly cookies automatically
+        credentials: 'include',
     });
 
     if (response.status === 401 || response.status === 403) {
