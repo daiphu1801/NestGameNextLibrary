@@ -375,7 +375,26 @@
     "reqUppercase": "Chữ hoa (A-Z)",
     "reqLowercase": "Chữ thường (a-z)",
     "reqNumber": "Số (0-9)",
-    "reqSpecial": "Ký tự đặc biệt (@$!%*?&)"
+    "reqSpecial": "Ký tự đặc biệt (@$!%*?&)",
+    "gamepad": {
+      "tabKeyboard": "⌨️ Bàn Phím",
+      "tabGamepad": "🎮 Tay Cầm",
+      "desc": "Tùy chỉnh nút tay cầm cho từng nút NES. Bấm vào ô rồi nhấn nút trên tay cầm.",
+      "noGamepad": "Chưa kết nối tay cầm – Cắm vào và nhấn bất kỳ nút nào",
+      "connected": "Đã kết nối",
+      "pressButton": "Nhấn nút...",
+      "hint": "Bấm vào ô nút → Nhấn nút trên tay cầm → Lưu. Nhấn Esc để hủy.",
+      "connectFirst": "Hãy kết nối tay cầm trước, rồi nhấn bất kỳ nút nào để trình duyệt nhận diện.",
+      "buttonIndex": "Nút #",
+      "saved": "Đã lưu cấu hình tay cầm!",
+      "guideTitle": "Hướng dẫn & Mapping nút",
+      "howToUse": "Cách sử dụng",
+      "step1": "Cắm tay cầm qua USB hoặc Bluetooth",
+      "step2": "Nhấn bất kỳ nút nào để trình duyệt nhận tay cầm",
+      "step3": "Bấm vào ô nút NES → nhấn nút trên tay cầm để gán",
+      "step4": "Bấm \"Lưu cấu hình\" để áp dụng",
+      "noteRestart": "Lưu ý: Cấu hình mới có hiệu lực ngay khi bắt đầu game. Nếu đang chơi, hãy thoát và vào lại."
+    }
   },
   "user": {
     "history": "Lịch sử chơi",

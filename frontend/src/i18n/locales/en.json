@@ -375,7 +375,26 @@
     "reqUppercase": "Uppercase (A-Z)",
     "reqLowercase": "Lowercase (a-z)",
     "reqNumber": "Number (0-9)",
-    "reqSpecial": "Special character (@$!%*?&)"
+    "reqSpecial": "Special character (@$!%*?&)",
+    "gamepad": {
+      "tabKeyboard": "⌨️ Keyboard",
+      "tabGamepad": "🎮 Gamepad",
+      "desc": "Customize gamepad buttons for each NES button. Click a box then press the button on your controller.",
+      "noGamepad": "No gamepad connected – Plug in and press any button",
+      "connected": "Connected",
+      "pressButton": "Press button...",
+      "hint": "Click a box → Press gamepad button → Save. Press Esc to cancel.",
+      "connectFirst": "Please connect a gamepad first, then press any button so the browser can detect it.",
+      "buttonIndex": "Button #",
+      "saved": "Gamepad config saved!",
+      "guideTitle": "Guide & Button Mapping",
+      "howToUse": "How to use",
+      "step1": "Connect your gamepad via USB or Bluetooth",
+      "step2": "Press any button so the browser detects the gamepad",
+      "step3": "Click a NES button box → press the gamepad button to assign",
+      "step4": "Click \"Save controls\" to apply",
+      "noteRestart": "Note: New config takes effect when starting the game. If you're mid-game, exit and re-enter."
+    }
   },
   "user": {
     "history": "Play History",

@@ -13,7 +13,8 @@ import Link from 'next/link';
 import { AvatarUpload } from '@/components/profile/AvatarUpload';
 import { BioEditor } from '@/components/profile/BioEditor';
 import { KeybindingSelector } from '@/components/settings/KeybindingSelector';
-import { Gamepad2 } from 'lucide-react';
+import { GamepadSelector } from '@/components/settings/GamepadSelector';
+import { Gamepad2, Keyboard } from 'lucide-react';
 
 export default function SettingsPage() {
     const { user } = useAuth();
@@ -28,6 +29,8 @@ export default function SettingsPage() {
         newPassword: '',
         confirmationPassword: ''
     });
+
+    const [controlTab, setControlTab] = useState<'keyboard' | 'gamepad'>('keyboard');
 
     // Password validation
     const passwordValidation = useMemo(() => validatePassword(passwords.newPassword), [passwords.newPassword]);
@@ -388,20 +391,60 @@ export default function SettingsPage() {
                             <div className="absolute top-0 right-0 p-8 opacity-5">
                                 <Gamepad2 className="w-32 h-32" />
                             </div>
-                            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+                            <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-3 relative z-10">
                                 <span className="p-2 rounded-lg bg-emerald-500/20 text-emerald-500">
                                     <Gamepad2 className="w-5 h-5" />
                                 </span>
                                 {t('settings.controls') || 'Điều khiển game'}
                             </h2>
 
-                            <p className="text-sm text-muted-foreground mb-6 relative z-10">
-                                {t('settings.controlsDesc') || 'Tùy chỉnh phím điều khiển cho từng nút trên tay cầm NES. Bấm vào nút rồi nhấn phím bạn muốn gán.'}
-                            </p>
-
-                            <div className="relative z-10">
-                                <KeybindingSelector />
+                            {/* Tabs */}
+                            <div className="flex gap-2 mb-6 relative z-10">
+                                <button
+                                    type="button"
+                                    onClick={() => setControlTab('keyboard')}
+                                    className={cn(
+                                        'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all',
+                                        controlTab === 'keyboard'
+                                            ? 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
+                                            : 'bg-white/5 text-muted-foreground border border-white/5 hover:bg-white/10 hover:text-white'
+                                    )}
+                                >
+                                    <Keyboard className="w-4 h-4" />
+                                    {t('settings.gamepad.tabKeyboard', undefined, '⌨️ Bàn Phím')}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setControlTab('gamepad')}
+                                    className={cn(
+                                        'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all',
+                                        controlTab === 'gamepad'
+                                            ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                                            : 'bg-white/5 text-muted-foreground border border-white/5 hover:bg-white/10 hover:text-white'
+                                    )}
+                                >
+                                    <Gamepad2 className="w-4 h-4" />
+                                    {t('settings.gamepad.tabGamepad', undefined, '🎮 Tay Cầm')}
+                                </button>
                             </div>
+
+                            {controlTab === 'keyboard' && (
+                                <div className="relative z-10">
+                                    <p className="text-sm text-muted-foreground mb-4">
+                                        {t('settings.controlsDesc') || 'Tùy chỉnh phím điều khiển. Bấm vào ô rồi nhấn phím mới.'}
+                                    </p>
+                                    <KeybindingSelector />
+                                </div>
+                            )}
+
+                            {controlTab === 'gamepad' && (
+                                <div className="relative z-10">
+                                    <p className="text-sm text-muted-foreground mb-4">
+                                        {t('settings.gamepad.desc', undefined, 'Tùy chỉnh nút tay cầm cho từng nút NES. Bấm vào ô rồi nhấn nút trên tay cầm.')}
+                                    </p>
+                                    <GamepadSelector />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

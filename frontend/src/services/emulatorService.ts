@@ -50,11 +50,61 @@ export const DEFAULT_KEYBINDINGS: KeybindingConfig = {
   },
 };
 
+// ============================================================
+// GAMEPAD CONFIG
+// ============================================================
+export interface GamepadButtonMap {
+  up: number;      // D-Pad or axis
+  down: number;
+  left: number;
+  right: number;
+  a: number;       // NES A button
+  b: number;       // NES B button
+  start: number;
+  select: number;
+  useAxis: boolean; // true = use axes for D-Pad instead of buttons
+}
+
+export interface GamepadConfig {
+  p1: GamepadButtonMap;
+  p2: GamepadButtonMap;
+}
+
+// Standard Xbox/PlayStation mapping (W3C Gamepad API standard)
+// Xbox: A=0, B=1, X=2, Y=3, LB=4, RB=5, LT=6, RT=7, Back/Select=8, Start=9
+// D-Pad: up=12, down=13, left=14, right=15
+// PS:   Cross=0, Circle=1, Square=2, Triangle=3, ...
+export const DEFAULT_GAMEPAD_MAPPING: GamepadConfig = {
+  p1: {
+    up: 12,
+    down: 13,
+    left: 14,
+    right: 15,
+    b: 0,    // A(Xbox)/Cross(PS) → NES B
+    a: 1,    // B(Xbox)/Circle(PS) → NES A
+    start: 9,
+    select: 8,
+    useAxis: false,
+  },
+  p2: {
+    up: 12,
+    down: 13,
+    left: 14,
+    right: 15,
+    b: 0,
+    a: 1,
+    start: 9,
+    select: 8,
+    useAxis: false,
+  },
+};
+
 class EmulatorService {
   private currentEmulator: any = null;
   private isLoading = false;
   private _isOfflineMode = false;
   private readonly KEYBINDINGS_KEY = 'nestgame_keybindings';
+  private readonly GAMEPAD_KEY = 'nestgame_gamepad';
 
   /**
    * Get current keybindings
@@ -102,6 +152,40 @@ class EmulatorService {
       console.error('Failed to save keybindings:', error);
       throw error;
     }
+  }
+
+  // ---- Gamepad mapping helpers ----
+
+  getGamepadMapping(): GamepadConfig {
+    if (typeof window === 'undefined') return DEFAULT_GAMEPAD_MAPPING;
+    try {
+      const stored = localStorage.getItem(this.GAMEPAD_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return {
+          p1: { ...DEFAULT_GAMEPAD_MAPPING.p1, ...(parsed.p1 || {}) },
+          p2: { ...DEFAULT_GAMEPAD_MAPPING.p2, ...(parsed.p2 || {}) },
+        };
+      }
+    } catch {
+      // ignore
+    }
+    return DEFAULT_GAMEPAD_MAPPING;
+  }
+
+  async saveGamepadMapping(config: GamepadConfig): Promise<void> {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(this.GAMEPAD_KEY, JSON.stringify(config));
+  }
+
+  /** Returns the first connected gamepad or null */
+  detectGamepad(): Gamepad | null {
+    if (typeof navigator === 'undefined') return null;
+    const pads = navigator.getGamepads();
+    for (const pad of pads) {
+      if (pad && pad.connected) return pad;
+    }
+    return null;
   }
 
   /**
@@ -189,12 +273,15 @@ class EmulatorService {
       // Get custom keybindings
       const keys = this.getKeybindings();
 
-      // Launch emulator with canvas and custom keyboard controls
+      // Get gamepad mapping
+      const gp = this.getGamepadMapping();
+
+      // Launch emulator with canvas, keyboard + gamepad controls
       this.currentEmulator = await Nostalgist.nes({
         rom: romUrl,
         element: canvas,
         retroarchConfig: {
-          // Player 1 Controls (Custom)
+          // ── Keyboard: Player 1 ──
           input_player1_up: keys.p1.up,
           input_player1_down: keys.p1.down,
           input_player1_left: keys.p1.left,
@@ -204,7 +291,7 @@ class EmulatorService {
           input_player1_start: keys.p1.start,
           input_player1_select: keys.p1.select,
 
-          // Player 2 Controls (Custom)
+          // ── Keyboard: Player 2 ──
           input_player2_up: keys.p2.up,
           input_player2_down: keys.p2.down,
           input_player2_left: keys.p2.left,
@@ -213,6 +300,28 @@ class EmulatorService {
           input_player2_b: keys.p2.b,
           input_player2_start: keys.p2.start,
           input_player2_select: keys.p2.select,
+
+          // ── Gamepad: Player 1 ──
+          input_player1_joypad_index: 0,
+          input_player1_b_btn: String(gp.p1.b),
+          input_player1_a_btn: String(gp.p1.a),
+          input_player1_up_btn: String(gp.p1.up),
+          input_player1_down_btn: String(gp.p1.down),
+          input_player1_left_btn: String(gp.p1.left),
+          input_player1_right_btn: String(gp.p1.right),
+          input_player1_start_btn: String(gp.p1.start),
+          input_player1_select_btn: String(gp.p1.select),
+
+          // ── Gamepad: Player 2 ──
+          input_player2_joypad_index: 1,
+          input_player2_b_btn: String(gp.p2.b),
+          input_player2_a_btn: String(gp.p2.a),
+          input_player2_up_btn: String(gp.p2.up),
+          input_player2_down_btn: String(gp.p2.down),
+          input_player2_left_btn: String(gp.p2.left),
+          input_player2_right_btn: String(gp.p2.right),
+          input_player2_start_btn: String(gp.p2.start),
+          input_player2_select_btn: String(gp.p2.select),
         },
       });
 
