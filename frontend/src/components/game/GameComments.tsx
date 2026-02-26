@@ -21,7 +21,7 @@ export function GameComments({ gameId }: GameCommentsProps) {
 
     useEffect(() => {
         loadComments();
-    }, [gameId]);
+    }, [gameId, user]);
 
     const loadComments = async () => {
         setIsLoading(true);

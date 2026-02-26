@@ -37,7 +37,10 @@ export function GameDetailsModal({ game, isOpen, onClose, onPlayNow }: GameDetai
             setHasError(false);
             loadRatings();
         }
-    }, [isOpen, game]);
+        if (!user) {
+            setMyRating(0);
+        }
+    }, [isOpen, game, user]);
 
     const loadRatings = async () => {
         if (!game?.id) return;
