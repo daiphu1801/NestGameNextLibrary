@@ -28,189 +28,191 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GameReviewController {
 
-    private final GameRatingRepository ratingRepository;
-    private final GameCommentRepository commentRepository;
-    private final GameRepository gameRepository;
+        private final GameRatingRepository ratingRepository;
+        private final GameCommentRepository commentRepository;
+        private final GameRepository gameRepository;
 
-    // =================== RATINGS ===================
+        // =================== RATINGS ===================
 
-    /**
-     * Get all ratings for a game
-     */
-    @GetMapping("/ratings")
-    public ResponseEntity<?> getRatings(@PathVariable Long gameId) {
-        Double avgRating = ratingRepository.getAverageRatingByGameId(gameId);
-        Long count = ratingRepository.countByGameId(gameId);
+        /**
+         * Get all ratings for a game
+         */
+        @GetMapping("/ratings")
+        public ResponseEntity<?> getRatings(@PathVariable Long gameId) {
+                Double avgRating = ratingRepository.getAverageRatingByGameId(gameId);
+                Long count = ratingRepository.countByGameId(gameId);
 
-        return ResponseEntity.ok(Map.of(
-                "averageRating", avgRating != null ? Math.round(avgRating * 10) / 10.0 : 0,
-                "totalRatings", count));
-    }
-
-    /**
-     * Get user's rating for a game
-     */
-    @GetMapping("/ratings/me")
-    public ResponseEntity<?> getMyRating(@PathVariable Long gameId, Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.ok(Map.of("rating", 0));
+                return ResponseEntity.ok(Map.of(
+                                "averageRating", avgRating != null ? Math.round(avgRating * 10) / 10.0 : 0,
+                                "totalRatings", count));
         }
 
-        User user = extractUser(principal);
-        return ratingRepository.findByUserIdAndGameId(user.getId(), gameId)
-                .map(r -> ResponseEntity.ok(Map.of("rating", r.getRating())))
-                .orElse(ResponseEntity.ok(Map.of("rating", 0)));
-    }
+        /**
+         * Get user's rating for a game
+         */
+        @GetMapping("/ratings/me")
+        public ResponseEntity<?> getMyRating(@PathVariable Long gameId, Principal principal) {
+                if (principal == null) {
+                        return ResponseEntity.ok(Map.of("rating", 0));
+                }
 
-    /**
-     * Rate a game (1-5 stars)
-     */
-    @PostMapping("/ratings")
-    public ResponseEntity<?> rateGame(
-            @PathVariable Long gameId,
-            @RequestBody Map<String, Integer> request,
-            Principal principal) {
-
-        User user = extractUser(principal);
-        Integer rating = request.get("rating");
-
-        if (rating == null || rating < 1 || rating > 5) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "success", false,
-                    "message", "Rating must be between 1 and 5"));
+                User user = extractUser(principal);
+                return ratingRepository.findByUserIdAndGameId(user.getId(), gameId)
+                                .map(r -> ResponseEntity.ok(Map.of("rating", r.getRating())))
+                                .orElse(ResponseEntity.ok(Map.of("rating", 0)));
         }
 
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new RuntimeException("Game not found"));
+        /**
+         * Rate a game (1-5 stars)
+         */
+        @PostMapping("/ratings")
+        public ResponseEntity<?> rateGame(
+                        @PathVariable Long gameId,
+                        @RequestBody Map<String, Integer> request,
+                        Principal principal) {
 
-        // Update or create rating
-        GameRating gameRating = ratingRepository.findByUserIdAndGameId(user.getId(), gameId)
-                .orElse(GameRating.builder()
-                        .user(user)
-                        .game(game)
-                        .build());
+                User user = extractUser(principal);
+                Integer rating = request.get("rating");
 
-        gameRating.setRating(rating);
-        gameRating.setUpdatedAt(LocalDateTime.now());
-        // Get new average
-        Double avgRating = ratingRepository.getAverageRatingByGameId(gameId);
+                if (rating == null || rating < 1 || rating > 5) {
+                        return ResponseEntity.badRequest().body(Map.of(
+                                        "success", false,
+                                        "message", "Rating must be between 1 and 5"));
+                }
 
-        // Update rating in Game entity for Leaderboard sorting
-        game.setRating(avgRating != null ? Math.round(avgRating * 10) / 10.0 : rating.doubleValue());
-        gameRepository.save(game);
+                Game game = gameRepository.findById(gameId)
+                                .orElseThrow(() -> new RuntimeException("Game not found"));
 
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "rating", rating,
-                "averageRating", avgRating != null ? Math.round(avgRating * 10) / 10.0 : rating));
-    }
+                // Update or create rating
+                GameRating gameRating = ratingRepository.findByUserIdAndGameId(user.getId(), gameId)
+                                .orElse(GameRating.builder()
+                                                .user(user)
+                                                .game(game)
+                                                .build());
 
-    // =================== COMMENTS ===================
+                gameRating.setRating(rating);
+                gameRating.setUpdatedAt(LocalDateTime.now());
+                ratingRepository.save(gameRating); // ← Lưu rating vào DB
 
-    /**
-     * Get all comments for a game
-     */
-    @GetMapping("/comments")
-    public ResponseEntity<List<GameCommentDTO>> getComments(@PathVariable Long gameId) {
-        List<GameComment> comments = commentRepository.findByGameIdOrderByCreatedAtDesc(gameId);
+                // Get new average (tính SAU khi đã save để bao gồm rating mới)
+                Double avgRating = ratingRepository.getAverageRatingByGameId(gameId);
 
-        List<GameCommentDTO> dtos = comments.stream()
-                .map(this::toCommentDTO)
-                .collect(Collectors.toList());
+                // Update rating in Game entity for Leaderboard sorting
+                game.setRating(avgRating != null ? Math.round(avgRating * 10) / 10.0 : rating.doubleValue());
+                gameRepository.save(game);
 
-        return ResponseEntity.ok(dtos);
-    }
-
-    /**
-     * Add a comment to a game
-     */
-    @PostMapping("/comments")
-    public ResponseEntity<?> addComment(
-            @PathVariable Long gameId,
-            @RequestBody Map<String, String> request,
-            Principal principal) {
-
-        User user = extractUser(principal);
-        String content = request.get("content");
-
-        if (content == null || content.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "success", false,
-                    "message", "Comment content is required"));
+                return ResponseEntity.ok(Map.of(
+                                "success", true,
+                                "rating", rating,
+                                "averageRating", avgRating != null ? Math.round(avgRating * 10) / 10.0 : rating));
         }
 
-        if (content.length() > 1000) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "success", false,
-                    "message", "Comment must be less than 1000 characters"));
+        // =================== COMMENTS ===================
+
+        /**
+         * Get all comments for a game
+         */
+        @GetMapping("/comments")
+        public ResponseEntity<List<GameCommentDTO>> getComments(@PathVariable Long gameId) {
+                List<GameComment> comments = commentRepository.findByGameIdOrderByCreatedAtDesc(gameId);
+
+                List<GameCommentDTO> dtos = comments.stream()
+                                .map(this::toCommentDTO)
+                                .collect(Collectors.toList());
+
+                return ResponseEntity.ok(dtos);
         }
 
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new RuntimeException("Game not found"));
+        /**
+         * Add a comment to a game
+         */
+        @PostMapping("/comments")
+        public ResponseEntity<?> addComment(
+                        @PathVariable Long gameId,
+                        @RequestBody Map<String, String> request,
+                        Principal principal) {
 
-        GameComment comment = GameComment.builder()
-                .user(user)
-                .game(game)
-                .content(content.trim())
-                .build();
+                User user = extractUser(principal);
+                String content = request.get("content");
 
-        comment = commentRepository.save(comment);
+                if (content == null || content.trim().isEmpty()) {
+                        return ResponseEntity.badRequest().body(Map.of(
+                                        "success", false,
+                                        "message", "Comment content is required"));
+                }
 
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "comment", toCommentDTO(comment)));
-    }
+                if (content.length() > 1000) {
+                        return ResponseEntity.badRequest().body(Map.of(
+                                        "success", false,
+                                        "message", "Comment must be less than 1000 characters"));
+                }
 
-    /**
-     * Delete a comment (only by owner)
-     */
-    @DeleteMapping("/comments/{commentId}")
-    public ResponseEntity<?> deleteComment(
-            @PathVariable Long gameId,
-            @PathVariable Long commentId,
-            Principal principal) {
+                Game game = gameRepository.findById(gameId)
+                                .orElseThrow(() -> new RuntimeException("Game not found"));
 
-        User user = extractUser(principal);
+                GameComment comment = GameComment.builder()
+                                .user(user)
+                                .game(game)
+                                .content(content.trim())
+                                .build();
 
-        GameComment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                comment = commentRepository.save(comment);
 
-        if (!comment.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(403).body(Map.of(
-                    "success", false,
-                    "message", "You can only delete your own comments"));
+                return ResponseEntity.ok(Map.of(
+                                "success", true,
+                                "comment", toCommentDTO(comment)));
         }
 
-        commentRepository.delete(comment);
+        /**
+         * Delete a comment (only by owner)
+         */
+        @DeleteMapping("/comments/{commentId}")
+        public ResponseEntity<?> deleteComment(
+                        @PathVariable Long gameId,
+                        @PathVariable Long commentId,
+                        Principal principal) {
 
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Comment deleted"));
-    }
+                User user = extractUser(principal);
 
-    // =================== HELPERS ===================
+                GameComment comment = commentRepository.findById(commentId)
+                                .orElseThrow(() -> new RuntimeException("Comment not found"));
 
-    private GameCommentDTO toCommentDTO(GameComment comment) {
-        return GameCommentDTO.builder()
-                .id(comment.getId())
-                .userId(comment.getUser().getId())
-                .username(comment.getUser().getUsername())
-                .avatarUrl(comment.getUser().getAvatarUrl())
-                .content(comment.getContent())
-                .createdAt(comment.getCreatedAt())
-                .build();
-    }
+                if (!comment.getUser().getId().equals(user.getId())) {
+                        return ResponseEntity.status(403).body(Map.of(
+                                        "success", false,
+                                        "message", "You can only delete your own comments"));
+                }
 
-    private User extractUser(Principal principal) {
-        if (principal == null) {
-            throw new RuntimeException("Vui lòng đăng nhập");
+                commentRepository.delete(comment);
+
+                return ResponseEntity.ok(Map.of(
+                                "success", true,
+                                "message", "Comment deleted"));
         }
-        if (principal instanceof UsernamePasswordAuthenticationToken authToken) {
-            Object userObj = authToken.getPrincipal();
-            if (userObj instanceof User user) {
-                return user;
-            }
+
+        // =================== HELPERS ===================
+
+        private GameCommentDTO toCommentDTO(GameComment comment) {
+                return GameCommentDTO.builder()
+                                .id(comment.getId())
+                                .userId(comment.getUser().getId())
+                                .username(comment.getUser().getUsername())
+                                .avatarUrl(comment.getUser().getAvatarUrl())
+                                .content(comment.getContent())
+                                .createdAt(comment.getCreatedAt())
+                                .build();
         }
-        throw new RuntimeException("Invalid authentication");
-    }
+
+        private User extractUser(Principal principal) {
+                if (principal == null) {
+                        throw new RuntimeException("Vui lòng đăng nhập");
+                }
+                if (principal instanceof UsernamePasswordAuthenticationToken authToken) {
+                        Object userObj = authToken.getPrincipal();
+                        if (userObj instanceof User user) {
+                                return user;
+                        }
+                }
+                throw new RuntimeException("Invalid authentication");
+        }
 }
