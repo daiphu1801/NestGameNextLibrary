@@ -84,7 +84,7 @@ export function UserDropdown({ user, onLogin, onLogout }: UserDropdownProps) {
 
             {/* Dropdown Menu */}
             {isOpen && (
-                <div className="absolute top-full right-0 mt-2 w-64 py-2 rounded-2xl glass-card-strong border border-white/10 shadow-2xl shadow-black/20 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute top-full right-0 mt-2 w-64 py-2 rounded-2xl glass-card-strong border border-white/10 shadow-2xl shadow-black/20 animate-in fade-in slide-in-from-top-2 duration-200 z-[200]">
                     {/* User Info */}
                     <div className="px-4 py-3 border-b border-white/10">
                         <p className="font-semibold text-foreground truncate">{user.username}</p>

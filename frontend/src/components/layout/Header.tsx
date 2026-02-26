@@ -148,10 +148,10 @@ export function Header() {
         "sticky z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60",
         showDisclaimer ? 'top-[37px] sm:top-[37px]' : 'top-0'
       )}>
-        <div className="container mx-auto px-4 lg:px-8 overflow-hidden">
-          <div className="flex h-16 items-center justify-between gap-4 overflow-visible">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="flex h-16 items-center justify-between gap-4">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 sm:gap-2.5 group cursor-pointer hover:opacity-90 transition-opacity flex-shrink-0">
+            <Link href="/" className="flex items-center gap-2 sm:gap-2.5 group cursor-pointer hover:opacity-90 transition-opacity shrink-0 min-w-0">
               <div className="relative w-9 h-9 sm:w-10 sm:h-10 group-hover:scale-105 transition-transform duration-300">
                 <img
                   src="/game-console.png"
@@ -209,7 +209,7 @@ export function Header() {
 
                 {/* Dropdown Menu */}
                 {isExploreOpen && (
-                  <div className="absolute top-full left-0 pt-1 w-48 z-50">
+                  <div className="absolute top-full left-0 pt-1 w-48 z-[200]">
                     <div className="bg-secondary/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl shadow-primary/10 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                       <Link
                         href="/random"
