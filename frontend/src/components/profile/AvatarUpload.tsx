@@ -10,9 +10,10 @@ interface AvatarUploadProps {
     currentAvatarUrl?: string;
     username: string;
     onAvatarChange?: (newUrl: string | null) => void;
+    size?: 'sm' | 'md' | 'lg';
 }
 
-export function AvatarUpload({ currentAvatarUrl, username, onAvatarChange }: AvatarUploadProps) {
+export function AvatarUpload({ currentAvatarUrl, username, onAvatarChange, size = 'md' }: AvatarUploadProps) {
     const { refreshUser } = useAuth();
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState('');
@@ -67,10 +68,16 @@ export function AvatarUpload({ currentAvatarUrl, username, onAvatarChange }: Ava
         }
     };
 
+    const sizeClasses = {
+        sm: { container: 'w-16 h-16', text: 'text-2xl', camera: 'p-1.5', icon: 'w-3 h-3' },
+        md: { container: 'w-24 h-24', text: 'text-4xl', camera: 'p-2', icon: 'w-3.5 h-3.5' },
+        lg: { container: 'w-32 h-32', text: 'text-5xl', camera: 'p-2.5', icon: 'w-4 h-4' },
+    }[size];
+
     return (
         <div className="relative inline-block group">
             {/* Avatar Display */}
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl mx-auto bg-gradient-to-br from-gray-800 to-black p-1">
+            <div className={cn(sizeClasses.container, "rounded-full overflow-hidden border-4 border-white/10 shadow-2xl mx-auto bg-gradient-to-br from-gray-800 to-black p-1")}>
                 {currentAvatarUrl ? (
                     <img
                         src={currentAvatarUrl}
@@ -79,7 +86,7 @@ export function AvatarUpload({ currentAvatarUrl, username, onAvatarChange }: Ava
                     />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center rounded-full">
-                        <span className="text-5xl font-bold text-white uppercase">
+                        <span className={cn(sizeClasses.text, "font-bold text-white uppercase")}>
                             {username.charAt(0)}
                         </span>
                     </div>
@@ -106,13 +113,14 @@ export function AvatarUpload({ currentAvatarUrl, username, onAvatarChange }: Ava
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
                 className={cn(
-                    "absolute bottom-1 right-1 p-2.5 rounded-full bg-primary text-white",
+                    sizeClasses.camera,
+                    "absolute bottom-0 right-0 rounded-full bg-primary text-white",
                     "hover:bg-primary/80 transition-all hover:scale-110 shadow-lg border-2 border-background",
                     "disabled:opacity-50 disabled:cursor-not-allowed"
                 )}
                 title="Thay đổi avatar"
             >
-                <Camera className="w-4 h-4" />
+                <Camera className={sizeClasses.icon} />
             </button>
 
             {/* Delete Button (when avatar exists) */}

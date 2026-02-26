@@ -140,17 +140,15 @@ export default function SettingsPage() {
                     <div className="w-full lg:w-64 xl:w-72 shrink-0 space-y-3">
 
                         {/* Profile card — horizontal compact on all sizes */}
-                        <div className="glass-card-strong rounded-2xl p-4 border border-white/10 relative overflow-hidden">
+                        <div className="glass-card-strong rounded-2xl p-3 sm:p-4 border border-white/10 relative overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-transparent" />
                             <div className="relative flex items-center gap-3">
                                 {/* Avatar — smaller on mobile */}
                                 <div className="shrink-0">
-                                    <div className="scale-75 sm:scale-90 lg:scale-100 origin-left">
-                                        <AvatarUpload currentAvatarUrl={user.avatarUrl} username={user.username} />
-                                    </div>
+                                    <AvatarUpload currentAvatarUrl={user.avatarUrl} username={user.username} size="md" />
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                    <p className="font-bold text-white text-base sm:text-lg truncate">{user.username}</p>
+                                    <p className="font-bold text-white text-base truncate">{user.username}</p>
                                     <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                                     <div className="hidden sm:flex items-center gap-1.5 mt-1.5">
                                         <Calendar className="w-3 h-3 text-muted-foreground" />

@@ -172,13 +172,15 @@ export function GamepadSelector() {
         <div className="space-y-5">
             {/* Gamepad Status */}
             <div className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-xl border text-sm font-medium transition-all',
+                'flex items-start gap-3 px-4 py-3 rounded-xl border text-sm font-medium transition-all',
                 connectedPad
                     ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
                     : 'bg-white/5 border-white/10 text-muted-foreground'
             )}>
-                {connectedPad ? <Wifi className="w-4 h-4 shrink-0" /> : <WifiOff className="w-4 h-4 shrink-0" />}
-                <span className="truncate">
+                <div className="shrink-0 mt-0.5">
+                    {connectedPad ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
+                </div>
+                <span className="leading-relaxed text-xs sm:text-sm">
                     {connectedPad
                         ? `${t('settings.gamepad.connected', undefined, 'Đã kết nối')}: ${connectedPad.length > 50 ? connectedPad.slice(0, 50) + '…' : connectedPad}`
                         : t('settings.gamepad.noGamepad', undefined, 'Chưa kết nối tay cầm – Cắm vào và nhấn bất kỳ nút nào')
