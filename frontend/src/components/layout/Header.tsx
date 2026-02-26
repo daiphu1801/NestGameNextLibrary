@@ -145,14 +145,14 @@ export function Header() {
       )}
 
       <header className={cn(
-        "sticky z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60",
+        "sticky z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 overflow-hidden",
         showDisclaimer ? 'top-[37px] sm:top-[37px]' : 'top-0'
       )}>
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-4">{/* Giảm từ h-20 xuống h-16, gap-6 xuống gap-4 */}
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 group cursor-pointer hover:opacity-90 transition-opacity flex-shrink-0">{/* gap-3 xuống 2.5 */}
-              <div className="relative w-10 h-10 group-hover:scale-105 transition-transform duration-300">{/* w-12 h-12 xuống w-10 h-10 */}
+            <Link href="/" className="flex items-center gap-2 sm:gap-2.5 group cursor-pointer hover:opacity-90 transition-opacity flex-shrink-0">
+              <div className="relative w-9 h-9 sm:w-10 sm:h-10 group-hover:scale-105 transition-transform duration-300">
                 <img
                   src="/game-console.png"
                   alt="NestGame Logo"
@@ -160,11 +160,11 @@ export function Header() {
                 />
               </div>
               <div className="flex flex-col">
-                <span className="text-lg font-black tracking-tight font-mono-tech leading-none">{/* text-xl xuống text-lg */}
+                <span className="text-base sm:text-lg font-black tracking-tight font-mono-tech leading-none">
                   <span className="text-gradient-cyan">NEST</span>
                   <span className="text-foreground">GAME</span>
                 </span>
-                <span className="text-[8px] text-muted-foreground tracking-[0.2em] uppercase font-medium">{/* text-[9px] xuống [8px] */}
+                <span className="hidden sm:block text-[8px] text-muted-foreground tracking-[0.2em] uppercase font-medium">
                   Classic NES Emulator
                 </span>
               </div>
@@ -287,62 +287,71 @@ export function Header() {
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
-              {/* Group 1: Search + Keyboard */}
+            <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+              {/* Search (library only) */}
               {isLibraryPage && (
                 <button
                   onClick={toggleSearch}
-                  className="group flex items-center h-10 rounded-full hover:bg-white/5 transition-all duration-300 ease-out overflow-hidden"
+                  className="group flex items-center h-9 w-9 rounded-full hover:bg-white/5 transition-all duration-300 justify-center"
                   title={t('header.search')}
                 >
                   <div className={cn(
-                    "w-10 h-10 flex-shrink-0 flex items-center justify-center transition-all duration-300",
+                    "flex-shrink-0 flex items-center justify-center transition-all duration-300",
                     isSearchOpen ? "text-primary" : "text-muted-foreground group-hover:text-primary"
                   )}>
-                    {isSearchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
+                    {isSearchOpen ? <X className="h-4 w-4 sm:h-5 sm:w-5" /> : <Search className="h-4 w-4 sm:h-5 sm:w-5" />}
                   </div>
                 </button>
               )}
 
-              {/* Separator */}
-              <div className="hidden sm:block w-px h-5 bg-white/10 mx-0.5" />
-
-              {/* Group 2: Theme + Language */}
+              {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
-                className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-all hover:scale-105 active:scale-95"
+                className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/5 transition-all hover:scale-105 active:scale-95"
                 title={mounted ? (theme === 'dark' ? 'Light mode' : 'Dark mode') : 'Toggle theme'}
                 suppressHydrationWarning
               >
-                <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-orange-400" />
-                <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-cyan-400" />
+                <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-orange-400" />
+                <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-cyan-400" />
               </button>
 
+              {/* Language Toggle
+                  Mobile: show only active flag + tap to switch
+                  Desktop: show both flags with text
+              */}
               <button
                 onClick={toggleLanguage}
-                className="px-2 sm:px-3 py-1.5 rounded-full hover:bg-white/5 border border-transparent hover:border-white/10 transition-all text-xs font-bold font-mono-tech uppercase flex items-center gap-1.5 sm:gap-2"
+                className="flex items-center rounded-full hover:bg-white/5 border border-transparent hover:border-white/10 transition-all"
+                title={locale === 'en' ? 'Switch to Vietnamese' : 'Chuyển sang tiếng Anh'}
               >
-                <div className={cn("flex items-center gap-1.5", locale === 'en' ? 'text-primary opacity-100' : 'text-muted-foreground opacity-50 hover:opacity-100 transition-opacity')}>
-                  <USFlag className="w-3.5 h-3.5 rounded-[2px] object-cover shadow-sm" />
-                  <span>EN</span>
+                {/* Mobile: single active flag */}
+                <div className="sm:hidden flex items-center gap-1 px-2 py-1.5 text-xs font-bold font-mono-tech text-primary">
+                  {locale === 'en'
+                    ? <><USFlag className="w-4 h-4 rounded-[2px]" /><span>EN</span></>
+                    : <><VietnamFlag className="w-4 h-4 rounded-[2px]" /><span>VI</span></>
+                  }
                 </div>
-                <div className="w-[1px] h-3 bg-white/10" />
-                <div className={cn("flex items-center gap-1.5", locale === 'vi' ? 'text-primary opacity-100' : 'text-muted-foreground opacity-50 hover:opacity-100 transition-opacity')}>
-                  <VietnamFlag className="w-3.5 h-3.5 rounded-[2px] object-cover shadow-sm" />
-                  <span>VI</span>
+                {/* Desktop: both flags */}
+                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold font-mono-tech uppercase">
+                  <div className={cn("flex items-center gap-1.5", locale === 'en' ? 'text-primary opacity-100' : 'text-muted-foreground opacity-50 hover:opacity-100 transition-opacity')}>
+                    <USFlag className="w-3.5 h-3.5 rounded-[2px] object-cover shadow-sm" />
+                    <span>EN</span>
+                  </div>
+                  <div className="w-[1px] h-3 bg-white/10" />
+                  <div className={cn("flex items-center gap-1.5", locale === 'vi' ? 'text-primary opacity-100' : 'text-muted-foreground opacity-50 hover:opacity-100 transition-opacity')}>
+                    <VietnamFlag className="w-3.5 h-3.5 rounded-[2px] object-cover shadow-sm" />
+                    <span>VI</span>
+                  </div>
                 </div>
               </button>
 
-              {/* Separator */}
-              <div className="hidden sm:block w-px h-5 bg-white/10 mx-0.5" />
-
-              {/* Group 3: Performance */}
+              {/* Performance Toggle (hidden on mobile) */}
               <PerformanceToggleButton />
 
               {/* Separator */}
               <div className="hidden sm:block w-px h-5 bg-white/10 mx-0.5" />
 
-              {/* Group 4: User */}
+              {/* User */}
               <UserDropdown
                 user={user}
                 onLogin={openLoginModal}
@@ -352,9 +361,9 @@ export function Header() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-all"
+                className="md:hidden w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/5 transition-all"
               >
-                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
               </button>
             </div>
           </div>
