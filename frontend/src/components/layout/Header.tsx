@@ -145,11 +145,11 @@ export function Header() {
       )}
 
       <header className={cn(
-        "sticky z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 overflow-hidden",
+        "sticky z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60",
         showDisclaimer ? 'top-[37px] sm:top-[37px]' : 'top-0'
       )}>
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex h-16 items-center justify-between gap-4">{/* Giảm từ h-20 xuống h-16, gap-6 xuống gap-4 */}
+        <div className="container mx-auto px-4 lg:px-8 overflow-hidden">
+          <div className="flex h-16 items-center justify-between gap-4 overflow-visible">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 sm:gap-2.5 group cursor-pointer hover:opacity-90 transition-opacity flex-shrink-0">
               <div className="relative w-9 h-9 sm:w-10 sm:h-10 group-hover:scale-105 transition-transform duration-300">
