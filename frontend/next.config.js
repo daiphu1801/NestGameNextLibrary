@@ -30,6 +30,30 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
       },
+      {
+        // Wikipedia & Wikimedia images (from Auto-Fix)
+        protocol: 'https',
+        hostname: '**.wikipedia.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+      },
+      {
+        // Google image results (from Auto-Fix)
+        protocol: 'https',
+        hostname: '**.googleusercontent.com',
+      },
+      {
+        // downloadroms.io images
+        protocol: 'https',
+        hostname: 'cache.downloadroms.io',
+      },
+      {
+        // General wildcard for other image sources found by Auto-Fix
+        protocol: 'https',
+        hostname: '**',
+      },
     ],
   },
 };

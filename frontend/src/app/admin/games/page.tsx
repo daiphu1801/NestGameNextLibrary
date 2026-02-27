@@ -12,7 +12,7 @@ import { useToast } from '../components/ToastProvider';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ActionButton } from '../components/ActionButton';
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// �"?�"?�"? Constants �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
 const REGIONS = ['', 'JP', 'US', 'EU', 'World', 'KR', 'AU', 'FR', 'DE', 'IT', 'SP'];
 const ROM_FOLDERS = [
     'Nes ROMs Complete 1 Of 4',
@@ -21,7 +21,7 @@ const ROM_FOLDERS = [
     'Nes ROMs Complete 4 Of 4',
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// �"?�"?�"? Helpers �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
 function toSlug(name: string) {
     return name.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-\(\)\[\]!]/g, '');
 }
@@ -61,7 +61,7 @@ function fmtSize(bytes: number) {
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
-// ─── Image Preview Component ──────────────────────────────────────────────────
+// �"?�"?�"? Image Preview Component �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
 function ImagePreview({ url, label }: { url: string; label: string }) {
     const [ok, setOk] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -90,14 +90,14 @@ function ImagePreview({ url, label }: { url: string; label: string }) {
             ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-1" style={{ background: '#1C2434' }}>
                     <AlertCircle className="w-4 h-4 text-[#FB5454]" />
-                    <span className="text-[#FB5454] text-[10px]">Không tải được</span>
+                    <span className="text-[#FB5454] text-[10px]">Không tải �'ược</span>
                 </div>
             )}
         </div>
     );
 }
 
-// ─── ROM Upload Drop Zone ─────────────────────────────────────────────────────
+// �"?�"?�"? ROM Upload Drop Zone �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
 interface RomDropZoneProps {
     onUploaded: (fileName: string, path: string) => void;
 }
@@ -113,7 +113,7 @@ function RomDropZone({ onUploaded }: RomDropZoneProps) {
     const handleFile = async (file: File) => {
         const ext = file.name.split('.').pop()?.toLowerCase();
         if (!['nes', 'zip'].includes(ext || '')) {
-            setError('Chỉ hỗ trợ file .nes hoặc .zip');
+            setError('Ch�? h�- trợ file .nes hoặc .zip');
             return;
         }
         setError('');
@@ -145,10 +145,10 @@ function RomDropZone({ onUploaded }: RomDropZoneProps) {
 
     return (
         <div className="space-y-3">
-            {/* Folder selector — only show for local mode */}
+            {/* Folder selector �?" only show for local mode */}
             {!isCloudinaryMode && !uploaded && (
                 <div>
-                    <label className="block text-xs font-medium text-[#A5B4CB] mb-1.5 uppercase tracking-wider">Thư mục đích (Local)</label>
+                    <label className="block text-xs font-medium text-[#A5B4CB] mb-1.5 uppercase tracking-wider">Thư mục �'ích (Local)</label>
                     <select
                         value={selectedFolder}
                         onChange={e => setSelectedFolder(e.target.value)}
@@ -219,7 +219,7 @@ function RomDropZone({ onUploaded }: RomDropZoneProps) {
     );
 }
 
-// ─── Libretro Image Finder ─────────────────────────────────────────────────────
+// --------------------------------------------------------------------------------------------------------------------- Libretro Image Finder ---------------------------------------------------------------------------------------------------------------------
 interface LibretroFinderProps {
     defaultName?: string;
     onApply: (imageUrl: string, imageSnap: string, imageTitle: string) => void;
@@ -359,7 +359,7 @@ function LibretroFinder({ defaultName = '', onApply }: LibretroFinderProps) {
     );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// --------------------------------------------------------------------------------------------------------------------- Main Component ---------------------------------------------------------------------------------------------------------------------
 function AdminGamesContent() {
     const [games, setGames] = useState<any[]>([]);
     const [categories, setCategories] = useState<any[]>([]);
@@ -385,7 +385,7 @@ function AdminGamesContent() {
     };
     const [form, setForm] = useState(emptyForm);
 
-    // ── Data loading ─────────────────────────────────────────────────────────
+    // --------------------------------------------------------------------------------------------------------------------- Data loading ---------------------------------------------------------------------------------------------------------------------
     const loadGames = useCallback(async () => {
         setLoading(true);
         try {
@@ -400,7 +400,7 @@ function AdminGamesContent() {
     useEffect(() => { setPage(0); }, [search]);
     useEffect(() => { adminService.getCategories().then(setCategories).catch(console.error); }, []);
 
-    // ── Auto-fill helpers ─────────────────────────────────────────────────────
+    // --------------------------------------------------------------------------------------------------------------------- Auto-fill helpers ---------------------------------------------------------------------------------------------------------------------
     const autoFillFromName = (name: string) => {
         if (!form.fileName && !editingGame) {
             setForm(f => ({ ...f, name, fileName: name }));
@@ -418,7 +418,7 @@ function AdminGamesContent() {
         setForm(f => ({ ...f, fileName, path }));
     };
 
-    // ── Modal helpers ─────────────────────────────────────────────────────────
+    // --------------------------------------------------------------------------------------------------------------------- Modal helpers ---------------------------------------------------------------------------------------------------------------------
     const openCreate = () => {
         setEditingGame(null);
         setForm(emptyForm);
@@ -445,7 +445,7 @@ function AdminGamesContent() {
         setModalOpen(true);
     };
 
-    // ── Save ──────────────────────────────────────────────────────────────────
+    // --------------------------------------------------------------------------------------------------------------------- Save ---------------------------------------------------------------------------------------------------------------------
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
@@ -575,7 +575,7 @@ function AdminGamesContent() {
                 {/* Pagination */}
                 {totalPages > 1 && (
                     <div className="flex items-center justify-between px-5 py-3" style={{ borderTop: '1px solid #2E3A47' }}>
-                        <span className="text-[#637381] text-xs">{page * SIZE + 1}–{Math.min((page + 1) * SIZE, total)} / {total}</span>
+                        <span className="text-[#637381] text-xs">{page * SIZE + 1}—{Math.min((page + 1) * SIZE, total)} / {total}</span>
                         <div className="flex items-center gap-1">
                             <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="p-1.5 rounded-md text-[#A5B4CB] hover:text-white hover:bg-[#333A48] disabled:opacity-30 transition-colors cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
                             <span className="px-3 py-1 text-white text-xs font-medium">{page + 1} / {totalPages}</span>
@@ -585,7 +585,7 @@ function AdminGamesContent() {
                 )}
             </div>
 
-            {/* ════════════════ Create/Edit Modal ════════════════ */}
+            {/* --------------------------------------------------------------------------------------------------------------------- Create/Edit Modal --------------------------------------------------------------------------------------------------------------------- */}
             {modalOpen && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
                     <div className="rounded-[12px] w-full max-w-3xl max-h-[92vh] overflow-y-auto border shadow-2xl" style={{ background: '#1C2434', borderColor: '#2E3A47' }}>
@@ -605,7 +605,7 @@ function AdminGamesContent() {
 
                         <form onSubmit={handleSave} className="p-6 space-y-6">
 
-                            {/* ─ Section 1: ROM File Upload ─ */}
+                            {/* --------------------------------------------------------------------------------------------------------------------- Section 1: ROM File Upload --------------------------------------------------------------------------------------------------------------------- */}
                             {!editingGame && (
                                 <div className="rounded-[10px] p-4 space-y-3" style={{ background: '#24303F', border: '1px solid #2E3A47' }}>
                                     <div className="flex items-center gap-2 mb-1">
@@ -617,7 +617,7 @@ function AdminGamesContent() {
                                 </div>
                             )}
 
-                            {/* ─ Section 2: Thông tin cơ bản ─ */}
+                            {/* --------------------------------------------------------------------------------------------------------------------- Section 2: Thông tin cơ bản --------------------------------------------------------------------------------------------------------------------- */}
                             <div className="rounded-[10px] p-4 space-y-4" style={{ background: '#24303F', border: '1px solid #2E3A47' }}>
                                 <h4 className="text-white text-sm font-semibold flex items-center gap-2">
                                     <FolderOpen className="w-4 h-4" style={{ color: '#F59E0B' }} />
@@ -641,7 +641,7 @@ function AdminGamesContent() {
                                     <div>
                                         <label className={labelCls}>
                                             File Name *
-                                            {form.fileName && <span className="ml-2 text-[#10B981] normal-case font-normal">✓ đã điền</span>}
+                                            {form.fileName && <span className="ml-2 text-[#10B981] normal-case font-normal">✓ Đã điền</span>}
                                         </label>
                                         <input
                                             value={form.fileName}
@@ -656,7 +656,7 @@ function AdminGamesContent() {
                                     <div>
                                         <label className={labelCls}>
                                             Path *
-                                            {form.path && <span className="ml-2 text-[#10B981] normal-case font-normal">✓ đã điền</span>}
+                                            {form.path && <span className="ml-2 text-[#10B981] normal-case font-normal">✓ Đã điền</span>}
                                         </label>
                                         <input
                                             value={form.path}
@@ -701,7 +701,7 @@ function AdminGamesContent() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {/* Rating */}
                                     <div>
-                                        <label className={labelCls}>Rating (0–5)</label>
+                                        <label className={labelCls}>Rating (0—5)</label>
                                         <input type="number" step="0.1" min="0" max="5" value={form.rating}
                                             onChange={e => setForm(f => ({ ...f, rating: e.target.value }))}
                                             placeholder="4.5"
@@ -735,14 +735,14 @@ function AdminGamesContent() {
                                 </div>
                             </div>
 
-                            {/* ─ Section 3: Hình ảnh ─ */}
+                            {/* --------------------------------------------------------------------------------------------------------------------- Section 3: Hình ảnh --------------------------------------------------------------------------------------------------------------------- */}
                             <div className="rounded-[10px] p-4 space-y-4" style={{ background: '#24303F', border: '1px solid #2E3A47' }}>
                                 <h4 className="text-white text-sm font-semibold flex items-center gap-2">
                                     <ImageIcon className="w-4 h-4" style={{ color: '#10B981' }} />
                                     Hình ảnh
                                 </h4>
 
-                                {/* ── Libretro Finder ── */}
+                                {/* --------------------------------------------------------------------------------------------------------------------- Libretro Finder --------------------------------------------------------------------------------------------------------------------- */}
                                 <div className="rounded-md p-3 space-y-2" style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)' }}>
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <Search className="w-3.5 h-3.5" style={{ color: '#10B981' }} />
@@ -791,7 +791,7 @@ function AdminGamesContent() {
                                         )}
                                     </div>
                                     <p className="text-[#637381] text-[11px] mt-1">
-                                        Nhập URL bất kỳ → tự tạo: <code className="text-[#A5B4CB]">.jpg</code> · <code className="text-[#A5B4CB]">s.jpg</code> · <code className="text-[#A5B4CB]">t.jpg</code>
+                                        Nhập URL bất kỳ để tự tạo: <code className="text-[#A5B4CB]">.jpg</code> · <code className="text-[#A5B4CB]">s.jpg</code> · <code className="text-[#A5B4CB]">t.jpg</code>
                                     </p>
                                 </div>
 
@@ -816,7 +816,7 @@ function AdminGamesContent() {
                                 </div>
                             </div>
 
-                            {/* ─ Actions ─ */}
+                            {/* --------------------------------------------------------------------------------------------------------------------- Actions --------------------------------------------------------------------------------------------------------------------- */}
                             <div className="flex justify-end gap-3 pt-1">
                                 <button type="button" onClick={() => setModalOpen(false)}
                                     className="px-5 py-2.5 rounded-md text-[#A5B4CB] text-sm font-medium hover:text-white border transition-colors cursor-pointer"
@@ -839,11 +839,12 @@ function AdminGamesContent() {
             <ConfirmDialog
                 isOpen={!!deleteTarget}
                 title="Xóa game"
-                message={`Bạn có chắc chắn muốn xóa game "${deleteTarget?.name}"? Hành động này không thể hoàn tác.`}
+                message={`Bạn có chắc chắn mu�'n xóa game "${deleteTarget?.name}"? Hành �'�Tng này không th�f hoàn tác.`}
                 confirmLabel="Xóa"
                 onConfirm={handleDelete}
                 onCancel={() => setDeleteTarget(null)}
             />
+
         </div>
     );
 }

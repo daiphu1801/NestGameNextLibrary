@@ -5,7 +5,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
     LayoutDashboard, Users, Gamepad2, FolderTree, LogOut, Menu, X,
-    ChevronLeft, ChevronDown, Search, Bell, Settings, MessageSquare, Clock, Star
+    ChevronLeft, ChevronDown, Search, Bell, Settings, MessageSquare, Clock, Star, Image as ImageIcon
 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
 import { ToastProvider } from './components/ToastProvider';
@@ -15,6 +15,7 @@ const NAV_ITEMS = [
     { href: '/admin/users', label: 'Người dùng', icon: Users },
     { href: '/admin/games', label: 'Games', icon: Gamepad2 },
     { href: '/admin/categories', label: 'Danh mục', icon: FolderTree },
+    { href: '/admin/images', label: 'Ảnh Game', icon: ImageIcon },
     { href: '/admin/comments', label: 'Bình luận', icon: MessageSquare },
     { href: '/admin/ratings', label: 'Đánh giá', icon: Star },
     { href: '/admin/activity', label: 'Lịch sử', icon: Clock },
