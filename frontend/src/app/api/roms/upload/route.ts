@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { S3Client, PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 
-// ─── Local config ──────────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
 const LIBRARY_PATH = path.join(process.cwd(), 'LibraryNes');
 const DEFAULT_FOLDER = 'Nes ROMs Complete 1 Of 4';
 const ALLOWED_EXTENSIONS = ['.nes', '.zip'];
@@ -13,93 +14,83 @@ const ALLOWED_FOLDERS = [
     'Nes ROMs Complete 4 Of 4',
 ];
 
-// ─── Environment detection ────────────────────────────────────────────────────
-/**
- * Production = Cloudinary credentials are set AND no local LibraryNes folder
- * Local = LibraryNes folder exists OR no Cloudinary credentials
- */
-function isProduction(): boolean {
-    const hasCloudinary =
-        !!process.env.CLOUDINARY_CLOUD_NAME &&
-        !!process.env.CLOUDINARY_API_KEY &&
-        !!process.env.CLOUDINARY_API_SECRET;
-    const hasLocalLibrary = fs.existsSync(LIBRARY_PATH);
-    return hasCloudinary && !hasLocalLibrary;
+// ─── R2 Client ────────────────────────────────────────────────────────────────
+function getR2Client(): S3Client | null {
+    const accountId = process.env.R2_ACCOUNT_ID;
+    const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+
+    if (!accountId || !accessKeyId || !secretAccessKey) return null;
+
+    return new S3Client({
+        region: 'auto',
+        endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+        credentials: { accessKeyId, secretAccessKey },
+    });
 }
 
-// ─── Cloudinary upload ────────────────────────────────────────────────────────
-async function uploadToCloudinary(
-    file: File,
-    fileName: string
-): Promise<{ secureUrl: string; publicId: string }> {
-    const cloudName = process.env.CLOUDINARY_CLOUD_NAME!;
-    const apiKey = process.env.CLOUDINARY_API_KEY!;
-    const apiSecret = process.env.CLOUDINARY_API_SECRET!;
+function getR2BucketName(): string {
+    return process.env.R2_BUCKET_NAME || 'nesgame';
+}
 
-    const timestamp = Math.floor(Date.now() / 1000);
-    const folder = 'nes-roms';
-    const publicId = encodePublicId(fileName);
+/**
+ * Build public R2 URL from object key.
+ * Uses NEXT_PUBLIC_R2_URL as base (e.g. https://pub-xxx.r2.dev/)
+ */
+function buildR2PublicUrl(key: string): string {
+    const base = process.env.NEXT_PUBLIC_R2_URL || '';
+    const trimmedBase = base.endsWith('/') ? base : `${base}/`;
+    return `${trimmedBase}${key}`;
+}
 
-    // Cloudinary requires params sorted ALPHABETICALLY for signature
-    // access_mode=public ensures the file is publicly accessible (no auth needed)
-    const paramsToSign = [
-        `access_mode=public`,
-        `folder=${folder}`,
-        `public_id=${publicId}`,
-        `timestamp=${timestamp}`,
-    ].join('&');
+// ─── Environment detection ────────────────────────────────────────────────────
+function isProduction(): boolean {
+    const hasR2 =
+        !!process.env.R2_ACCOUNT_ID &&
+        !!process.env.R2_ACCESS_KEY_ID &&
+        !!process.env.R2_SECRET_ACCESS_KEY;
+    const hasLocalLibrary = fs.existsSync(LIBRARY_PATH);
+    // Production: R2 credentials present AND no local LibraryNes folder
+    return hasR2 && !hasLocalLibrary;
+}
 
-    const signature = await sha1(paramsToSign + apiSecret);
+// ─── R2 Upload ────────────────────────────────────────────────────────────────
+async function uploadToR2(
+    buffer: Buffer,
+    fileName: string,
+    contentType: string
+): Promise<{ url: string; key: string }> {
+    const client = getR2Client();
+    if (!client) throw new Error('R2 credentials not configured');
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('api_key', apiKey);
-    formData.append('timestamp', String(timestamp));
-    formData.append('signature', signature);
-    formData.append('folder', folder);
-    formData.append('public_id', publicId);
-    formData.append('access_mode', 'public');
-    formData.append('resource_type', 'raw');
+    const bucket = getR2BucketName();
+    // Store under roms/ prefix so it's organized
+    const key = `roms/${fileName}`;
 
-    const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`;
+    await client.send(new PutObjectCommand({
+        Bucket: bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: contentType,
+        // Public-read via R2 public bucket settings
+        CacheControl: 'public, max-age=31536000, immutable',
+    }));
 
-    const response = await fetch(uploadUrl, {
-        method: 'POST',
-        body: formData,
-    });
-
-    if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        console.error('Cloudinary upload error:', err);
-        throw new Error(err.error?.message || 'Cloudinary upload failed');
-    }
-
-    const data = await response.json();
-    console.log('Cloudinary upload success:', data.secure_url, 'access_mode:', data.access_mode);
     return {
-        secureUrl: data.secure_url,
-        publicId: data.public_id,
+        url: buildR2PublicUrl(key),
+        key,
     };
 }
 
-/** Convert filename to a Cloudinary-safe public_id (no extension, no special chars) */
-function encodePublicId(fileName: string): string {
-    // Keep the extension separately — Cloudinary raw preserves it if set in public_id
-    return fileName.replace(/[^a-zA-Z0-9_\-\.\(\)\[\]!]/g, '_');
-}
-
-/** SHA-1 hash using Web Crypto API (Node.js 18+ compatible) */
-async function sha1(message: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-1', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-// ─── Local save ───────────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 function sanitizeFileName(name: string): string {
     return name.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').trim();
+}
+
+function getContentType(ext: string): string {
+    if (ext === '.zip') return 'application/zip';
+    if (ext === '.nes') return 'application/x-nes-rom';
+    return 'application/octet-stream';
 }
 
 function saveLocally(buffer: Buffer, folder: string, safeFileName: string): string {
@@ -146,18 +137,22 @@ export async function POST(request: NextRequest) {
         }
 
         const safeFileName = sanitizeFileName(file.name);
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const contentType = getContentType(ext);
 
-        // ── Production: upload to Cloudinary ──────────────────────────────────
+        // ── Production: upload to Cloudflare R2 ───────────────────────────────
         if (isProduction()) {
-            const { secureUrl } = await uploadToCloudinary(file, safeFileName);
+            const { url, key } = await uploadToR2(buffer, safeFileName, contentType);
+            console.log(`[R2] Uploaded: ${key} → ${url}`);
 
             return NextResponse.json({
                 success: true,
-                mode: 'cloudinary',
+                mode: 'r2',
                 fileName: safeFileName,
-                // path = full Cloudinary URL → emulatorService uses it directly
-                path: secureUrl,
-                sizeBytes: file.size,
+                // path = full public R2 URL → emulatorService loads directly
+                path: url,
+                sizeBytes: buffer.length,
             });
         }
 
@@ -165,9 +160,6 @@ export async function POST(request: NextRequest) {
         if (!ALLOWED_FOLDERS.includes(folder)) {
             return NextResponse.json({ error: 'Invalid folder' }, { status: 400 });
         }
-
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
 
         try {
             const relPath = saveLocally(buffer, folder, safeFileName);
