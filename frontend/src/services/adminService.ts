@@ -249,4 +249,24 @@ export const adminService = {
     async deleteRating(ratingId: number): Promise<void> {
         return apiRequest(`/ratings/${ratingId}`, { method: 'DELETE' });
     },
+
+    // ==================== ROM UPLOAD ====================
+    async uploadRom(file: File, folder?: string): Promise<{ fileName: string; path: string; folder: string; sizeBytes: number }> {
+        const formData = new FormData();
+        formData.append('file', file);
+        if (folder) formData.append('folder', folder);
+
+        const response = await fetch('/api/roms/upload', {
+            method: 'POST',
+            body: formData,
+            // Do NOT set Content-Type — browser sets multipart/form-data with boundary
+        });
+
+        if (!response.ok) {
+            const err = await response.json().catch(() => ({}));
+            throw new Error(err.error || 'Upload ROM thất bại');
+        }
+
+        return response.json();
+    },
 };

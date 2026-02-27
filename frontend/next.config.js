@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Allow API routes to receive large ROM files (up to 30MB)
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '30mb',
+    },
+  },
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -18,6 +24,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: '**.r2.dev',
+      },
+      {
+        // Cloudinary images and raw files
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
       },
     ],
   },

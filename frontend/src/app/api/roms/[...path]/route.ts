@@ -15,116 +15,99 @@ const LIBRARY_PATH = path.join(process.cwd(), 'LibraryNes');
 const ALLOWED_EXTENSIONS = ['.nes', '.zip'];
 
 /**
- * Validate filename to prevent path traversal attacks
- * @security Defense-in-depth protection
+ * Find ROM file with security checks.
+ * Handles two path formats:
+ *   1. "Nes ROMs Complete 1 Of 4/Game.zip"  — includes folder prefix
+ *   2. "Game.zip"                             — bare filename, scan all folders
  */
-function isValidFileName(fileName: string): boolean {
-    const decoded = decodeURIComponent(fileName);
+function findRomPath(rawPath: string): string | null {
+    const decoded = rawPath.includes('%') ? decodeURIComponent(rawPath) : rawPath;
 
-    // Block path traversal patterns
+    // Block path traversal
     if (decoded.includes('..') || decoded.includes('~')) {
-        console.warn('[Security] Path traversal attempt blocked:', fileName);
-        return false;
-    }
-
-    // Block absolute paths and special characters
-    if (/^[\/\\]|[:\\*\\?"<>|]/.test(decoded)) {
-        console.warn('[Security] Invalid characters in filename:', fileName);
-        return false;
-    }
-
-    // Only allow specific ROM extensions
-    const ext = path.extname(decoded).toLowerCase();
-    if (!ALLOWED_EXTENSIONS.includes(ext)) {
-        console.warn('[Security] Invalid file extension:', ext);
-        return false;
-    }
-
-    return true;
-}
-
-/**
- * Find ROM in local folders with security checks
- */
-function findRomPath(fileName: string): string | null {
-    // Validate input first (defense-in-depth)
-    if (!isValidFileName(fileName)) {
+        console.warn('[Security] Path traversal attempt blocked:', decoded);
         return null;
     }
 
-    // Decode URI-encoded filename
-    const decodedFileName = decodeURIComponent(fileName);
+    const ext = path.extname(decoded).toLowerCase();
+    if (!ALLOWED_EXTENSIONS.includes(ext)) {
+        console.warn('[Security] Invalid file extension:', ext);
+        return null;
+    }
 
-    for (const folder of ROM_FOLDERS) {
-        const fullPath = path.join(LIBRARY_PATH, folder, decodedFileName);
+    const libraryResolved = path.resolve(LIBRARY_PATH);
 
-        // Security: Ensure resolved path stays within library directory
-        const resolvedPath = path.resolve(fullPath);
-        const libraryResolved = path.resolve(LIBRARY_PATH);
-
-        if (!resolvedPath.startsWith(libraryResolved + path.sep)) {
-            console.warn('[Security] Path escape attempt blocked:', resolvedPath);
+    const attemptPath = (candidate: string): string | null => {
+        const resolved = path.resolve(candidate);
+        if (!resolved.startsWith(libraryResolved + path.sep)) {
+            console.warn('[Security] Path escape blocked:', resolved);
             return null;
         }
+        return fs.existsSync(candidate) ? candidate : null;
+    };
 
-        if (fs.existsSync(fullPath)) {
-            return fullPath;
+    // Case 1: path already includes a known folder prefix
+    for (const folder of ROM_FOLDERS) {
+        if (decoded.startsWith(folder + '/') || decoded.startsWith(folder + path.sep)) {
+            return attemptPath(path.join(LIBRARY_PATH, decoded));
         }
     }
+
+    // Case 2: bare filename — scan all folders
+    for (const folder of ROM_FOLDERS) {
+        const found = attemptPath(path.join(LIBRARY_PATH, folder, decoded));
+        if (found) return found;
+    }
+
     return null;
 }
 
-/**
- * API Route to serve local ROM files
- * GET /api/roms/[filename]
- */
-export async function GET(
-    request: NextRequest,
-    { params }: { params: Promise<{ path: string[] }> }
+/** Shared logic for GET and HEAD requests */
+async function handleRomRequest(
+    params: Promise<{ path: string[] }>,
+    includeBody: boolean
 ) {
     try {
         const { path: pathSegments } = await params;
-        const fileName = pathSegments.join('/');
+        const joined = pathSegments.join('/');
 
-        const romPath = findRomPath(fileName);
-
+        const romPath = findRomPath(joined);
         if (!romPath) {
-            return NextResponse.json(
-                { error: 'ROM not found locally', fileName },
-                { status: 404 }
-            );
+            return NextResponse.json({ error: 'ROM not found locally', fileName: joined }, { status: 404 });
         }
 
-        // Read the file
-        const fileBuffer = fs.readFileSync(romPath);
-
-        // Determine content type based on extension
         const ext = path.extname(romPath).toLowerCase();
         let contentType = 'application/octet-stream';
-        if (ext === '.zip') {
-            contentType = 'application/zip';
-        } else if (ext === '.nes') {
-            contentType = 'application/x-nes-rom';
+        if (ext === '.zip') contentType = 'application/zip';
+        else if (ext === '.nes') contentType = 'application/x-nes-rom';
+
+        const stat = fs.statSync(romPath);
+        const headers: Record<string, string> = {
+            'Content-Type': contentType,
+            'Content-Length': stat.size.toString(),
+            'Cache-Control': 'public, max-age=31536000, immutable',
+            'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_SITE_URL || '*',
+            'X-Content-Type-Options': 'nosniff',
+        };
+
+        if (!includeBody) {
+            // HEAD: headers only, no body
+            return new NextResponse(null, { status: 200, headers });
         }
 
-        // Return the file with appropriate headers
-        return new NextResponse(fileBuffer, {
-            status: 200,
-            headers: {
-                'Content-Type': contentType,
-                'Content-Length': fileBuffer.length.toString(),
-                'Cache-Control': 'public, max-age=31536000, immutable',
-                // CORS: Use site URL or allow all for ROM files
-                'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_SITE_URL || '*',
-                // Security: Prevent MIME sniffing
-                'X-Content-Type-Options': 'nosniff',
-            },
-        });
+        const fileBuffer = fs.readFileSync(romPath);
+        return new NextResponse(fileBuffer, { status: 200, headers });
     } catch (error) {
         console.error('Error serving ROM:', error);
-        return NextResponse.json(
-            { error: 'Failed to serve ROM file' },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: 'Failed to serve ROM file' }, { status: 500 });
     }
+}
+
+export function GET(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+    return handleRomRequest(params, true);
+}
+
+/** HEAD is called by emulatorService to check if ROM exists locally */
+export function HEAD(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+    return handleRomRequest(params, false);
 }

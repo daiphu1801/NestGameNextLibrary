@@ -189,9 +189,17 @@ class EmulatorService {
   }
 
   /**
-   * Get the ROM URL - tries local API first, falls back to R2
+   * Get the ROM URL
+   * Priority: full URL (Cloudinary/CDN) → local API → R2 fallback
    */
   private async getRomUrl(gamePath: string): Promise<string> {
+    // If path is already a full URL (e.g. Cloudinary), use directly
+    if (gamePath.startsWith('http://') || gamePath.startsWith('https://')) {
+      console.log('🌐 Loading ROM from full URL:', gamePath);
+      this._isOfflineMode = false;
+      return gamePath;
+    }
+
     const cleanPath = gamePath.startsWith('/') ? gamePath.slice(1) : gamePath;
     const localApiUrl = `/api/roms/${encodeURIComponent(cleanPath)}`;
 
@@ -215,7 +223,7 @@ class EmulatorService {
 
     const baseUrl = env.r2Url.endsWith('/') ? env.r2Url : `${env.r2Url}/`;
     const r2Url = `${baseUrl}${cleanPath}`;
-    console.log('🌐 Loading ROM from cloud:', r2Url);
+    console.log('🌐 Loading ROM from R2:', r2Url);
     this._isOfflineMode = false;
     return r2Url;
   }
