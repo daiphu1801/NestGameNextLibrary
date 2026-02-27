@@ -111,8 +111,18 @@ async function updateGameImage(
                 'Authorization': authHeader,
             },
             body: JSON.stringify({
-                ...currentGame,
+                name: currentGame.name,
+                fileName: currentGame.fileName,
+                path: currentGame.path,
+                categoryId: currentGame.categoryId || 1,
+                description: currentGame.description || '',
+                rating: currentGame.rating || 0,
+                year: currentGame.year || new Date().getFullYear(),
+                region: currentGame.region || 'US',
+                isFeatured: currentGame.isFeatured || false,
                 imageUrl,
+                imageSnap: currentGame.imageSnap || '',
+                imageTitle: currentGame.imageTitle || ''
             }),
         });
         return res.ok;
