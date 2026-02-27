@@ -5,6 +5,13 @@ const ADMIN_API = `${API_BASE}/admin`;
 
 // ─── Image source helpers ─────────────────────────────────────────────────────
 
+const FETCH_OPTIONS = {
+    headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 NestGameBot/1.0',
+        'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
+    }
+};
+
 /** Strip ROM extension + region tags from filename to get clean game name */
 function cleanGameName(raw: string): string {
     return raw
@@ -37,6 +44,7 @@ async function isUrlAlive(url: string): Promise<boolean> {
     try {
         const res = await fetch(url, {
             method: 'HEAD',
+            ...FETCH_OPTIONS,
             signal: AbortSignal.timeout(3000),
         });
         return res.ok;
@@ -60,7 +68,7 @@ async function findWikipediaImage(gameName: string): Promise<string | null> {
         const clean = cleanGameName(gameName);
         const query = encodeURIComponent(`${clean} NES game`);
         const apiUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${query}&prop=pageimages&format=json&pithumbsize=400&origin=*`;
-        const res = await fetch(apiUrl, { signal: AbortSignal.timeout(5000) });
+        const res = await fetch(apiUrl, { ...FETCH_OPTIONS, signal: AbortSignal.timeout(5000) });
         if (!res.ok) return null;
         const data = await res.json();
         const pages = data?.query?.pages || {};
@@ -81,7 +89,7 @@ async function findGoogleImage(gameName: string): Promise<string | null> {
         const clean = cleanGameName(gameName);
         const q = encodeURIComponent(`${clean} NES game cover art box`);
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cseId}&searchType=image&q=${q}&num=3&imgType=photo&imgSize=medium`;
-        const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+        const res = await fetch(url, { ...FETCH_OPTIONS, signal: AbortSignal.timeout(8000) });
         if (!res.ok) return null;
         const data = await res.json();
         const items = data?.items || [];

@@ -4,6 +4,14 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 const ADMIN_API = `${API_BASE}/admin`;
 
 // ─── Helpers (duplicated from parent route for isolation) ─────────────────────
+
+const FETCH_OPTIONS = {
+    headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 NestGameBot/1.0',
+        'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
+    }
+};
+
 function cleanGameName(raw: string): string {
     return raw
         .replace(/\.(zip|nes|smc|sfc|gb|gbc|gba|n64|z64|v64|nds|iso|bin|cue)$/i, '')
@@ -14,7 +22,7 @@ function cleanGameName(raw: string): string {
 
 async function isUrlAlive(url: string): Promise<boolean> {
     try {
-        const res = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
+        const res = await fetch(url, { method: 'HEAD', ...FETCH_OPTIONS, signal: AbortSignal.timeout(3000) });
         return res.ok;
     } catch { return false; }
 }
@@ -35,7 +43,7 @@ async function findWikipedia(name: string): Promise<string | null> {
         const clean = cleanGameName(name);
         const q = encodeURIComponent(`${clean} NES game`);
         const api = `https://en.wikipedia.org/w/api.php?action=query&titles=${q}&prop=pageimages&format=json&pithumbsize=400&origin=*`;
-        const res = await fetch(api, { signal: AbortSignal.timeout(5000) });
+        const res = await fetch(api, { ...FETCH_OPTIONS, signal: AbortSignal.timeout(5000) });
         if (!res.ok) return null;
         const data = await res.json();
         const page = Object.values(data?.query?.pages || {})[0] as any;
@@ -51,7 +59,7 @@ async function findGoogle(name: string): Promise<string | null> {
         const clean = cleanGameName(name);
         const q = encodeURIComponent(`${clean} NES game cover art`);
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cseId}&searchType=image&q=${q}&num=3`;
-        const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+        const res = await fetch(url, { ...FETCH_OPTIONS, signal: AbortSignal.timeout(8000) });
         if (!res.ok) return null;
         const data = await res.json();
         for (const item of (data?.items || [])) {
