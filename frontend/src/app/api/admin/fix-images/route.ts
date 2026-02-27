@@ -182,57 +182,73 @@ export async function GET(request: NextRequest) {
                 send({ type: 'total', total: games.length });
 
                 let fixed = 0, notFound = 0, ok = 0;
+                let processedCount = 0;
 
-                for (let i = 0; i < games.length; i++) {
-                    const game = games[i];
-                    const { id, name, fileName, imageUrl: currentImageUrl } = game;
+                // Keep-alive ping interval to prevent Vercel 504 Gateway Timeout on long SSE
+                const pingInterval = setInterval(() => {
+                    send({ type: 'ping', time: Date.now() });
+                }, 15000);
 
-                    send({ type: 'progress', current: i + 1, total: games.length, name });
+                try {
+                    // Process in batches of 10 to speed up and avoid overwhelming API limits
+                    const BATCH_SIZE = 10;
+                    for (let i = 0; i < games.length; i += BATCH_SIZE) {
+                        const batch = games.slice(i, i + BATCH_SIZE);
 
-                    // Check current image
-                    const hasImage = currentImageUrl && currentImageUrl.startsWith('http');
-                    const isAlive = hasImage ? await isUrlAlive(currentImageUrl) : false;
+                        // Process one batch concurrently
+                        await Promise.all(batch.map(async (game) => {
+                            const { id, name, fileName, imageUrl: currentImageUrl } = game;
 
-                    if (isAlive) {
-                        ok++;
-                        send({ type: 'result', id, name, status: 'ok' });
-                        continue;
+                            // Check current image
+                            const hasImage = currentImageUrl && currentImageUrl.startsWith('http');
+                            const isAlive = hasImage ? await isUrlAlive(currentImageUrl) : false;
+
+                            if (isAlive) {
+                                ok++;
+                                send({ type: 'result', id, name, status: 'ok' });
+                            } else {
+                                // Try to find a new image
+                                const searchName = name || fileName || '';
+                                let newUrl: string | null = null;
+                                let source = '';
+
+                                newUrl = await findLibretroImage(searchName);
+                                if (newUrl) source = 'Libretro';
+
+                                if (!newUrl) {
+                                    newUrl = await findWikipediaImage(searchName);
+                                    if (newUrl) source = 'Wikipedia';
+                                }
+
+                                if (!newUrl) {
+                                    newUrl = await findGoogleImage(searchName);
+                                    if (newUrl) source = 'Google';
+                                }
+
+                                if (newUrl) {
+                                    fixed++;
+                                    if (mode === 'fix') {
+                                        await updateGameImage(id, newUrl, authHeader, game);
+                                    }
+                                    send({ type: 'result', id, name, status: 'fixed', newUrl, source });
+                                } else {
+                                    notFound++;
+                                    send({ type: 'result', id, name, status: 'not_found' });
+                                }
+                            }
+
+                            processedCount++;
+                            send({ type: 'progress', current: processedCount, total: games.length, name });
+                        }));
+
+                        // Small delay between batches to respect rate limits (e.g. Google CSE)
+                        await new Promise(r => setTimeout(r, 200));
                     }
 
-                    // Try to find a new image
-                    const searchName = name || fileName || '';
-                    let newUrl: string | null = null;
-                    let source = '';
-
-                    newUrl = await findLibretroImage(searchName);
-                    if (newUrl) source = 'Libretro';
-
-                    if (!newUrl) {
-                        newUrl = await findWikipediaImage(searchName);
-                        if (newUrl) source = 'Wikipedia';
-                    }
-
-                    if (!newUrl) {
-                        newUrl = await findGoogleImage(searchName);
-                        if (newUrl) source = 'Google';
-                    }
-
-                    if (newUrl) {
-                        fixed++;
-                        if (mode === 'fix') {
-                            await updateGameImage(id, newUrl, authHeader, game);
-                        }
-                        send({ type: 'result', id, name, status: 'fixed', newUrl, source });
-                    } else {
-                        notFound++;
-                        send({ type: 'result', id, name, status: 'not_found' });
-                    }
-
-                    // Small delay to avoid rate limiting
-                    await new Promise(r => setTimeout(r, 100));
+                    send({ type: 'done', stats: { total: games.length, fixed, notFound, ok } });
+                } finally {
+                    clearInterval(pingInterval);
                 }
-
-                send({ type: 'done', stats: { total: games.length, fixed, notFound, ok } });
             } catch (err: any) {
                 send({ type: 'error', message: err.message || 'Đã xảy ra lỗi' });
             } finally {
