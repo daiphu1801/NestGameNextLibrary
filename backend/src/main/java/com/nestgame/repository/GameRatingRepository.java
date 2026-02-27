@@ -34,4 +34,8 @@ public interface GameRatingRepository extends JpaRepository<GameRating, Long> {
     @Query("SELECT r FROM GameRating r WHERE LOWER(r.user.username) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "OR LOWER(r.game.name) LIKE LOWER(CONCAT('%', :search, '%')) ORDER BY r.createdAt DESC")
     Page<GameRating> searchRatings(@Param("search") String search, Pageable pageable);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("DELETE FROM GameRating r WHERE r.game.id = :gameId")
+    void deleteByGameId(Long gameId);
 }

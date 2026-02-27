@@ -222,12 +222,28 @@ public class AdminService {
 
     @Transactional
     public void deleteGame(Long gameId) {
-        if (!gameRepository.existsById(gameId)) {
-            throw new RuntimeException("Không tìm thấy game");
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy game"));
+
+        // 1. Xóa play_history, comments, ratings liên quan
+        playHistoryRepository.deleteByGameId(gameId);
+        gameCommentRepository.deleteByGameId(gameId);
+        gameRatingRepository.deleteByGameId(gameId);
+
+        // 2. Xóa favorites (ManyToMany trong User) — cần load users có game này
+        List<User> usersWithFavorite = userRepository.findAll().stream()
+                .filter(u -> u.getFavorites() != null && u.getFavorites().stream()
+                        .anyMatch(g -> g.getId().equals(gameId)))
+                .collect(Collectors.toList());
+        for (User u : usersWithFavorite) {
+            u.getFavorites().removeIf(g -> g.getId().equals(gameId));
+            userRepository.save(u);
         }
-        gameRepository.deleteById(gameId);
-        log.info("Deleted game {}", gameId);
-        logActivity("system", "DELETE", "GAME", "ID: " + gameId, "Xóa game ID: " + gameId);
+
+        // 3. Xóa game
+        gameRepository.delete(game);
+        log.info("Deleted game {} with all related data", gameId);
+        logActivity("system", "DELETE", "GAME", game.getName(), "Xóa game: " + game.getName());
     }
 
     // ==================== CATEGORIES ====================

@@ -4,6 +4,8 @@ import com.nestgame.entity.Game;
 import com.nestgame.entity.PlayHistory;
 import com.nestgame.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,4 +23,8 @@ public interface PlayHistoryRepository extends JpaRepository<PlayHistory, Long> 
 
     // Admin
     List<PlayHistory> findTop10ByUserIdOrderByPlayedAtDesc(Long userId);
+
+    @Modifying
+    @Query("DELETE FROM PlayHistory p WHERE p.game.id = :gameId")
+    void deleteByGameId(Long gameId);
 }
