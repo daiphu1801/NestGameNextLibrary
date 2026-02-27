@@ -71,12 +71,11 @@ export async function GET(request: NextRequest) {
     // Fetch game info from backend
     let gameName = '';
     try {
-        const res = await fetch(`${ADMIN_API}/games?page=0&size=1000`, {
-            headers: { 'Authorization': authHeader },
+        const res = await fetch(`${API_BASE}/games/${gameId}`, {
+            headers: authHeader ? { 'Authorization': authHeader } : {},
         });
         if (res.ok) {
-            const data = await res.json();
-            const game = (data?.content || []).find((g: any) => String(g.id) === gameId);
+            const game = await res.json();
             gameName = game?.name || game?.fileName || '';
         }
     } catch { /* try anyway */ }

@@ -174,15 +174,35 @@ export default function AdminImagesPage() {
         if (!game.newUrl?.trim()) return;
         setBrokenGames(prev => prev.map(g => g.id === game.id ? { ...g, saving: true } : g));
         try {
-            await adminService.updateGame(game.id, { imageUrl: game.newUrl?.trim() });
+            // Fetch full game from public endpoint
+            const fullGame = await adminService.getGameById(game.id);
+            if (!fullGame) throw new Error('Không tìm thấy game trong DB');
+
+            // Build payload mapping exactly to backend's AdminGameRequest
+            const payload = {
+                name: fullGame.name,
+                fileName: fullGame.fileName,
+                path: fullGame.path,
+                categoryId: fullGame.categoryId || 1, // backend requires categoryId
+                description: fullGame.description || '',
+                rating: fullGame.rating || 0,
+                year: fullGame.year || new Date().getFullYear(),
+                region: fullGame.region || 'US',
+                isFeatured: fullGame.isFeatured || false,
+                imageUrl: game.newUrl?.trim(),
+                imageSnap: fullGame.imageSnap || '',
+                imageTitle: fullGame.imageTitle || ''
+            };
+
+            await adminService.updateGame(game.id, payload);
             setBrokenGames(prev => prev.map(g => g.id === game.id
                 ? { ...g, saving: false, saved: true, currentImageUrl: game.newUrl }
                 : g
             ));
             showToast('success', `Đã lưu ảnh cho "${game.name}"`);
-        } catch {
+        } catch (err: any) {
             setBrokenGames(prev => prev.map(g => g.id === game.id ? { ...g, saving: false } : g));
-            showToast('error', 'Lỗi khi lưu');
+            showToast('error', err?.message || 'Lỗi khi lưu');
         }
     }, [showToast]);
 
