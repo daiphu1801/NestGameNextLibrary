@@ -21,6 +21,7 @@
     "home": "Home",
     "library": "Library",
     "favorites": "Favorites",
+    "featured": "Featured",
     "explore": "Explore",
     "leaderboard": "Leaderboard",
     "random": "Random",
@@ -45,7 +46,13 @@
   },
   "featured": {
     "title": "Hot Games",
-    "subtitle": "Most popular games this week"
+    "subtitle": "Most popular games this week",
+    "loadingText": "Fetching featured games...",
+    "badge": "Premium Collection",
+    "mainTitle": "Featured Games",
+    "description": "Discover a collection of the highest-rated classic games, carefully curated exclusively for your passion.",
+    "masterpiece": "Masterpieces",
+    "rating": "Rating"
   },
   "library": {
     "title": "Game Library",

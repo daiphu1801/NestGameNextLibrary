@@ -162,6 +162,11 @@ public class AdminService {
         return gameRepository.findAll(pageable).map(this::toGameDTO);
     }
 
+    @Transactional(readOnly = true)
+    public Page<GameDTO> getFeaturedGames(Pageable pageable) {
+        return gameRepository.findByIsFeaturedTrue(pageable).map(this::toGameDTO);
+    }
+
     @Transactional
     public GameDTO createGame(AdminGameRequest request) {
         Category cat = null;

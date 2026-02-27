@@ -146,6 +146,11 @@ export const adminService = {
         return apiRequest(`/games?${params}`);
     },
 
+    async getFeaturedGames(page = 0, size = 20): Promise<PageResponse<any>> {
+        const params = new URLSearchParams({ page: String(page), size: String(size) });
+        return apiRequest(`/games/featured?${params}`);
+    },
+
     async getGameById(gameId: number): Promise<any> {
         const baseUrl = API_URL.replace('/admin', '');
         const token = localStorage.getItem(ADMIN_USER_KEY) ? JSON.parse(localStorage.getItem(ADMIN_USER_KEY)!)?.token : '';

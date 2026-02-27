@@ -21,6 +21,7 @@
     "home": "Trang chủ",
     "library": "Thư viện",
     "favorites": "Yêu thích",
+    "featured": "Nổi Bật",
     "explore": "Khám phá",
     "leaderboard": "Bảng xếp hạng",
     "random": "Ngẫu nhiên",
@@ -45,7 +46,13 @@
   },
   "featured": {
     "title": "Games Hot 🔥",
-    "subtitle": "Những tựa game được yêu thích nhất tuần này"
+    "subtitle": "Những tựa game được yêu thích nhất tuần này",
+    "loadingText": "Đang lấy game nổi bật...",
+    "badge": "Tuyển Tập Đỉnh Cao",
+    "mainTitle": "Game Nổi Bật",
+    "description": "Khám phá bộ sưu tập những tựa game kinh điển được đánh giá cao nhất, chọn lọc kỹ lưỡng dành riêng cho đam mê của bạn.",
+    "masterpiece": "Siêu Phẩm",
+    "rating": "Đánh giá"
   },
   "library": {
     "title": "Thư viện Games",

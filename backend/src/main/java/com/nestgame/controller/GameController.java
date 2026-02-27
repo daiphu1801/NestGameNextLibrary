@@ -21,13 +21,14 @@ public class GameController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String region,
+            @RequestParam(required = false) Boolean isFeatured,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         PageRequest pageRequest = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(gameService.getGames(search, category, region, pageRequest));
+        return ResponseEntity.ok(gameService.getGames(search, category, region, isFeatured, pageRequest));
     }
 
     @GetMapping("/{id}")

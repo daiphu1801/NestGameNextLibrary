@@ -19,7 +19,8 @@ import java.util.List;
 public class GameService {
     private final GameRepository gameRepository;
 
-    public Page<GameDTO> getGames(String search, String category, String region, Pageable pageable) {
+    public Page<GameDTO> getGames(String search, String category, String region, Boolean isFeatured,
+            Pageable pageable) {
         Specification<Game> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -34,6 +35,10 @@ public class GameService {
 
             if (StringUtils.hasText(region) && !"all".equalsIgnoreCase(region)) {
                 predicates.add(cb.equal(root.get("region"), region));
+            }
+
+            if (isFeatured != null && isFeatured) {
+                predicates.add(cb.isTrue(root.get("isFeatured")));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

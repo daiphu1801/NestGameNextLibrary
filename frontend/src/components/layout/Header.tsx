@@ -1,14 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Search, Moon, Sun, Zap, ZapOff, BookOpen, Gamepad2, X, Star, ArrowUp, Menu, Home, Trophy, Heart, Dices, Sparkles, ChevronDown } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Search, Moon, Sun, Zap, ZapOff, BookOpen, Gamepad2, X, Star, ArrowUp, Menu, Home, Trophy, Heart, Dices, Sparkles, ChevronDown, Crown, Play, Loader2 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useGameStore } from '@/features/games/store/gameStore';
 import { gameService } from '@/services/gameService';
 import { debounce, cn } from '@/lib/utils';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import { Game } from '@/types';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { UserDropdown } from '@/components/auth';
@@ -16,11 +17,18 @@ import { USFlag, VietnamFlag } from '@/components/ui/Flags';
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { locale, setLocale, t } = useLanguage();
   const { user, logout, openLoginModal } = useAuth();
+
+  // Search State
   const [searchValue, setSearchValue] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [suggestions, setSuggestions] = useState<Game[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Other States
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
@@ -81,21 +89,44 @@ export function Header() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSearch = debounce((query: string) => {
-    setSearchQuery(query);
+  // Handle live search
+  const fetchSuggestions = useCallback(
+    debounce((query: string) => {
+      if (!query.trim()) {
+        setSuggestions([]);
+        setIsSearching(false);
+        return;
+      }
 
-    let filtered = gameService.searchGames(allGames, query);
-    filtered = gameService.filterByCategory(filtered, currentCategory);
-    filtered = gameService.filterByRegion(filtered, currentRegion);
-    filtered = gameService.sortGames(filtered, currentSort);
-
-    setFilteredGames(filtered);
-  }, 300);
+      const results = gameService.searchGames(allGames, query);
+      setSuggestions(results);
+      setIsSearching(false);
+    }, 300),
+    [allGames]
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchValue(value);
-    handleSearch(value);
+    setIsSearching(true);
+    fetchSuggestions(value);
+  };
+
+  const handleSubmitSearch = () => {
+    if (!searchValue.trim()) return;
+    setIsSearchOpen(false);
+
+    setSearchQuery(searchValue);
+
+    if (pathname === '/library' || pathname === '/featured') {
+      let filtered = gameService.searchGames(allGames, searchValue);
+      filtered = gameService.filterByCategory(filtered, currentCategory);
+      filtered = gameService.filterByRegion(filtered, currentRegion);
+      filtered = gameService.sortGames(filtered, currentSort);
+      setFilteredGames(filtered);
+    } else {
+      router.push('/library');
+    }
   };
 
   const toggleTheme = () => {
@@ -108,7 +139,8 @@ export function Header() {
 
   const handleHotKeywordClick = (keyword: string) => {
     setSearchValue(keyword);
-    handleSearch(keyword);
+    setIsSearching(true);
+    fetchSuggestions(keyword);
   };
 
   const toggleSearch = () => {
@@ -117,6 +149,34 @@ export function Header() {
       setSearchValue('');
     }
   };
+
+  // ---------------------------------------------------------------------------
+  // NATIVE BROWSER EVENT: Handle "Click Outside" to close search overlay
+  // ---------------------------------------------------------------------------
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Bỏ qua nếu khung Tìm Kiếm đang ĐÓNG
+      if (!isSearchOpen) return;
+
+      // Bỏ qua nếu người dùng click CHUỘT VÀO BêN TRONG `searchContainerRef`
+      if (searchContainerRef.current && searchContainerRef.current.contains(event.target as Node)) {
+        return;
+      }
+
+      // Click Chuột RA NGOÀI vùng Container -> ĐÓNG KHUNG tìm kiếm
+      setIsSearchOpen(false);
+    };
+
+    // Đăng ký Event Listener Native
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Dọn dẹp listener khi component Unmount hoặc Dependencies (isSearchOpen) thay đổi
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSearchOpen]);
 
   return (
     <>
@@ -185,7 +245,13 @@ export function Header() {
                 </span>
               </NavLink>
 
-              {/* Explore Dropdown */}
+              <NavLink href="/featured" active={pathname === '/featured'}>
+                <span className="flex items-center gap-1.5 text-amber-500 font-bold">
+                  <Crown className="w-3 h-3" />
+                  {t('nav.featured', undefined, 'Nổi Bật')}
+                </span>
+              </NavLink>
+
               <div
                 className="relative"
                 onMouseEnter={() => setIsExploreOpen(true)}
@@ -288,21 +354,19 @@ export function Header() {
 
             {/* Actions */}
             <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
-              {/* Search (library only) */}
-              {isLibraryPage && (
-                <button
-                  onClick={toggleSearch}
-                  className="group flex items-center h-9 w-9 rounded-full hover:bg-white/5 transition-all duration-300 justify-center"
-                  title={t('header.search')}
-                >
-                  <div className={cn(
-                    "flex-shrink-0 flex items-center justify-center transition-all duration-300",
-                    isSearchOpen ? "text-primary" : "text-muted-foreground group-hover:text-primary"
-                  )}>
-                    {isSearchOpen ? <X className="h-4 w-4 sm:h-5 sm:w-5" /> : <Search className="h-4 w-4 sm:h-5 sm:w-5" />}
-                  </div>
-                </button>
-              )}
+              {/* Search (Global) */}
+              <button
+                onClick={toggleSearch}
+                className="group flex items-center h-9 w-9 rounded-full hover:bg-white/5 transition-all duration-300 justify-center"
+                title={t('header.search')}
+              >
+                <div className={cn(
+                  "flex-shrink-0 flex items-center justify-center transition-all duration-300",
+                  isSearchOpen ? "text-primary" : "text-muted-foreground group-hover:text-primary"
+                )}>
+                  {isSearchOpen ? <X className="h-4 w-4 sm:h-5 sm:w-5" /> : <Search className="h-4 w-4 sm:h-5 sm:w-5" />}
+                </div>
+              </button>
 
               {/* Theme Toggle */}
               <button
@@ -315,10 +379,7 @@ export function Header() {
                 <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-cyan-400" />
               </button>
 
-              {/* Language Toggle
-                  Mobile: show only active flag + tap to switch
-                  Desktop: show both flags with text
-              */}
+              {/* Language Toggle */}
               <button
                 onClick={toggleLanguage}
                 className="flex items-center rounded-full hover:bg-white/5 border border-transparent hover:border-white/10 transition-all"
@@ -369,44 +430,59 @@ export function Header() {
           </div>
 
           {/* Spotlight Search Overlay */}
-          {isLibraryPage && isSearchOpen && (
-            <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4">
+          {isSearchOpen && (
+            <div
+              className="fixed inset-0 z-[100] flex items-start justify-center pt-[10vh] px-4"
+            >
               {/* Backdrop */}
               <div
                 className="absolute inset-0 bg-background/80 backdrop-blur-xl animate-in fade-in duration-300"
-                onClick={() => setIsSearchOpen(false)}
+                onMouseDown={() => setIsSearchOpen(false)}
               />
 
               {/* Search Container */}
-              <div className="relative w-full max-w-2xl animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-300">
+              <div
+                className="relative w-full max-w-3xl animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-300 flex flex-col max-h-[80vh]"
+                onClick={(e) => e.stopPropagation()}
+              >
                 {/* Search Box */}
-                <div className="relative bg-secondary/80 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl shadow-primary/10 overflow-hidden">
+                <div className={cn(
+                  "relative bg-secondary/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-primary/10 transition-all duration-300 shrink-0",
+                  searchValue.trim() ? "rounded-t-2xl border-b-white/5" : "rounded-2xl"
+                )}>
                   {/* Search Input */}
                   <div className="relative flex items-center">
-                    <Search className="absolute left-5 h-6 w-6 text-primary" />
+                    <Search className="absolute left-6 h-6 w-6 text-primary" />
                     <input
                       type="text"
-                      placeholder={t('header.searchPlaceholder')}
+                      placeholder={t('header.searchPlaceholder') || "Tìm kiếm game..."}
                       value={searchValue}
                       onChange={handleInputChange}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
-                          handleSearch(searchValue);
-                          setIsSearchOpen(false);
+                          handleSubmitSearch();
                         }
                         if (e.key === 'Escape') {
                           setIsSearchOpen(false);
                         }
                       }}
                       autoFocus
-                      className="w-full pl-14 pr-32 py-5 bg-transparent text-xl font-medium placeholder:text-muted-foreground/50 focus:outline-none"
+                      className="w-full pl-16 pr-32 py-5 bg-transparent text-xl font-medium placeholder:text-muted-foreground/50 focus:outline-none text-foreground"
                     />
                     <div className="absolute right-4 flex items-center gap-2">
+                      {/* Loading Spinner */}
+                      {isSearching && (
+                        <Loader2 className="w-5 h-5 animate-spin text-primary opacity-70 mr-1" />
+                      )}
+
                       {/* Clear Button */}
-                      {searchValue && (
+                      {searchValue && !isSearching && (
                         <button
-                          onClick={() => setSearchValue('')}
-                          className="px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 text-xs font-medium text-muted-foreground hover:text-foreground transition-all flex items-center gap-1"
+                          onClick={() => {
+                            setSearchValue('');
+                            setSuggestions([]);
+                          }}
+                          className="px-2 py-1 flex items-center gap-1 rounded-md bg-white/5 hover:bg-white/10 text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
                         >
                           <X className="h-3 w-3" />
                           Xóa
@@ -415,20 +491,73 @@ export function Header() {
                       <kbd className="hidden sm:inline-flex px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[10px] font-mono text-muted-foreground">
                         ESC
                       </kbd>
-                      <button
-                        onClick={() => setIsSearchOpen(false)}
-                        className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all"
-                      >
-                        <X className="h-5 w-5" />
-                      </button>
                     </div>
                   </div>
+                </div>
 
-                  {/* Divider */}
-                  <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                {/* Live Search Results Dropdown */}
+                {searchValue.trim() && (
+                  <div className="bg-secondary/95 backdrop-blur-xl border border-t-0 border-white/10 rounded-b-2xl shadow-2xl overflow-hidden flex flex-col flex-1 min-h-0">
+                    <div className="overflow-y-auto p-2 custom-scrollbar">
+                      {suggestions.length > 0 ? (
+                        <div className="space-y-1">
+                          {suggestions.slice(0, 5).map((game) => (
+                            <Link
+                              key={game.id}
+                              href={`/${game.path}`}
+                              onClick={() => setIsSearchOpen(false)}
+                              className="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-all duration-200"
+                            >
+                              <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-black/50 shrink-0 border border-white/5">
+                                {game.thumbnail ? (
+                                  <img src={game.thumbnail} alt={game.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center"><Gamepad2 className="w-5 h-5 text-muted-foreground/50" /></div>
+                                )}
+                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Play className="w-5 h-5 fill-white text-white" />
+                                </div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">{game.name}</h4>
+                                <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground">
+                                  <span className="capitalize">{game.categoryName || game.category}</span>
+                                  {game.playCount !== undefined && (
+                                    <>
+                                      <span className="w-1 h-1 rounded-full bg-muted-foreground/30"></span>
+                                      <span>{game.playCount.toLocaleString()} lượt chơi</span>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
 
-                  {/* Hot Keywords */}
-                  <div className="p-4">
+                          {suggestions.length > 5 && (
+                            <button
+                              onClick={handleSubmitSearch}
+                              className="w-full mt-2 py-3 px-4 flex items-center justify-center gap-2 text-sm font-semibold text-primary hover:text-primary-focus bg-primary/5 hover:bg-primary/10 rounded-xl transition-colors"
+                            >
+                              <Search className="w-4 h-4" />
+                              Xem tất cả {suggestions.length} kết quả
+                            </button>
+                          )}
+                        </div>
+                      ) : !isSearching ? (
+                        <div className="px-6 py-12 text-center flex flex-col items-center">
+                          <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3">
+                            <Search className="w-6 h-6 text-muted-foreground/50" />
+                          </div>
+                          <p className="text-muted-foreground text-sm">Không tìm thấy tựa game nào phù hợp với "{searchValue}"</p>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                )}
+
+                {/* Hot Keywords (Only show when search is empty) */}
+                {!searchValue.trim() && (
+                  <div className="bg-secondary/95 backdrop-blur-xl border border-t-0 border-white/10 rounded-b-2xl shadow-2xl p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                         <Star className="w-3 h-3" />
@@ -440,8 +569,9 @@ export function Header() {
                         <button
                           key={keyword}
                           onClick={() => {
-                            handleHotKeywordClick(keyword);
-                            setIsSearchOpen(false);
+                            setSearchValue(keyword);
+                            setIsSearching(true);
+                            fetchSuggestions(keyword);
                           }}
                           className="px-4 py-2 rounded-xl bg-white/5 border border-white/5 hover:border-primary/50 hover:bg-primary/10 text-sm font-medium transition-all duration-200 hover:scale-105"
                         >
@@ -449,16 +579,16 @@ export function Header() {
                         </button>
                       ))}
                     </div>
-                  </div>
 
-                  {/* Hint */}
-                  <div className="px-4 pb-4 flex items-center justify-between text-xs text-muted-foreground">
-                    <span className="flex items-center gap-2">
-                      <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 font-mono">↵</kbd>
-                      {t('header.searchHint') || 'để tìm kiếm'}
-                    </span>
+                    {/* Hint */}
+                    <div className="mt-6 flex items-center justify-between text-xs text-muted-foreground">
+                      <span className="flex items-center gap-2">
+                        <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 font-mono">↵</kbd>
+                        {t('header.searchHint') || 'để tìm kiếm'}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           )}
@@ -485,6 +615,15 @@ export function Header() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {t('nav.library')}
+              </MobileNavLink>
+
+              <MobileNavLink
+                href="/featured"
+                icon={<Crown className="w-5 h-5 text-amber-500" />}
+                active={pathname === '/featured'}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {t('nav.featured', undefined, 'Nổi Bật')}
               </MobileNavLink>
 
               {/* Explore Section */}

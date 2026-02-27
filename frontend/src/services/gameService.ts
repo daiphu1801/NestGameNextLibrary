@@ -67,21 +67,34 @@ class GameService {
     return 'other';
   }
 
-  async loadGames(): Promise<Game[]> {
+  async loadGames(isFeatured?: boolean): Promise<Game[]> {
     try {
       // Try to load from backend API
       if (this.useBackend) {
         try {
+          const params: any = {
+            page: 0,
+            size: 9999, // Load all games
+            sortBy: 'name',
+            sortDir: 'asc'
+          };
+
+          if (isFeatured !== undefined) {
+            params.isFeatured = isFeatured;
+          }
+
           const response = await apiClient.get<{ content: GameDTO[]; totalElements: number }>('/games', {
-            params: {
-              page: 0,
-              size: 9999, // Load all games
-              sortBy: 'name',
-              sortDir: 'asc'
-            }
+            params
           });
 
-          this.games = response.data.content.map(dto => this.mapGameDTO(dto));
+          let downloadedGames = response.data.content.map(dto => this.mapGameDTO(dto));
+
+          // Temporary fallback filter in case backend hasn't been restarted yet and ignores isFeatured param
+          if (isFeatured) {
+            downloadedGames = downloadedGames.filter(g => g.isFeatured);
+          }
+
+          this.games = downloadedGames;
           console.log(`✅ Loaded ${this.games.length} games from backend`);
           return this.games;
         } catch (apiError) {
@@ -91,7 +104,11 @@ class GameService {
       }
 
       // Fallback to JSON
-      this.games = gamesData as unknown as Game[];
+      let fallbackGames = gamesData as unknown as Game[];
+      if (isFeatured) {
+        fallbackGames = fallbackGames.filter(g => g.isFeatured);
+      }
+      this.games = fallbackGames;
       console.log(`📦 Loaded ${this.games.length} games from JSON fallback`);
       return this.games;
     } catch (error) {
