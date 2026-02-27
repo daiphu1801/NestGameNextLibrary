@@ -190,23 +190,30 @@ class EmulatorService {
 
   /**
    * Get the ROM URL
-   * Priority: full URL (Cloudinary/CDN) → local API → R2 fallback
+   * Priority: Cloudinary URL (proxied) → local API → R2 fallback
    */
   private async getRomUrl(gamePath: string): Promise<string> {
-    // If path is already a full URL (e.g. Cloudinary), use directly
+    // Cloudinary URLs: proxy through our API to avoid 401/CORS issues
+    if (gamePath.startsWith('https://res.cloudinary.com/')) {
+      const proxyUrl = `/api/roms/proxy?url=${encodeURIComponent(gamePath)}`;
+      console.log('☁️ Loading ROM via Cloudinary proxy:', proxyUrl);
+      this._isOfflineMode = false;
+      return proxyUrl;
+    }
+
+    // Other full URLs (R2, CDN, etc.): use directly
     if (gamePath.startsWith('http://') || gamePath.startsWith('https://')) {
       console.log('🌐 Loading ROM from full URL:', gamePath);
       this._isOfflineMode = false;
       return gamePath;
     }
 
+    // Relative path: try local API first
     const cleanPath = gamePath.startsWith('/') ? gamePath.slice(1) : gamePath;
     const localApiUrl = `/api/roms/${encodeURIComponent(cleanPath)}`;
 
     try {
-      // Try to fetch from local API first
       const response = await fetch(localApiUrl, { method: 'HEAD' });
-
       if (response.ok) {
         console.log('✅ ROM found locally:', cleanPath);
         this._isOfflineMode = true;

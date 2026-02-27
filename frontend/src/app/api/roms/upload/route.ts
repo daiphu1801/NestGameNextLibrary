@@ -36,12 +36,19 @@ async function uploadToCloudinary(
     const apiKey = process.env.CLOUDINARY_API_KEY!;
     const apiSecret = process.env.CLOUDINARY_API_SECRET!;
 
-    // Cloudinary signed upload: need timestamp + signature
     const timestamp = Math.floor(Date.now() / 1000);
     const folder = 'nes-roms';
+    const publicId = encodePublicId(fileName);
 
-    // Build signature string: folder=...&public_id=...&timestamp=...{secret}
-    const paramsToSign = `folder=${folder}&public_id=${encodePublicId(fileName)}&timestamp=${timestamp}`;
+    // Cloudinary requires params sorted ALPHABETICALLY for signature
+    // access_mode=public ensures the file is publicly accessible (no auth needed)
+    const paramsToSign = [
+        `access_mode=public`,
+        `folder=${folder}`,
+        `public_id=${publicId}`,
+        `timestamp=${timestamp}`,
+    ].join('&');
+
     const signature = await sha1(paramsToSign + apiSecret);
 
     const formData = new FormData();
@@ -50,8 +57,8 @@ async function uploadToCloudinary(
     formData.append('timestamp', String(timestamp));
     formData.append('signature', signature);
     formData.append('folder', folder);
-    formData.append('public_id', encodePublicId(fileName));
-    // Upload as 'raw' resource type to keep original binary file intact
+    formData.append('public_id', publicId);
+    formData.append('access_mode', 'public');
     formData.append('resource_type', 'raw');
 
     const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`;
@@ -63,10 +70,12 @@ async function uploadToCloudinary(
 
     if (!response.ok) {
         const err = await response.json().catch(() => ({}));
+        console.error('Cloudinary upload error:', err);
         throw new Error(err.error?.message || 'Cloudinary upload failed');
     }
 
     const data = await response.json();
+    console.log('Cloudinary upload success:', data.secure_url, 'access_mode:', data.access_mode);
     return {
         secureUrl: data.secure_url,
         publicId: data.public_id,
