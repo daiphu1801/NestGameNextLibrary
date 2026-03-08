@@ -346,7 +346,7 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
         {/* Main Content - Sidebar Layout */}
         <div className="flex-1 flex min-h-0">
           {/* Left Sidebar - Player 1 Controls */}
-          <div className="hidden md:flex flex-col w-[140px] bg-[#0d0d0d] border-r border-white/10 p-3">
+          <div className="hidden lg:flex flex-col w-[140px] bg-[#0d0d0d] border-r border-white/10 p-3">
             <div className="text-xs font-bold text-blue-400 mb-3 text-center">
               Player 1
             </div>
@@ -447,7 +447,7 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
           </div>
 
           {/* Right Sidebar - Player 2 Controls */}
-          <div className="hidden md:flex flex-col w-[140px] bg-[#0d0d0d] border-l border-white/10 p-3">
+          <div className="hidden lg:flex flex-col w-[140px] bg-[#0d0d0d] border-l border-white/10 p-3">
             <div className="text-xs font-bold text-red-400 mb-3 text-center">
               Player 2
             </div>
@@ -473,7 +473,7 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
             <span className="text-muted-foreground">{t('modal.back') || 'Quay lại'}</span>
           </div>
           {/* Mobile hint */}
-          <span className="md:hidden text-xs text-muted-foreground ml-4">
+          <span className="lg:hidden text-xs text-muted-foreground ml-4">
             ({t('modal.rotateForControls') || 'Xoay ngang để xem phím'})
           </span>
         </div>

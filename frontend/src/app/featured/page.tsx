@@ -309,7 +309,7 @@ export default function FeaturedGamesPage() {
                         }}
                     />
 
-                    <div className="relative p-8 md:p-12 lg:p-16 flex flex-col md:flex-row items-center gap-8 justify-between">
+                    <div className="relative p-5 sm:p-8 lg:p-16 flex flex-col lg:flex-row items-center gap-6 lg:gap-8 justify-between">
                         <div className="flex-1 max-w-2xl space-y-6">
                             {/* Badge */}
                             <div

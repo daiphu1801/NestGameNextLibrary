@@ -21,6 +21,11 @@ import { useToast } from '@/components/providers/ToastProvider';
 import { LoginModal, RegisterModal } from '@/components/auth';
 import { PlayTutorialPanel, ControlsPanel, HotGamesPanel } from '@/components/game/PlayTutorialPanel';
 import { GameTutorial } from '@/components/game/GameTutorial';
+import { MobileControlsOverlay } from '@/components/mobile/MobileControlsOverlay';
+import { ExitOverlay } from '@/components/mobile/ExitOverlay';
+import { PortraitOverlay } from '@/components/mobile/PortraitOverlay';
+import { useMobileDetection } from '@/hooks/useMobileDetection';
+import { useScreenOrientation } from '@/hooks/useScreenOrientation';
 import { cn } from '@/lib/utils';
 
 export default function PlayPage() {
@@ -30,6 +35,9 @@ export default function PlayPage() {
   const { t, locale } = useLanguage();
   const { showToast } = useToast();
   const { isFavorite: checkIsFavorite, toggleFavorite: toggleFav } = useFavorites();
+
+  const isMobile = useMobileDetection();
+  const { lockLandscape, unlock } = useScreenOrientation();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
@@ -86,6 +94,16 @@ export default function PlayPage() {
       emulatorService.unload();
     };
   }, [game]);
+
+  // Mobile: auto-lock landscape when game starts
+  useEffect(() => {
+    if (game && isMobile && !isLoading && !error) {
+      lockLandscape();
+    }
+    return () => {
+      if (isMobile) unlock();
+    };
+  }, [game, isMobile, isLoading, error, lockLandscape, unlock]);
 
   // Trial Timer Logic
   useEffect(() => {
@@ -347,17 +365,22 @@ export default function PlayPage() {
   return (
     <div
       ref={pageRef}
-      className="h-screen bg-black flex flex-col relative overflow-hidden"
+      className={isMobile ? "game-container bg-black flex flex-col relative" : "h-screen bg-black flex flex-col relative overflow-hidden"}
     >
-      {/* Subtle Ambient Glow */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
+      {/* Subtle Ambient Glow — hidden on mobile for performance */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none hidden lg:block">
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-indigo-600/15 rounded-full blur-[100px]" />
       </div>
 
-      {/* Floating Trial Timer Pill */}
+      {/* Floating Trial Timer Pill — repositioned on mobile */}
       {!user && !isTrialEnded && !error && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-[60] animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className={cn(
+          "absolute z-[60] animate-in fade-in slide-in-from-top-2 duration-300",
+          isMobile
+            ? "top-2 right-2"
+            : "top-16 left-1/2 -translate-x-1/2"
+        )}>
           <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/15 border border-yellow-500/25 backdrop-blur-md shadow-lg shadow-yellow-500/5">
             <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
             <p className="text-xs font-bold text-yellow-400 whitespace-nowrap">
@@ -367,11 +390,12 @@ export default function PlayPage() {
         </div>
       )}
 
-      {/* Top Header */}
+      {/* Top Header — hidden on mobile (use ExitOverlay tap instead) */}
       <header
         className={cn(
           "relative z-50 backdrop-blur-xl bg-[#0a0a1a]/90 border-b border-white/[0.06] transition-transform duration-300",
-          !showControls && !isFullscreen && "-translate-y-full"
+          !showControls && !isFullscreen && "-translate-y-full",
+          isMobile && "hidden"
         )}
       >
         <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-2">
@@ -529,6 +553,25 @@ export default function PlayPage() {
               justifyContent: 'center'
             }}
           />
+
+          {/* Mobile Touch Controls */}
+          {isMobile && (
+            <>
+              <MobileControlsOverlay
+                enabled={!isLoading && !error && !isTrialEnded}
+              />
+              <ExitOverlay
+                onExit={() => {
+                  unlock();
+                  router.back();
+                }}
+                onSave={user && !isLoading && !error ? () => openSaveModal('save') : undefined}
+                onLoad={user && !isLoading && !error ? () => openSaveModal('load') : undefined}
+                gameName={game?.name}
+              />
+              <PortraitOverlay />
+            </>
+          )}
         </div>
 
         {/* RIGHT — Hot Games Panel (Desktop only) */}
@@ -543,8 +586,8 @@ export default function PlayPage() {
           </div>
         )}
 
-        {/* Mobile Floating Button */}
-        {!isFullscreen && (
+        {/* Mobile Floating Button — hide when touch controls are active */}
+        {!isFullscreen && !isMobile && (
           <>
             <button
               onClick={() => setShowMobileTutorial(true)}
@@ -600,7 +643,8 @@ export default function PlayPage() {
         )}
       </div>
 
-      {/* Floating Bottom Control Hints */}
+      {/* Floating Bottom Control Hints — hidden on mobile (has virtual controls) */}
+      {!isMobile && (
       <div
         className={cn(
           "absolute bottom-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300",
@@ -621,12 +665,13 @@ export default function PlayPage() {
             <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-300 font-mono text-[10px] font-semibold border border-white/[0.08]">J/K</kbd>
             <span className="text-[10px] text-slate-500">A/B</span>
           </div>
-          <div className="hidden md:flex items-center gap-1.5">
+          <div className="hidden lg:flex items-center gap-1.5">
             <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-300 font-mono text-[10px] font-semibold border border-white/[0.08]">Enter</kbd>
             <span className="text-[10px] text-slate-500">Start</span>
           </div>
         </div>
       </div>
+      )}
 
       {/* Save/Load Modal */}
       {showSaveModal && (

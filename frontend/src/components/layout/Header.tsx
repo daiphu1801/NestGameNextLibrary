@@ -231,7 +231,7 @@ export function Header() {
             </Link>
 
             {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-1 flex-1 justify-center">
+            <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
               <NavLink href="/" active={pathname === '/'}>
                 <span className="flex items-center gap-1.5">
                   <Home className="w-3 h-3" />
@@ -385,11 +385,11 @@ export function Header() {
                 className="flex items-center rounded-full hover:bg-white/5 border border-transparent hover:border-white/10 transition-all"
                 title={locale === 'en' ? 'Switch to Vietnamese' : 'Chuyển sang tiếng Anh'}
               >
-                {/* Mobile: single active flag */}
-                <div className="sm:hidden flex items-center gap-1 px-2 py-1.5 text-xs font-bold font-mono-tech text-primary">
+                {/* Mobile: single active flag only (no text) */}
+                <div className="sm:hidden flex items-center px-2 py-1.5">
                   {locale === 'en'
-                    ? <><USFlag className="w-4 h-4 rounded-[2px]" /><span>EN</span></>
-                    : <><VietnamFlag className="w-4 h-4 rounded-[2px]" /><span>VI</span></>
+                    ? <USFlag className="w-4 h-4 rounded-[2px]" />
+                    : <VietnamFlag className="w-4 h-4 rounded-[2px]" />
                   }
                 </div>
                 {/* Desktop: both flags */}
@@ -422,7 +422,7 @@ export function Header() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/5 transition-all"
+                className="lg:hidden w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/5 transition-all"
               >
                 {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
               </button>
@@ -597,8 +597,11 @@ export function Header() {
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-xl animate-in fade-in duration-200">
-          <div className="container mx-auto px-4 pt-20 pb-8">
+        <div className="lg:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-xl animate-in fade-in duration-200">
+          <div
+            className="container mx-auto px-4 pb-8 overflow-y-auto h-full"
+            style={{ paddingTop: showDisclaimer ? '148px' : '104px' }}
+          >
             <nav className="flex flex-col gap-2">
               <MobileNavLink
                 href="/"

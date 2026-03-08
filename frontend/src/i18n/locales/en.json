@@ -263,7 +263,9 @@
     "warningTitle": "Better experience on PC",
     "warningDesc": "For the best gaming experience, please use a computer or laptop with a keyboard.",
     "warningShort": "Best experience on PC/Laptop with keyboard",
-    "recommended": "Recommended: PC / Laptop"
+    "recommended": "Recommended: PC / Laptop",
+    "rotateTitle": "Rotate to play",
+    "rotateDesc": "Rotate your phone to landscape for the best gaming experience"
   },
   "performance": {
     "modeOn": "Low Performance Mode: ON",

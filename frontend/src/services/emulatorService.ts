@@ -99,6 +99,8 @@ export const DEFAULT_GAMEPAD_MAPPING: GamepadConfig = {
   },
 };
 
+export type NESButton = 'up' | 'down' | 'left' | 'right' | 'a' | 'b' | 'start' | 'select';
+
 class EmulatorService {
   private currentEmulator: any = null;
   private isLoading = false;
@@ -396,6 +398,75 @@ class EmulatorService {
 
   getLoadingState(): boolean {
     return this.isLoading;
+  }
+
+  /**
+   * Get the current emulator instance (for direct API access)
+   */
+  getEmulator(): any {
+    return this.currentEmulator;
+  }
+
+  /**
+   * Map NES button name to the keyboard key configured for player 1
+   */
+  private getKeyForButton(button: NESButton): string {
+    const keys = this.getKeybindings();
+    return keys.p1[button];
+  }
+
+  /**
+   * Convert a RetroArch key name to a KeyboardEvent key/code
+   */
+  private retroKeyToKeyboard(retroKey: string): { key: string; code: string; keyCode: number } {
+    const map: Record<string, { key: string; code: string; keyCode: number }> = {
+      'w': { key: 'w', code: 'KeyW', keyCode: 87 },
+      's': { key: 's', code: 'KeyS', keyCode: 83 },
+      'a': { key: 'a', code: 'KeyA', keyCode: 65 },
+      'd': { key: 'd', code: 'KeyD', keyCode: 68 },
+      'j': { key: 'j', code: 'KeyJ', keyCode: 74 },
+      'k': { key: 'k', code: 'KeyK', keyCode: 75 },
+      'enter': { key: 'Enter', code: 'Enter', keyCode: 13 },
+      'rshift': { key: 'Shift', code: 'ShiftRight', keyCode: 16 },
+      'up': { key: 'ArrowUp', code: 'ArrowUp', keyCode: 38 },
+      'down': { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40 },
+      'left': { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
+      'right': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
+      'space': { key: ' ', code: 'Space', keyCode: 32 },
+    };
+    return map[retroKey.toLowerCase()] || { key: retroKey, code: `Key${retroKey.toUpperCase()}`, keyCode: retroKey.charCodeAt(0) };
+  }
+
+  /**
+   * Simulate a button press down via keyboard events on the canvas
+   */
+  pressButtonDown(button: NESButton): void {
+    const retroKey = this.getKeyForButton(button);
+    const { key, code, keyCode } = this.retroKeyToKeyboard(retroKey);
+
+    const canvas = document.querySelector('canvas.emulator-canvas') as HTMLCanvasElement;
+    const target = canvas || document;
+
+    target.dispatchEvent(new KeyboardEvent('keydown', {
+      key, code, keyCode, which: keyCode,
+      bubbles: true, cancelable: true,
+    }));
+  }
+
+  /**
+   * Simulate a button release via keyboard events on the canvas
+   */
+  pressButtonUp(button: NESButton): void {
+    const retroKey = this.getKeyForButton(button);
+    const { key, code, keyCode } = this.retroKeyToKeyboard(retroKey);
+
+    const canvas = document.querySelector('canvas.emulator-canvas') as HTMLCanvasElement;
+    const target = canvas || document;
+
+    target.dispatchEvent(new KeyboardEvent('keyup', {
+      key, code, keyCode, which: keyCode,
+      bubbles: true, cancelable: true,
+    }));
   }
 }
 

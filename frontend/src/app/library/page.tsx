@@ -175,19 +175,19 @@ export default function LibraryPage() {
                 />
             </div>
 
-            <div className="container mx-auto px-4 lg:px-8 py-8">
+            <div className="container mx-auto px-4 lg:px-8 py-4 sm:py-8">
                 {/* Page Header */}
-                <div className="mb-8">
-                    <h1 className="text-4xl font-black font-mono-tech uppercase tracking-wider mb-2">
+                <div className="mb-4 sm:mb-8">
+                    <h1 className="text-2xl sm:text-4xl font-black font-mono-tech uppercase tracking-wider mb-1 sm:mb-2">
                         {t('game.library') || 'Game Library'}
                     </h1>
-                    <p className="text-muted-foreground">
+                    <p className="text-sm sm:text-base text-muted-foreground">
                         {t('library.subtitle') || 'Browse and select a game to play'}
                     </p>
-                    <div className="mt-4 flex items-center gap-4 flex-wrap">
+                    <div className="mt-2 sm:mt-4 flex items-center gap-3 sm:gap-4 flex-wrap">
                         <div className="flex items-center gap-2">
-                            <span className="text-primary font-mono-tech text-2xl font-bold">{filteredGames.length}</span>
-                            <span className="text-muted-foreground font-mono-tech uppercase">{t('header.games') || 'Games'}</span>
+                            <span className="text-primary font-mono-tech text-xl sm:text-2xl font-bold">{filteredGames.length}</span>
+                            <span className="text-muted-foreground font-mono-tech uppercase text-xs sm:text-base">{t('header.games') || 'Games'}</span>
                         </div>
 
                         {/* Search Active Indicator with Reset */}
@@ -196,12 +196,12 @@ export default function LibraryPage() {
                 </div>
 
                 {/* Category Filter */}
-                <div className="mb-6">
+                <div className="mb-3 sm:mb-6">
                     <CategoryFilter />
                 </div>
 
                 {/* Sort & Region Filters */}
-                <div className="mb-8">
+                <div className="mb-4 sm:mb-8">
                     <FilterToolbar />
                 </div>
 

@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { Monitor } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export function MobileWarning() {
     const [isVisible, setIsVisible] = useState(false);
+    const pathname = usePathname();
 
     useEffect(() => {
-        // Check if mobile device
         const checkMobile = () => {
             const isMobile = window.innerWidth < 768;
             setIsVisible(isMobile);
@@ -17,6 +18,9 @@ export function MobileWarning() {
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    // Hide on play page — mobile now has virtual controls
+    if (pathname?.includes('/play')) return null;
 
     if (!isVisible) return null;
 

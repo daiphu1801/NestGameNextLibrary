@@ -54,17 +54,17 @@ export function FeaturedGames({ games, onGameClick }: FeaturedGamesProps) {
                     </div>
                 </div>
 
-                {/* Navigation Arrows */}
-                <div className="flex items-center gap-2">
+                {/* Navigation Arrows — hidden on mobile (swipe to scroll) */}
+                <div className="hidden sm:flex items-center gap-2">
                     <button
                         onClick={() => scroll('left')}
-                        className="p-2 rounded-lg bg-card hover:bg-white/10 transition-colors border border-white/10"
+                        className="p-2 rounded-lg bg-card hover:bg-white/10 transition-colors border border-white/10 cursor-pointer"
                     >
                         <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
                         onClick={() => scroll('right')}
-                        className="p-2 rounded-lg bg-card hover:bg-white/10 transition-colors border border-white/10"
+                        className="p-2 rounded-lg bg-card hover:bg-white/10 transition-colors border border-white/10 cursor-pointer"
                     >
                         <ChevronRight className="w-5 h-5" />
                     </button>
@@ -114,10 +114,10 @@ function FeaturedGameCard({ game, onClick, index }: FeaturedGameCardProps) {
         <div
             onClick={onClick}
             className={cn(
-                "group relative flex-shrink-0 w-72 rounded-2xl overflow-hidden cursor-pointer",
+                "group relative flex-shrink-0 w-56 sm:w-72 rounded-2xl overflow-hidden cursor-pointer",
                 "bg-gradient-to-br from-card to-card/50 border border-white/10",
                 "hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10",
-                "transition-all duration-500 hover:-translate-y-2"
+                "transition-all duration-500 hover:-translate-y-2 active:scale-[0.98]"
             )}
             style={{ animationDelay: `${index * 100}ms` }}
         >

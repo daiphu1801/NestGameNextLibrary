@@ -263,7 +263,9 @@
     "warningTitle": "Trải nghiệm tốt hơn trên PC",
     "warningDesc": "Để có trải nghiệm chơi game tốt nhất, hãy sử dụng máy tính hoặc laptop với bàn phím.",
     "warningShort": "Trải nghiệm tốt nhất trên PC/Laptop với bàn phím",
-    "recommended": "Khuyến nghị: PC / Laptop"
+    "recommended": "Khuyến nghị: PC / Laptop",
+    "rotateTitle": "Xoay ngang để chơi",
+    "rotateDesc": "Xoay điện thoại sang ngang để có trải nghiệm chơi game tốt nhất"
   },
   "performance": {
     "modeOn": "Chế độ tiết kiệm: BẬT",

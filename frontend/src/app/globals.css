@@ -260,7 +260,50 @@
   }
 }
 
+/* ===== Mobile Game Controls ===== */
+
+/* Fullscreen game container — safe for notch / Dynamic Island / home bar */
+.game-container {
+  height: 100dvh;
+  width: 100vw;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Hide mobile-only elements when device has a fine pointer (mouse) */
+@media (pointer: fine) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+/* Portrait orientation overlay — force landscape */
+.portrait-overlay {
+  display: none;
+}
+@media (orientation: portrait) and (pointer: coarse) {
+  .portrait-overlay {
+    display: flex;
+  }
+}
+
 /* Animations */
+@keyframes tilt {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-90deg); }
+}
+
+@keyframes ripple {
+  from { transform: scale(1); opacity: 0.7; }
+  to   { transform: scale(2.2); opacity: 0; }
+}
+
 @keyframes float {
 
   0%,

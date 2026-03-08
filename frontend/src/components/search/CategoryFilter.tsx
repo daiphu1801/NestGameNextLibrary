@@ -30,13 +30,10 @@ export function CategoryFilter() {
   };
 
   return (
-    <div className="w-full relative group">
-      {/* Decorative gradient fade on sides */}
-      <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none md:hidden" />
-      <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none md:hidden" />
-
-      <div className="w-full">
-        <div className="flex flex-wrap gap-3 justify-center">
+    <div className="w-full relative">
+      {/* Mobile: horizontal scroll | Desktop: wrap */}
+      <div className="w-full overflow-x-auto sm:overflow-x-visible scrollbar-hide">
+        <div className="flex sm:flex-wrap gap-2 sm:gap-3 sm:justify-center pb-2 sm:pb-0">
           {CATEGORY_ORDER.map((categoryKey) => {
             const category = GAME_CATEGORIES[categoryKey];
             const isActive = currentCategory === categoryKey;
@@ -49,8 +46,8 @@ export function CategoryFilter() {
                 key={categoryKey}
                 onClick={() => handleCategoryClick(categoryKey)}
                 className={cn(
-                  'relative flex items-center gap-2 px-5 py-2.5 rounded-full transition-all duration-300',
-                  'border font-medium text-sm',
+                  'relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-300',
+                  'border font-medium text-xs sm:text-sm',
                   isActive
                     ? 'bg-primary text-white border-primary shadow-lg shadow-primary/25 scale-105'
                     : 'bg-card/50 hover:bg-card border-white/5 text-muted-foreground hover:text-foreground hover:border-white/10 hover:shadow-lg'

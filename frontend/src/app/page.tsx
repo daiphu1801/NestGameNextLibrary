@@ -109,7 +109,7 @@ export default function LandingPage() {
 
       <div className="container mx-auto px-4 lg:px-8">
         {/* Hero Section */}
-        <section className="relative py-20 lg:py-32">
+        <section className="relative py-10 sm:py-16 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left Column - Hero Content */}
             <div className="space-y-8">
@@ -123,7 +123,7 @@ export default function LandingPage() {
               </div>
 
               {/* Main Heading */}
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-none">
                 <span className="text-foreground block">{t('welcome.titlePart1') || 'PLAY YOUR'}</span>
                 <span className="text-gradient-cyan block italic">{t('welcome.titlePart2') || 'CLASSICS'}</span>
               </h1>
@@ -208,8 +208,8 @@ export default function LandingPage() {
         </section>
 
         {/* About Section - Introduction */}
-        <section className="py-16 lg:py-24">
-          <div className="text-center max-w-4xl mx-auto mb-16">
+        <section className="py-10 sm:py-16 lg:py-24">
+          <div className="text-center max-w-4xl mx-auto mb-8 sm:mb-16">
             <h2 className="text-3xl lg:text-4xl font-black mb-6">
               <span className="text-foreground">{t('landing.aboutTitle') || 'Về'} </span>
               <span className="text-gradient-cyan">{t('landing.aboutTitleHighlight') || 'NestGame'}</span>
@@ -245,8 +245,8 @@ export default function LandingPage() {
         </section>
 
         {/* How It Works Section */}
-        <section className="py-16 lg:py-24 border-t border-white/5">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+        <section className="py-10 sm:py-16 lg:py-24 border-t border-white/5">
+          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-16">
             <h2 className="text-3xl lg:text-4xl font-black mb-6">
               <span className="text-foreground">{t('landing.howItWorksTitle') || 'Cách'} </span>
               <span className="text-gradient-cyan">{t('landing.howItWorksHighlight') || 'Sử Dụng'}</span>
@@ -273,7 +273,7 @@ export default function LandingPage() {
         </section>
 
         {/* Featured Games Preview */}
-        <section className="py-16 lg:py-24 border-t border-white/5">
+        <section className="py-10 sm:py-16 lg:py-24 border-t border-white/5">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-3xl font-black mb-2">
@@ -299,14 +299,14 @@ export default function LandingPage() {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-16 lg:py-24">
-          <div className="glass-card-strong rounded-3xl p-8 lg:p-16 text-center relative overflow-hidden">
+        <section className="py-10 sm:py-16 lg:py-24">
+          <div className="glass-card-strong rounded-3xl p-6 sm:p-8 lg:p-16 text-center relative overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
 
             <div className="relative z-10">
-              <h2 className="text-3xl lg:text-5xl font-black mb-6">
+              <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-6">
                 <span className="text-foreground">{t('landing.ctaTitle') || 'Sẵn Sàng'} </span>
                 <span className="text-gradient-cyan">{t('landing.ctaHighlight') || 'Khám Phá?'}</span>
               </h2>

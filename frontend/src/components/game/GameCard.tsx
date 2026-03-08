@@ -106,8 +106,8 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
           </div>
         )}
 
-        {/* Hover Overlay with Play + Details Buttons */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-3">
+        {/* Hover Overlay with Play + Details Buttons — desktop only */}
+        <div className="hidden lg:flex absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex-col items-center justify-center gap-3">
           {onPlayClick && (
             <button
               onClick={(e) => { e.stopPropagation(); onPlayClick(); }}
@@ -132,7 +132,7 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
         <button
           onClick={handleFavoriteClick}
           className={cn(
-            "absolute top-2 right-2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300",
+            "absolute top-2 right-2 z-10 w-11 h-11 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all duration-300",
             "backdrop-blur-md border shadow-lg",
             user ? (
               isFavorite
@@ -167,10 +167,10 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
 
         {/* Login Required Tooltip */}
         {showLoginTooltip && (
-          <div className="absolute top-14 right-2 z-20 px-3 py-2 rounded-lg bg-black/90 border border-primary/30 text-white text-xs animate-in fade-in slide-in-from-top-2 duration-200 whitespace-nowrap">
-            <div className="flex items-center gap-2">
-              <LogIn className="w-3 h-3 text-primary" />
-              <span>Đăng nhập để thêm yêu thích</span>
+          <div className="absolute top-14 right-1 z-20 px-3 py-2 rounded-lg bg-black/90 border border-primary/30 text-white text-xs animate-in fade-in slide-in-from-top-2 duration-200 max-w-[calc(100%-8px)]">
+            <div className="flex items-center gap-1.5">
+              <LogIn className="w-3 h-3 text-primary flex-shrink-0" />
+              <span className="leading-tight">Đăng nhập để thêm yêu thích</span>
             </div>
           </div>
         )}
@@ -204,7 +204,7 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-2 bg-card">
+      <div className="p-3 sm:p-4 space-y-2 bg-card">
         <h3 className="font-bold text-sm text-foreground leading-tight line-clamp-1 group-hover:text-primary transition-colors">
           {game.name}
         </h3>
@@ -221,6 +221,30 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
             </span>
           </div>
         </div>
+
+        {/* Mobile: Play + Details buttons — always visible on mobile, hidden on desktop */}
+        {(onPlayClick || onDetailsClick) && (
+          <div className="lg:hidden flex items-center gap-2 pt-1">
+            {onPlayClick && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onPlayClick(); }}
+                className="flex-1 flex items-center justify-center gap-1 h-9 rounded-lg bg-primary text-white text-[11px] whitespace-nowrap active:scale-95 transition-transform hover:bg-primary/90"
+              >
+                <Play className="h-3 w-3 fill-current flex-shrink-0" />
+                {t('game.playNow')}
+              </button>
+            )}
+            {onDetailsClick && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onDetailsClick(); }}
+                className="flex-1 flex items-center justify-center gap-1 h-9 rounded-lg bg-secondary border border-white/10 text-foreground text-[11px] whitespace-nowrap active:scale-95 transition-transform hover:bg-white/10"
+              >
+                <Info className="h-3 w-3 flex-shrink-0" />
+                {t('game.details')}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

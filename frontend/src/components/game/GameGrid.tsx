@@ -86,11 +86,12 @@ export function GameGrid() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
         {games.map((game, index) => (
           <GameCard
             key={game.id}
             game={game}
+            onClick={() => handleDetailsClick(game)}
             onPlayClick={() => handlePlayClick(game)}
             onDetailsClick={() => handleDetailsClick(game)}
             priority={index < PERFORMANCE_CONFIG.IMAGE_PRIORITY_COUNT}
@@ -106,8 +107,8 @@ export function GameGrid() {
             {t('pagination.showing')} <span className="text-primary font-semibold">{(currentPage - 1) * 25 + 1}-{Math.min(currentPage * 25, filteredGames.length)}</span> {t('pagination.of')} <span className="text-foreground font-semibold">{filteredGames.length}</span> {t('pagination.games')}
           </p>
 
-          <div className="flex items-center gap-2">
-            {/* First Page Button */}
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-center">
+            {/* First Page Button — hidden on mobile */}
             <Button
               variant="ghost"
               size="icon"
@@ -116,7 +117,7 @@ export function GameGrid() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               disabled={currentPage === 1}
-              className="rounded-lg bg-card hover:bg-white/10 disabled:opacity-30 w-12 h-12"
+              className="hidden sm:flex rounded-lg bg-card hover:bg-white/10 disabled:opacity-30 w-10 h-10 sm:w-12 sm:h-12"
               title="First page"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -129,13 +130,13 @@ export function GameGrid() {
               size="icon"
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              className="rounded-lg bg-card hover:bg-white/10 disabled:opacity-30 w-12 h-12"
+              className="rounded-lg bg-card hover:bg-white/10 disabled:opacity-30 w-10 h-10 sm:w-12 sm:h-12"
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
 
             {/* Page Numbers */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               {(() => {
                 const pages: number[] = [];
                 const showPages = 3; // Show 3 page numbers
@@ -162,7 +163,7 @@ export function GameGrid() {
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
                         className={cn(
-                          "w-12 h-12 rounded-lg flex items-center justify-center text-sm font-semibold transition-all duration-300",
+                          "w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-sm font-semibold transition-all duration-300",
                           currentPage === pageNum
                             ? "bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/30"
                             : "bg-card hover:bg-white/10 text-muted-foreground hover:text-foreground"
@@ -175,7 +176,7 @@ export function GameGrid() {
                     {/* Ellipsis and Last Page */}
                     {end < totalPages && (
                       <>
-                        <span className="w-8 h-12 flex items-center justify-center text-muted-foreground font-semibold">
+                        <span className="w-6 sm:w-8 h-10 sm:h-12 flex items-center justify-center text-muted-foreground font-semibold text-xs sm:text-sm">
                           ...
                         </span>
                         <button
@@ -184,7 +185,7 @@ export function GameGrid() {
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }}
                           className={cn(
-                            "w-12 h-12 rounded-lg flex items-center justify-center text-sm font-semibold transition-all duration-300",
+                            "w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-sm font-semibold transition-all duration-300",
                             currentPage === totalPages
                               ? "bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/30"
                               : "bg-card hover:bg-white/10 text-muted-foreground hover:text-foreground"
@@ -205,12 +206,12 @@ export function GameGrid() {
               size="icon"
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className="rounded-lg bg-card hover:bg-white/10 disabled:opacity-30 w-12 h-12"
+              className="rounded-lg bg-card hover:bg-white/10 disabled:opacity-30 w-10 h-10 sm:w-12 sm:h-12"
             >
               <ChevronRight className="h-5 w-5" />
             </Button>
 
-            {/* Last Page Button */}
+            {/* Last Page Button — hidden on mobile */}
             <Button
               variant="ghost"
               size="icon"
@@ -219,7 +220,7 @@ export function GameGrid() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               disabled={currentPage === totalPages}
-              className="rounded-lg bg-card hover:bg-white/10 disabled:opacity-30 w-12 h-12"
+              className="hidden sm:flex rounded-lg bg-card hover:bg-white/10 disabled:opacity-30 w-10 h-10 sm:w-12 sm:h-12"
               title="Last page"
             >
               <ChevronRight className="h-4 w-4" />

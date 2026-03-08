@@ -38,10 +38,10 @@ export function UserDropdown({ user, onLogin, onLogout }: UserDropdownProps) {
         return (
             <button
                 onClick={onLogin}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 hover:border-primary/50 transition-all hover:scale-105 active:scale-95"
+                className="flex items-center gap-1.5 px-2 sm:px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 hover:border-primary/50 transition-all hover:scale-105 active:scale-95 cursor-pointer"
             >
                 <User className="w-4 h-4 text-primary" />
-                <span className="text-sm font-semibold text-primary">
+                <span className="hidden sm:inline text-sm font-semibold text-primary">
                     {t('auth.login') || 'Đăng nhập'}
                 </span>
             </button>
