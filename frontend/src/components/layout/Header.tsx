@@ -442,6 +442,7 @@ export function Header() {
 
               {/* Search Container */}
               <div
+                ref={searchContainerRef}
                 className="relative w-full max-w-3xl animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-300 flex flex-col max-h-[80vh]"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -504,7 +505,7 @@ export function Header() {
                           {suggestions.slice(0, 5).map((game) => (
                             <Link
                               key={game.id}
-                              href={`/${game.path}`}
+                              href={`/games/${game.id}/play`}
                               onClick={() => setIsSearchOpen(false)}
                               className="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-all duration-200"
                             >

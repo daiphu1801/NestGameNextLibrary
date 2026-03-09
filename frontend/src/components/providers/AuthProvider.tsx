@@ -43,9 +43,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const login = async (data: LoginRequest, rememberMe: boolean = false) => {
         try {
-            const response = await authService.login(data);
-            // Tokens are in HttpOnly cookies, just save user info locally
-            authService.setLocalUser(response);
+            const response = await authService.login(data, rememberMe);
+            authService.setLocalUser(response, rememberMe);
             setUser(response.user);
         } catch (error) {
             console.error('Login failed', error);

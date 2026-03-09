@@ -5,19 +5,31 @@ const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api
 // ── Token helpers ──────────────────────────────────────────────────────────
 const TOKEN_KEY = 'accessToken';
 const REFRESH_KEY = 'refreshToken';
+const REMEMBER_ME_KEY = 'rememberMe';
 
 export function getAccessToken(): string | null {
     return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
 }
 
-export function saveTokens(accessToken: string, refreshToken: string) {
-    localStorage.setItem(TOKEN_KEY, accessToken);
-    localStorage.setItem(REFRESH_KEY, refreshToken);
+export function getRememberMe(): boolean {
+    return localStorage.getItem(REMEMBER_ME_KEY) === 'true';
+}
+
+export function saveTokens(accessToken: string, refreshToken: string, rememberMe: boolean = false) {
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem(TOKEN_KEY, accessToken);
+    storage.setItem(REFRESH_KEY, refreshToken);
+    if (rememberMe) {
+        localStorage.setItem(REMEMBER_ME_KEY, 'true');
+    } else {
+        localStorage.removeItem(REMEMBER_ME_KEY);
+    }
 }
 
 export function clearTokens() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_KEY);
+    localStorage.removeItem(REMEMBER_ME_KEY);
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(REFRESH_KEY);
 }
@@ -29,12 +41,12 @@ export function getAuthHeaders(): Record<string, string> {
 // ──────────────────────────────────────────────────────────────────────────
 
 export const authService = {
-    async login(data: LoginRequest): Promise<{ user: User }> {
+    async login(data: LoginRequest, rememberMe: boolean = false): Promise<{ user: User }> {
         const response = await fetch(`${API_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify(data),
+            body: JSON.stringify({ ...data, rememberMe }),
         });
 
         if (!response.ok) {
@@ -43,7 +55,7 @@ export const authService = {
         }
 
         const result = await response.json();
-        if (result.accessToken) saveTokens(result.accessToken, result.refreshToken);
+        if (result.accessToken) saveTokens(result.accessToken, result.refreshToken, rememberMe);
         return result;
     },
 
@@ -137,6 +149,7 @@ export const authService = {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
+        localStorage.removeItem(REMEMBER_ME_KEY);
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('user');
@@ -150,7 +163,7 @@ export const authService = {
         return null;
     },
 
-    setLocalUser(user: User | { user: User }) {
+    setLocalUser(user: User | { user: User }, rememberMe?: boolean) {
         // Store only non-sensitive fields
         const u = 'user' in user ? user.user : user;
         const safeUser = {
@@ -158,7 +171,9 @@ export const authService = {
             username: u.username,
             avatarUrl: u.avatarUrl,
         };
-        localStorage.setItem('user', JSON.stringify(safeUser));
+        const shouldRemember = rememberMe ?? getRememberMe();
+        const storage = shouldRemember ? localStorage : sessionStorage;
+        storage.setItem('user', JSON.stringify(safeUser));
     },
 
     /**
@@ -177,6 +192,8 @@ export const authService = {
             }
 
             const data = await response.json();
+            const rememberMe = getRememberMe();
+            if (data.accessToken) saveTokens(data.accessToken, data.refreshToken, rememberMe);
             this.setLocalUser(data);
             return data.user;
         } catch {
