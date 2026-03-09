@@ -272,8 +272,17 @@
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
+  -ms-touch-action: none;
   overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
   position: relative;
+}
+
+/* Prevent zoom on all descendants — iOS Safari fix */
+.game-container * {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
 }
 
 /* Hide mobile-only elements when device has a fine pointer (mouse) */

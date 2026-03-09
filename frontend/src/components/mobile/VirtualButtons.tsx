@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { cn } from '@/lib/utils';
 
@@ -15,7 +15,23 @@ export function VirtualButtons({ onButtonDown, onButtonUp }: VirtualButtonsProps
   const { vibrate } = useHapticFeedback();
   const activeButtonsRef = useRef<Set<string>>(new Set());
   const [pressed, setPressed] = useState<Record<string, boolean>>({});
-  const [rippleKey, setRippleKey] = useState<Record<string, number>>({}); // one-shot ripple
+  const [rippleKey, setRippleKey] = useState<Record<string, number>>({});
+
+  // Release all held buttons on orientation change or visibility change
+  useEffect(() => {
+    const releaseAll = () => {
+      activeButtonsRef.current.forEach(btn => onButtonUp(btn as ButtonName));
+      activeButtonsRef.current.clear();
+      setPressed({});
+    };
+    window.addEventListener('orientationchange', releaseAll);
+    const onVisibility = () => { if (document.hidden) releaseAll(); };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('orientationchange', releaseAll);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [onButtonUp]);
 
   const handleTouchStart = useCallback((button: ButtonName) => (e: React.TouchEvent) => {
     e.preventDefault();
@@ -24,7 +40,7 @@ export function VirtualButtons({ onButtonDown, onButtonUp }: VirtualButtonsProps
       activeButtonsRef.current.add(button);
       vibrate(15);
       setPressed(p => ({ ...p, [button]: true }));
-      setRippleKey(r => ({ ...r, [button]: Date.now() })); // trigger new ripple
+      setRippleKey(r => ({ ...r, [button]: Date.now() }));
       onButtonDown(button);
     }
   }, [onButtonDown, vibrate]);
@@ -49,7 +65,6 @@ export function VirtualButtons({ onButtonDown, onButtonUp }: VirtualButtonsProps
 
     return (
       <div className={cn('absolute', posClass)}>
-        {/* Expanding ripple ring — one-shot per press, keyed to timestamp */}
         {key && (
           <span
             key={key}
@@ -58,7 +73,6 @@ export function VirtualButtons({ onButtonDown, onButtonUp }: VirtualButtonsProps
           />
         )}
 
-        {/* Outer ambient glow — visible while held */}
         <div
           className={cn(
             'absolute inset-[-4px] rounded-full pointer-events-none transition-opacity duration-100',
@@ -79,9 +93,7 @@ export function VirtualButtons({ onButtonDown, onButtonUp }: VirtualButtonsProps
               : 'bg-gradient-to-br from-red-500/90 to-red-700/90 border-red-400/50 shadow-lg shadow-red-900/30'
           )}
         >
-          {/* Shine spot */}
           <div className="absolute top-1.5 left-2.5 w-3.5 h-2 rounded-full bg-white/30 blur-[2px] pointer-events-none" />
-          {/* White flash on press */}
           {isPressed && (
             <span className="absolute inset-0 rounded-full bg-white/15 pointer-events-none" />
           )}
