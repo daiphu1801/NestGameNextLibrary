@@ -18,4 +18,5 @@ ENV SPRING_PROFILES_ACTIVE=prod
 
 # Run with memory limits for Free Tier (Render/Railway have 512MB RAM)
 # -Xmx350m: Max heap size 350MB (leaving ~150MB for OS/JVM overhead)
-ENTRYPOINT ["java", "-Xmx350m", "-jar", "app.jar"]
+#ENTRYPOINT ["java", "-Xmx350m", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]

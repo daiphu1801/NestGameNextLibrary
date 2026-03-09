@@ -10,6 +10,7 @@ import { ToastProvider } from '@/components/providers/ToastProvider';
 import { FavoritesProvider } from '@/components/providers/FavoritesProvider';
 import { metadata as siteMetadata } from '@/config/site';
 import { PWARegister } from '@/components/providers/PWARegister';
+import { PWAInstallPrompt } from '@/components/pwa/PWAInstallPrompt';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -56,6 +57,7 @@ export default function RootLayout({
                           {children}
                         </div>
                         <Footer />
+                        <PWAInstallPrompt />
                       </div>
                     </ToastProvider>
                   </QueryProvider>

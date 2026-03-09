@@ -267,6 +267,16 @@
     "rotateTitle": "Xoay ngang để chơi",
     "rotateDesc": "Xoay điện thoại sang ngang để có trải nghiệm chơi game tốt nhất"
   },
+  "pwa": {
+    "title": "Thêm NestGame vào màn hình chính",
+    "desc": "Mở nhanh hơn, chỉ một chạm từ màn hình",
+    "iosStep1": "Nhấn Chia sẻ",
+    "iosStep2": "Thêm vào MH Chính",
+    "iosChromeHint": "Mở trang này bằng Safari để thêm vào màn hình chính",
+    "androidStep1": "Nhấn menu ⋮",
+    "androidStep2": "Thêm vào màn hình chính",
+    "androidInstall": "Cài đặt ứng dụng"
+  },
   "performance": {
     "modeOn": "Chế độ tiết kiệm: BẬT",
     "modeOff": "Chế độ tiết kiệm: TẮT",

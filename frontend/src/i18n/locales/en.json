@@ -267,6 +267,16 @@
     "rotateTitle": "Rotate to play",
     "rotateDesc": "Rotate your phone to landscape for the best gaming experience"
   },
+  "pwa": {
+    "title": "Add NestGame to Home Screen",
+    "desc": "Launch faster, one tap from your screen",
+    "iosStep1": "Tap Share",
+    "iosStep2": "Add to Home Screen",
+    "iosChromeHint": "Open this page in Safari to add to your Home Screen",
+    "androidStep1": "Tap menu ⋮",
+    "androidStep2": "Add to Home Screen",
+    "androidInstall": "Install app"
+  },
   "performance": {
     "modeOn": "Low Performance Mode: ON",
     "modeOff": "Low Performance Mode: OFF",
