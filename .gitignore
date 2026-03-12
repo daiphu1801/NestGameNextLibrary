@@ -63,3 +63,5 @@ __pycache__/
 
 # Render deployment (contains secrets, DO NOT COMMIT)
 render-backend.env
+
+scripts/*.log
