@@ -152,13 +152,7 @@ export const adminService = {
     },
 
     async getGameById(gameId: number): Promise<any> {
-        const baseUrl = API_URL.replace('/admin', '');
-        const token = localStorage.getItem(ADMIN_USER_KEY) ? JSON.parse(localStorage.getItem(ADMIN_USER_KEY)!)?.token : '';
-        const res = await fetch(`${baseUrl}/games/${gameId}`, {
-            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-        });
-        if (!res.ok) throw new Error('Game not found');
-        return res.json();
+        return apiRequest(`/games/${gameId}`);
     },
 
     async createGame(data: any): Promise<any> {

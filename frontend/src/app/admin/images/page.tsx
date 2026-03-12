@@ -19,6 +19,8 @@ interface BrokenGame {
     // UI state
     searching?: boolean;
     foundUrl?: string;
+    foundSnap?: string;    // Named_Snaps image
+    foundTitle?: string;   // Named_Titles image
     foundSource?: string;
     newUrl?: string;   // user-edited manual URL
     saving?: boolean;
@@ -35,7 +37,8 @@ interface ScanStats {
 // ─── Helper ───────────────────────────────────────────────────────────────────
 function getToken() {
     if (typeof window === 'undefined') return '';
-    return localStorage.getItem('admin_token') || localStorage.getItem('auth_token') || '';
+    // accessToken is set by authService.saveTokens() after login
+    return localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken') || '';
 }
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
@@ -119,7 +122,9 @@ export default function AdminImagesPage() {
                                 setBrokenGames(prev => [...prev, {
                                     id: ev.id, name: ev.name,
                                     currentImageUrl: ev.newUrl, newUrl: ev.newUrl,
-                                    foundUrl: ev.newUrl, foundSource: ev.source, saved: true,
+                                    foundUrl: ev.newUrl, foundSnap: ev.newSnap || undefined,
+                                    foundTitle: ev.newTitle || undefined,
+                                    foundSource: ev.source, saved: true,
                                 }]);
                             }
                         } else if (ev.type === 'done') {
@@ -156,7 +161,7 @@ export default function AdminImagesPage() {
                 const data = await res.json();
                 if (data.url) {
                     setBrokenGames(prev => prev.map(g => g.id === gameId
-                        ? { ...g, searching: false, foundUrl: data.url, foundSource: data.source, newUrl: data.url }
+                        ? { ...g, searching: false, foundUrl: data.url, foundSnap: data.snap || undefined, foundTitle: data.title || undefined, foundSource: data.source, newUrl: data.url }
                         : g
                     ));
                 } else {
@@ -183,15 +188,15 @@ export default function AdminImagesPage() {
                 name: fullGame.name,
                 fileName: fullGame.fileName,
                 path: fullGame.path,
-                categoryId: fullGame.categoryId || 1, // backend requires categoryId
+                categoryId: fullGame.categoryId || fullGame.category?.id || 1,
                 description: fullGame.description || '',
                 rating: fullGame.rating || 0,
                 year: fullGame.year || new Date().getFullYear(),
-                region: fullGame.region || 'US',
+                region: fullGame.region || '',
                 isFeatured: fullGame.isFeatured || false,
-                imageUrl: game.newUrl?.trim(),
-                imageSnap: fullGame.imageSnap || '',
-                imageTitle: fullGame.imageTitle || ''
+                imageUrl: game.newUrl?.trim() || fullGame.imageUrl,
+                imageSnap: game.foundSnap || fullGame.imageSnap || '',
+                imageTitle: game.foundTitle || fullGame.imageTitle || ''
             };
 
             await adminService.updateGame(game.id, payload);
@@ -208,6 +213,15 @@ export default function AdminImagesPage() {
 
     const pct = progress.total > 0 ? Math.round((progress.current / progress.total) * 100) : 0;
     const pendingCount = brokenGames.filter(g => !g.saved).length;
+    const unsavedFoundCount = brokenGames.filter(g => g.foundUrl && !g.saved).length;
+
+    // ── Save All Found ────────────────────────────────────────────────────────
+    const saveAllFound = useCallback(async () => {
+        const toSave = brokenGames.filter(g => g.foundUrl && !g.saved && !g.saving);
+        for (const game of toSave) {
+            await saveImageUrl({ ...game, newUrl: game.newUrl || game.foundUrl });
+        }
+    }, [brokenGames, saveImageUrl]);
 
     return (
         <div className="space-y-6">
@@ -317,6 +331,16 @@ export default function AdminImagesPage() {
                             Game chưa có ảnh
                             <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'rgba(251,84,84,0.15)', color: '#FB5454' }}>{pendingCount} cần xử lý</span>
                         </h2>
+                        {unsavedFoundCount > 0 && (
+                            <button
+                                onClick={saveAllFound}
+                                className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold border hover:brightness-110 transition-all cursor-pointer"
+                                style={{ background: 'rgba(16,185,129,0.1)', borderColor: '#10B981', color: '#10B981' }}
+                            >
+                                <Save className="w-3.5 h-3.5" />
+                                Lưu tất cả ({unsavedFoundCount})
+                            </button>
+                        )}
                     </div>
 
                     <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #2E3A47' }}>
