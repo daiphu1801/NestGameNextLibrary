@@ -488,6 +488,22 @@ function AdminGamesContent() {
         finally { setTogglingFeatured(null); }
     };
 
+    const [reseeding, setReseeding] = useState(false);
+
+    const handleReseed = async () => {
+        if (!confirm('Sync games.json vào database? Chỉ thêm game mới, không xóa/sửa game cũ.')) return;
+        setReseeding(true);
+        try {
+            const result = await adminService.reseedGames();
+            showToast('success', `✅ Thêm ${result.added} game mới, bỏ qua ${result.skipped} trùng lặp`);
+            loadGames();
+        } catch (err: any) {
+            showToast('error', err.message);
+        } finally {
+            setReseeding(false);
+        }
+    };
+
     const exportCSV = () => {
         const headers = ['ID', 'Name', 'Category', 'Region', 'Rating', 'Play Count', 'Featured', 'Year'];
         const rows = games.map(g => [g.id, g.name, g.categoryName || '', g.region || '', g.rating || '', g.playCount || 0, g.isFeatured ? 'Yes' : 'No', g.year || '']);
@@ -510,6 +526,10 @@ function AdminGamesContent() {
             <div className="flex items-center justify-end gap-2">
                 <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2.5 rounded-md text-[#A5B4CB] text-sm border hover:text-white transition-all cursor-pointer" style={{ borderColor: '#2E3A47', background: '#24303F' }} title="Xuất CSV">
                     <Download className="w-4 h-4" /> CSV
+                </button>
+                <button onClick={handleReseed} disabled={reseeding} className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm border hover:text-white transition-all cursor-pointer disabled:opacity-50" style={{ borderColor: '#2E3A47', background: '#24303F', color: reseeding ? '#637381' : '#A5B4CB' }} title="Sync games.json → DB">
+                    {reseeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                    {reseeding ? 'Đang sync...' : 'Sync DB'}
                 </button>
                 <button onClick={openCreate} className="flex items-center gap-2 px-5 py-2.5 rounded-md text-white text-sm font-semibold hover:brightness-110 transition-all active:scale-[0.98] cursor-pointer" style={{ background: '#3C50E0' }}>
                     <Plus className="w-4 h-4" /> Thêm game

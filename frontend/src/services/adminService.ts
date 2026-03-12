@@ -173,6 +173,10 @@ export const adminService = {
         return apiRequest(`/games/${gameId}`, { method: 'DELETE' });
     },
 
+    async reseedGames(): Promise<{ total: number; added: number; skipped: number }> {
+        return apiRequest('/games/reseed', { method: 'POST' });
+    },
+
     // ==================== CATEGORIES ====================
     async getCategories(): Promise<any[]> {
         return apiRequest('/categories');
