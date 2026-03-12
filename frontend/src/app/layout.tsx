@@ -20,6 +20,8 @@ export const metadata: Metadata = {
 
 import { Footer } from '@/components/layout/Footer';
 import { MobileWarning } from '@/components/layout/MobileWarning';
+import { LoadingProvider } from '@/components/providers/LoadingProvider';
+import { LoadingScreen } from '@/components/LoadingScreen';
 
 export default function RootLayout({
   children,
@@ -39,33 +41,36 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <PWARegister />
-        <ThemeProvider
-          attribute="data-theme"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <LanguageProvider>
-            <PerformanceProvider>
-              <AuthProvider>
-                <FavoritesProvider>
-                  <QueryProvider>
-                    <ToastProvider>
-                      <div className="flex min-h-screen flex-col relative">
-                        <MobileWarning />
-                        <div className="flex-1">
-                          {children}
+        <LoadingProvider>
+          <ThemeProvider
+            attribute="data-theme"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <LanguageProvider>
+              <PerformanceProvider>
+                <AuthProvider>
+                  <FavoritesProvider>
+                    <QueryProvider>
+                      <LoadingScreen />
+                      <ToastProvider>
+                        <div className="flex min-h-screen flex-col relative">
+                          <MobileWarning />
+                          <div className="flex-1">
+                            {children}
+                          </div>
+                          <Footer />
+                          <PWAInstallPrompt />
                         </div>
-                        <Footer />
-                        <PWAInstallPrompt />
-                      </div>
-                    </ToastProvider>
-                  </QueryProvider>
-                </FavoritesProvider>
-              </AuthProvider>
-            </PerformanceProvider>
-          </LanguageProvider>
-        </ThemeProvider>
+                      </ToastProvider>
+                    </QueryProvider>
+                  </FavoritesProvider>
+                </AuthProvider>
+              </PerformanceProvider>
+            </LanguageProvider>
+          </ThemeProvider>
+        </LoadingProvider>
       </body>
     </html>
   );
