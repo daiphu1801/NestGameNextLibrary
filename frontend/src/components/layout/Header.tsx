@@ -276,7 +276,7 @@ export function Header() {
                 {/* Dropdown Menu */}
                 {isExploreOpen && (
                   <div className="absolute top-full left-0 pt-1 w-48 z-[200]">
-                    <div className="bg-secondary/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl shadow-primary/10 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="bg-secondary/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl shadow-primary/10 animate-in fade-in slide-in-from-top-2 duration-200 overflow-clip">
                       <Link
                         href="/random"
                         className={cn(
@@ -297,6 +297,22 @@ export function Header() {
                       >
                         <Trophy className="w-4 h-4 text-yellow-500" />
                         <span>{t('nav.leaderboard')}</span>
+                      </Link>
+                      <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />
+                      <Link
+                        href="/systems"
+                        className={cn(
+                          "relative flex items-center gap-3 px-4 py-3.5 text-sm font-bold transition-all group/systems",
+                          "bg-gradient-to-r from-purple-500/10 via-fuchsia-500/10 to-cyan-500/10",
+                          "hover:from-purple-500/20 hover:via-fuchsia-500/20 hover:to-cyan-500/20",
+                          pathname === '/systems' ? "text-purple-400" : ""
+                        )}
+                      >
+                        <Gamepad2 className="w-4 h-4 text-purple-400 group-hover/systems:animate-bounce" />
+                        <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-cyan-400 bg-clip-text" style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                          {t('nav.systems')}
+                        </span>
+                        <span className="ml-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white leading-none">New</span>
                       </Link>
                     </div>
                   </div>
@@ -652,6 +668,14 @@ export function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {t('nav.leaderboard')}
+                  </MobileNavLink>
+                  <MobileNavLink
+                    href="/systems"
+                    icon={<Gamepad2 className="w-4 h-4 text-purple-500" />}
+                    active={pathname === '/systems'}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {t('nav.systems')}
                   </MobileNavLink>
                 </div>
               </div>

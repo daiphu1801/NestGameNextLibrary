@@ -6,7 +6,7 @@ import { S3Client, PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s
 // ─── Constants ────────────────────────────────────────────────────────────────
 const LIBRARY_PATH = path.join(process.cwd(), 'LibraryNes');
 const DEFAULT_FOLDER = 'Nes ROMs Complete 1 Of 4';
-const ALLOWED_EXTENSIONS = ['.nes', '.zip'];
+const ALLOWED_EXTENSIONS = ['.nes', '.zip', '.sfc', '.smc', '.gba', '.md', '.gen', '.bin'];
 const ALLOWED_FOLDERS = [
     'Nes ROMs Complete 1 Of 4',
     'Nes ROMs Complete 2 Of 4',
@@ -90,6 +90,9 @@ function sanitizeFileName(name: string): string {
 function getContentType(ext: string): string {
     if (ext === '.zip') return 'application/zip';
     if (ext === '.nes') return 'application/x-nes-rom';
+    if (ext === '.sfc' || ext === '.smc') return 'application/x-snes-rom';
+    if (ext === '.gba') return 'application/x-gba-rom';
+    if (ext === '.md' || ext === '.gen' || ext === '.bin') return 'application/x-genesis-rom';
     return 'application/octet-stream';
 }
 
@@ -131,7 +134,7 @@ export async function POST(request: NextRequest) {
         const ext = path.extname(file.name).toLowerCase();
         if (!ALLOWED_EXTENSIONS.includes(ext)) {
             return NextResponse.json(
-                { error: `"${ext}" không được hỗ trợ. Chỉ dùng .nes hoặc .zip.` },
+                { error: `"${ext}" không được hỗ trợ. Chỉ dùng .nes, .sfc, .gba, .md, .zip.` },
                 { status: 400 }
             );
         }

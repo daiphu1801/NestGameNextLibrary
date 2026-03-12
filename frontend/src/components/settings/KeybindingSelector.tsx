@@ -48,13 +48,17 @@ const formatKeyDisplay = (key: string): string => {
     return map[key] || key.toUpperCase();
 };
 
-const NES_BUTTONS: { id: keyof KeybindingConfig['p1']; icon: string; color: string }[] = [
+const GAME_BUTTONS: { id: keyof KeybindingConfig['p1']; icon: string; color: string; systems?: string }[] = [
     { id: 'up', icon: '⬆', color: 'from-slate-600 to-slate-500' },
     { id: 'down', icon: '⬇', color: 'from-slate-600 to-slate-500' },
     { id: 'left', icon: '⬅', color: 'from-slate-600 to-slate-500' },
     { id: 'right', icon: '➡', color: 'from-slate-600 to-slate-500' },
     { id: 'a', icon: 'A', color: 'from-red-600 to-red-500' },
     { id: 'b', icon: 'B', color: 'from-red-700 to-red-600' },
+    { id: 'x', icon: 'X', color: 'from-blue-600 to-blue-500', systems: 'SNES / Genesis' },
+    { id: 'y', icon: 'Y', color: 'from-green-600 to-green-500', systems: 'SNES / Genesis' },
+    { id: 'l', icon: 'L', color: 'from-slate-500 to-slate-400', systems: 'SNES / GBA / Genesis' },
+    { id: 'r', icon: 'R', color: 'from-slate-500 to-slate-400', systems: 'SNES / GBA / Genesis' },
     { id: 'start', icon: '▶', color: 'from-gray-600 to-gray-500' },
     { id: 'select', icon: '◉', color: 'from-gray-600 to-gray-500' },
 ];
@@ -179,6 +183,7 @@ export function KeybindingSelector() {
             up: t('settings.keyUp', undefined, 'Lên'), down: t('settings.keyDown', undefined, 'Xuống'),
             left: t('settings.keyLeft', undefined, 'Trái'), right: t('settings.keyRight', undefined, 'Phải'),
             a: t('settings.keyA', undefined, 'Nút A'), b: t('settings.keyB', undefined, 'Nút B'),
+            x: t('settings.keyX', undefined, 'Button X'), y: t('settings.keyY', undefined, 'Button Y'), l: t('settings.keyL', undefined, 'Button L (Left)'), r: t('settings.keyR', undefined, 'Button R (Right)'),
             start: t('settings.keyStart', undefined, 'Start'), select: t('settings.keySelect', undefined, 'Select'),
         };
         return labels[id] || id;
@@ -248,7 +253,7 @@ export function KeybindingSelector() {
 
             {/* Keybinding grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {NES_BUTTONS.map((btn) => {
+                {GAME_BUTTONS.map((btn) => {
                     const isListening = listeningButton === btn.id;
                     const isConflicted = activeConflicts.has(btn.id);
 
@@ -279,9 +284,16 @@ export function KeybindingSelector() {
                                 </div>
 
                                 {/* Button label */}
-                                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
-                                    {getButtonLabel(btn.id)}
-                                </span>
+                                <div className="text-center">
+                                    <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest block">
+                                        {getButtonLabel(btn.id)}
+                                    </span>
+                                    {btn.systems && (
+                                        <span className="text-[9px] font-medium text-purple-400/80 block mt-0.5">
+                                            {btn.systems}
+                                        </span>
+                                    )}
+                                </div>
 
                                 {/* Assigned key */}
                                 <div className={cn(

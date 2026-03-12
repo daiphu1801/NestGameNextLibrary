@@ -12,6 +12,7 @@ interface GameStore {
   searchQuery: string;
   currentSort: SortOption;
   currentRegion: RegionKey;
+  currentSystem: string;
   currentPage: number;
   gamesPerPage: number;
   isLoading: boolean;
@@ -23,6 +24,7 @@ interface GameStore {
   setSearchQuery: (query: string) => void;
   setSort: (sort: SortOption) => void;
   setRegion: (region: RegionKey) => void;
+  setSystem: (system: string) => void;
   setPage: (page: number) => void;
   setLoading: (loading: boolean) => void;
   resetFilters: () => void;
@@ -40,13 +42,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
   searchQuery: '',
   currentSort: 'name-asc',
   currentRegion: 'all',
+  currentSystem: 'all',
   currentPage: 1,
   gamesPerPage: 25,
   isLoading: true,
 
   // Actions
   setGames: (games) => {
-    const { searchQuery, currentCategory, currentRegion, currentSort } = get();
+    const { searchQuery, currentCategory, currentRegion, currentSystem, currentSort } = get();
 
     let filtered = games;
 
@@ -54,19 +57,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (searchQuery) filtered = gameService.searchGames(filtered, searchQuery);
     if (currentCategory !== 'all') filtered = gameService.filterByCategory(filtered, currentCategory);
     if (currentRegion !== 'all') filtered = gameService.filterByRegion(filtered, currentRegion);
+    if (currentSystem !== 'all') filtered = gameService.filterBySystem(filtered, currentSystem);
 
-    // Default sorting / Hot games if no filters applied
-    if (!searchQuery && currentCategory === 'all' && currentRegion === 'all' && currentSort === 'name-asc') {
-      const isHot = (g: Game) => g.isFeatured || (g.rating && g.rating >= 4.5);
-      filtered = [...games].sort((a, b) => {
-        const aHot = isHot(a) ? 1 : 0;
-        const bHot = isHot(b) ? 1 : 0;
-        if (aHot !== bHot) return bHot - aHot; // hot first
-        return a.name.localeCompare(b.name); // then alphabetical
-      });
-    } else {
-      filtered = gameService.sortGames(filtered, currentSort || 'name-asc');
-    }
+    // Default sorting
+    filtered = gameService.sortGames(filtered, currentSort || 'name-asc');
 
     set({ allGames: games, filteredGames: filtered, isLoading: false });
   },
@@ -81,6 +75,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   setRegion: (region) => set({ currentRegion: region, currentPage: 1 }),
 
+  setSystem: (system) => set({ currentSystem: system, currentPage: 1 }),
+
   setPage: (page) => set({ currentPage: page }),
 
   setLoading: (loading) => set({ isLoading: loading }),
@@ -90,6 +86,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     searchQuery: '',
     currentSort: 'name-asc',
     currentRegion: 'all',
+    currentSystem: 'all',
     currentPage: 1,
   }),
 

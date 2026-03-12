@@ -18,6 +18,10 @@ interface PlayerKeys {
   right: string;
   a: string;
   b: string;
+  x: string;
+  y: string;
+  l: string;
+  r: string;
   start: string;
   select: string;
 }
@@ -35,6 +39,10 @@ export const DEFAULT_KEYBINDINGS: KeybindingConfig = {
     right: 'd',
     a: 'j',
     b: 'k',
+    x: 'u',
+    y: 'i',
+    l: 'q',
+    r: 'e',
     start: 'enter',
     select: 'rshift',
   },
@@ -45,8 +53,12 @@ export const DEFAULT_KEYBINDINGS: KeybindingConfig = {
     right: 'right',
     a: 'num1',
     b: 'num2',
+    x: 'num4',
+    y: 'num5',
+    l: 'num7',
+    r: 'num8',
     start: 'num3',
-    select: 'num4',
+    select: 'num6',
   },
 };
 
@@ -60,6 +72,10 @@ export interface GamepadButtonMap {
   right: number;
   a: number;       // NES A button
   b: number;       // NES B button
+  x: number;       // SNES X button
+  y: number;       // SNES Y button
+  l: number;       // L Trigger
+  r: number;       // R Trigger
   start: number;
   select: number;
   useAxis: boolean; // true = use axes for D-Pad instead of buttons
@@ -82,6 +98,10 @@ export const DEFAULT_GAMEPAD_MAPPING: GamepadConfig = {
     right: 15,
     b: 0,    // A(Xbox)/Cross(PS) → NES B
     a: 1,    // B(Xbox)/Circle(PS) → NES A
+    y: 2,    // X(Xbox)/Square(PS) → SNES Y
+    x: 3,    // Y(Xbox)/Triangle(PS) → SNES X
+    l: 4,    // LB(Xbox)/L1(PS) → SNES L
+    r: 5,    // RB(Xbox)/R1(PS) → SNES R
     start: 9,
     select: 8,
     useAxis: false,
@@ -93,13 +113,17 @@ export const DEFAULT_GAMEPAD_MAPPING: GamepadConfig = {
     right: 15,
     b: 0,
     a: 1,
+    y: 2,
+    x: 3,
+    l: 4,
+    r: 5,
     start: 9,
     select: 8,
     useAxis: false,
   },
 };
 
-export type NESButton = 'up' | 'down' | 'left' | 'right' | 'a' | 'b' | 'start' | 'select';
+export type NESButton = 'up' | 'down' | 'left' | 'right' | 'a' | 'b' | 'x' | 'y' | 'l' | 'r' | 'start' | 'select';
 
 class EmulatorService {
   private currentEmulator: any = null;
@@ -244,7 +268,7 @@ class EmulatorService {
     return this._isOfflineMode;
   }
 
-  async loadGame(gamePath: string, container: HTMLElement): Promise<void> {
+  async loadGame(gamePath: string, system: string = 'nes', container: HTMLElement): Promise<void> {
     // Skip if already loading
     if (this.isLoading) {
       console.log('Game is already loading, skipping...');
@@ -293,8 +317,15 @@ class EmulatorService {
       // Get gamepad mapping
       const gp = this.getGamepadMapping();
 
+      // Determine correct core for the system
+      let core = 'fceumm'; // default NES
+      if (system === 'snes') core = 'snes9x';
+      else if (system === 'gba') core = 'mgba';
+      else if (system === 'genesis') core = 'genesis_plus_gx';
+
       // Launch emulator with canvas, keyboard + gamepad controls
-      this.currentEmulator = await Nostalgist.nes({
+      this.currentEmulator = await Nostalgist.launch({
+        core: core,
         rom: romUrl,
         element: canvas,
         retroarchConfig: {
@@ -305,6 +336,10 @@ class EmulatorService {
           input_player1_right: keys.p1.right,
           input_player1_a: keys.p1.a,
           input_player1_b: keys.p1.b,
+          input_player1_x: keys.p1.x,
+          input_player1_y: keys.p1.y,
+          input_player1_l: keys.p1.l,
+          input_player1_r: keys.p1.r,
           input_player1_start: keys.p1.start,
           input_player1_select: keys.p1.select,
 
@@ -315,6 +350,10 @@ class EmulatorService {
           input_player2_right: keys.p2.right,
           input_player2_a: keys.p2.a,
           input_player2_b: keys.p2.b,
+          input_player2_x: keys.p2.x,
+          input_player2_y: keys.p2.y,
+          input_player2_l: keys.p2.l,
+          input_player2_r: keys.p2.r,
           input_player2_start: keys.p2.start,
           input_player2_select: keys.p2.select,
 
@@ -322,6 +361,10 @@ class EmulatorService {
           input_player1_joypad_index: 0,
           input_player1_b_btn: String(gp.p1.b),
           input_player1_a_btn: String(gp.p1.a),
+          input_player1_x_btn: String(gp.p1.x),
+          input_player1_y_btn: String(gp.p1.y),
+          input_player1_l_btn: String(gp.p1.l),
+          input_player1_r_btn: String(gp.p1.r),
           input_player1_up_btn: String(gp.p1.up),
           input_player1_down_btn: String(gp.p1.down),
           input_player1_left_btn: String(gp.p1.left),
@@ -333,6 +376,10 @@ class EmulatorService {
           input_player2_joypad_index: 1,
           input_player2_b_btn: String(gp.p2.b),
           input_player2_a_btn: String(gp.p2.a),
+          input_player2_x_btn: String(gp.p2.x),
+          input_player2_y_btn: String(gp.p2.y),
+          input_player2_l_btn: String(gp.p2.l),
+          input_player2_r_btn: String(gp.p2.r),
           input_player2_up_btn: String(gp.p2.up),
           input_player2_down_btn: String(gp.p2.down),
           input_player2_left_btn: String(gp.p2.left),

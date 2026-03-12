@@ -4,23 +4,42 @@ import { useRef, useCallback, useState, useEffect } from 'react';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { cn } from '@/lib/utils';
 
-type ButtonName = 'a' | 'b' | 'start' | 'select';
+type ButtonName = 'a' | 'b' | 'x' | 'y' | 'l' | 'r' | 'start' | 'select';
 
 interface VirtualButtonsProps {
+  system?: string;
   onButtonDown: (button: ButtonName) => void;
   onButtonUp: (button: ButtonName) => void;
 }
 
-const ACTION_BUTTONS = [
-  { name: 'b' as const, posClass: 'left-0 bottom-0' },
-  { name: 'a' as const, posClass: 'right-0 top-0' },
-];
+const getActionButtons = (system?: string) => {
+  const isFourButton = system === 'snes' || system === 'gba';
+  
+  if (isFourButton) {
+    return [
+      { name: 'y' as const, posClass: 'left-0 top-[45px]' },
+      { name: 'x' as const, posClass: 'left-[45px] top-0' },
+      { name: 'b' as const, posClass: 'left-[45px] bottom-0' },
+      { name: 'a' as const, posClass: 'right-0 top-[45px]' },
+    ];
+  }
+  
+  return [
+    { name: 'b' as const, posClass: 'left-0 bottom-0' },
+    { name: 'a' as const, posClass: 'right-0 top-0' },
+  ];
+};
 
-export function VirtualButtons({ onButtonDown, onButtonUp }: VirtualButtonsProps) {
+export function VirtualButtons({ system, onButtonDown, onButtonUp }: VirtualButtonsProps) {
   const { vibrate } = useHapticFeedback();
   const activeButtonsRef = useRef<Set<string>>(new Set());
   const [pressed, setPressed] = useState<Record<string, boolean>>({});
   const [rippleKey, setRippleKey] = useState<Record<string, number>>({});
+  
+  const actionButtons = getActionButtons(system);
+  const containerStyle = system === 'snes' || system === 'gba' 
+    ? { width: 150, height: 150 } 
+    : { width: 130, height: 90 };
 
   // Release all held buttons on orientation change or visibility change
   useEffect(() => {
@@ -60,8 +79,8 @@ export function VirtualButtons({ onButtonDown, onButtonUp }: VirtualButtonsProps
 
   return (
     <div className="relative touch-none select-none">
-      <div className="relative" style={{ width: 130, height: 90 }}>
-        {ACTION_BUTTONS.map(({ name, posClass }) => {
+      <div className="relative" style={containerStyle}>
+        {actionButtons.map(({ name, posClass }) => {
           const isPressed = pressed[name];
           const key = rippleKey[name];
           return (

@@ -216,9 +216,22 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
                 <Heart className="w-3 h-3 fill-current" />
               </span>
             )}
-            <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase font-mono-tech border border-primary/20">
-              NES
-            </span>
+            {(() => {
+              const sys = (game.system || 'nes').toLowerCase();
+              let sysStyles = "bg-primary/10 text-primary border-primary/20";
+              let label = "NES";
+              
+              if (sys === 'snes') { sysStyles = "bg-purple-500/10 text-purple-400 border-purple-500/20"; label = "SNES"; }
+              else if (sys === 'gba') { sysStyles = "bg-blue-500/10 text-blue-400 border-blue-500/20"; label = "GBA"; }
+              else if (sys === 'genesis') { sysStyles = "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"; label = "GENESIS"; }
+              else { sysStyles = "bg-red-500/10 text-red-400 border-red-500/20"; }
+
+              return (
+                <span className={cn("px-2 py-0.5 rounded text-[10px] font-bold uppercase font-mono-tech border", sysStyles)}>
+                  {label}
+                </span>
+              );
+            })()}
           </div>
         </div>
 

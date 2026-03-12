@@ -11,9 +11,10 @@ import { cn } from '@/lib/utils';
 
 interface MobileControlsOverlayProps {
   enabled: boolean;
+  system?: string;
 }
 
-export function MobileControlsOverlay({ enabled }: MobileControlsOverlayProps) {
+export function MobileControlsOverlay({ enabled, system }: MobileControlsOverlayProps) {
   const activeDirsRef = useRef({ up: false, down: false, left: false, right: false });
   const { vibrate } = useHapticFeedback();
   const [pressed, setPressed] = useState<Record<string, boolean>>({});
@@ -31,13 +32,13 @@ export function MobileControlsOverlay({ enabled }: MobileControlsOverlayProps) {
     activeDirsRef.current = { ...directions };
   }, [enabled]);
 
-  const handleButtonDown = useCallback((button: 'a' | 'b' | 'start' | 'select') => {
+  const handleButtonDown = useCallback((button: 'a' | 'b' | 'x' | 'y' | 'l' | 'r' | 'start' | 'select') => {
     if (!enabled) return;
     vibrate(15);
     emulatorService.pressButtonDown(button as NESButton);
   }, [enabled, vibrate]);
 
-  const handleButtonUp = useCallback((button: 'a' | 'b' | 'start' | 'select') => {
+  const handleButtonUp = useCallback((button: 'a' | 'b' | 'x' | 'y' | 'l' | 'r' | 'start' | 'select') => {
     if (!enabled) return;
     emulatorService.pressButtonUp(button as NESButton);
   }, [enabled]);
@@ -81,7 +82,7 @@ export function MobileControlsOverlay({ enabled }: MobileControlsOverlayProps) {
         }
       </div>
 
-      {/* A/B Buttons — Bottom Right with safe-area */}
+      {/* A/B/X/Y Buttons — Bottom Right with safe-area */}
       <div
         className="absolute pointer-events-auto"
         style={{
@@ -89,8 +90,66 @@ export function MobileControlsOverlay({ enabled }: MobileControlsOverlayProps) {
           right: 'calc(16px + env(safe-area-inset-right, 0px))',
         }}
       >
-        <VirtualButtons onButtonDown={handleButtonDown} onButtonUp={handleButtonUp} />
+        <VirtualButtons system={system} onButtonDown={handleButtonDown as any} onButtonUp={handleButtonUp as any} />
       </div>
+
+      {/* L/R Triggers for advanced systems */}
+      {(system === 'snes' || system === 'gba') && (
+        <>
+          {/* L Trigger */}
+          <div
+            className="absolute pointer-events-auto"
+            style={{
+              top: 'calc(16px + env(safe-area-inset-top, 0px))',
+              left: 'calc(16px + env(safe-area-inset-left, 0px))',
+            }}
+          >
+            <button
+              onTouchStart={(e) => {
+                e.preventDefault();
+                handleButtonDown('l');
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                handleButtonUp('l');
+              }}
+              onTouchCancel={(e) => {
+                e.preventDefault();
+                handleButtonUp('l');
+              }}
+              className="w-[80px] h-[40px] rounded-full flex items-center justify-center border-b-4 border-slate-600/50 bg-slate-500/60 backdrop-blur-md text-white/90 font-black text-lg select-none shadow-lg active:translate-y-1 active:border-b-0 transition-all touch-none"
+            >
+              L
+            </button>
+          </div>
+          {/* R Trigger */}
+          <div
+            className="absolute pointer-events-auto"
+            style={{
+              top: 'calc(16px + env(safe-area-inset-top, 0px))',
+              right: 'calc(16px + env(safe-area-inset-right, 0px))',
+            }}
+          >
+            <button
+              onTouchStart={(e) => {
+                e.preventDefault();
+                handleButtonDown('r');
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                handleButtonUp('r');
+              }}
+              onTouchCancel={(e) => {
+                e.preventDefault();
+                handleButtonUp('r');
+              }}
+              className="w-[80px] h-[40px] rounded-full flex items-center justify-center border-b-4 border-slate-600/50 bg-slate-500/60 backdrop-blur-md text-white/90 font-black text-lg select-none shadow-lg active:translate-y-1 active:border-b-0 transition-all touch-none"
+            >
+              R
+            </button>
+          </div>
+        </>
+      )}
 
       {/* Control type toggle + Select/Start — Bottom Center */}
       <div

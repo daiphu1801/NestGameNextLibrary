@@ -112,8 +112,18 @@ function SearchIndicator() {
 }
 
 export default function LibraryPage() {
-    const { setGames, isLoading, filteredGames, allGames } = useGameStore();
+    const { setGames, isLoading, filteredGames, allGames, setSearchQuery, setCategory, setRegion, setSort, setSystem, setFilteredGames } = useGameStore();
     const { t } = useLanguage();
+
+    useEffect(() => {
+        return () => {
+            setSearchQuery('');
+            setCategory('all');
+            setRegion('all');
+            setSort('name-asc');
+            setSystem('all');
+        };
+    }, [setSearchQuery, setCategory, setRegion, setSort, setSystem]);
 
     useEffect(() => {
         validateEnv();

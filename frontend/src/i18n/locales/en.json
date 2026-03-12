@@ -26,7 +26,8 @@
     "leaderboard": "Leaderboard",
     "random": "Random",
     "donate": "Donate",
-    "docs": "Docs"
+    "docs": "Docs",
+    "systems": "Systems"
   },
   "categories": {
     "all": "All",
@@ -43,6 +44,23 @@
     "arcade": "Arcade",
     "simulation": "Simulation",
     "other": "Other"
+  },
+  "system": {
+    "title": "Console System",
+    "all": "All Systems",
+    "nes": "NES",
+    "snes": "SNES",
+    "gba": "GBA",
+    "genesis": "Sega Genesis",
+    "n64": "Nintendo 64",
+    "ps1": "PlayStation 1",
+    "arcade": "Arcade Games",
+    "comingSoon": "Coming soon",
+    "demo": "Demo"
+  },
+  "systems": {
+    "title": "Console Systems",
+    "subtitle": "Select and play games from your childhood consoles"
   },
   "featured": {
     "title": "Hot Games",
@@ -379,6 +397,10 @@
     "keyB": "Button B",
     "keyStart": "Start",
     "keySelect": "Select",
+    "keyX": "Button X",
+    "keyY": "Button Y",
+    "keyL": "Button L (Left)",
+    "keyR": "Button R (Right)",
     "saveControls": "Save controls",
     "resetDefault": "Default",
     "controlsSaved": "Controls saved!",

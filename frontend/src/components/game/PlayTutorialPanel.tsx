@@ -15,11 +15,13 @@ import { cn } from '@/lib/utils';
 // ================================================================
 
 interface ControlsPanelProps {
+  system?: string;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
 }
 
 export function ControlsPanel({
+  system = 'nes',
   isCollapsed = false,
   onToggleCollapse,
 }: ControlsPanelProps) {
@@ -68,7 +70,7 @@ export function ControlsPanel({
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto custom-scrollbar p-3">
-            <ControlsGuideCompact />
+            <ControlsGuideCompact system={system} />
           </div>
         </>
       )}
@@ -229,6 +231,7 @@ export function HotGamesPanel({
 // LEGACY EXPORT — for mobile drawer compatibility
 // ================================================================
 interface PlayTutorialPanelProps {
+  system?: string;
   hotGames?: Game[];
   onGameClick?: (gameId: number) => void;
   isCollapsed?: boolean;
@@ -238,6 +241,7 @@ interface PlayTutorialPanelProps {
 }
 
 export function PlayTutorialPanel({
+  system = 'nes',
   hotGames = [],
   onGameClick,
 }: PlayTutorialPanelProps) {
@@ -256,7 +260,7 @@ export function PlayTutorialPanel({
           </div>
         </div>
         <div className="p-3">
-          <ControlsGuideCompact />
+          <ControlsGuideCompact system={system} />
         </div>
       </div>
 
@@ -281,8 +285,23 @@ export function PlayTutorialPanel({
 // ============================================
 // Controls Guide — Clean grid for P1, P2, Common
 // ============================================
-function ControlsGuideCompact() {
+function ControlsGuideCompact({ system = 'nes' }: { system?: string }) {
   const { t } = useLanguage();
+
+  const isAdvancedSystem = ['snes', 'gba', 'genesis'].includes(system.toLowerCase());
+
+  const p1Actions: { key: string; label: string; group?: string }[] = [
+    { key: 'J', label: 'A', group: 'Cơ bản' },
+    { key: 'K', label: 'B', group: 'Cơ bản' },
+  ];
+
+  if (isAdvancedSystem) {
+    const advGroup = 'Hệ SNES, GBA, Genesis';
+    p1Actions.push({ key: 'U', label: 'X', group: advGroup });
+    p1Actions.push({ key: 'I', label: 'Y', group: advGroup });
+    p1Actions.push({ key: 'O', label: 'L', group: advGroup });
+    p1Actions.push({ key: 'P', label: 'R', group: advGroup });
+  }
 
   return (
     <div className="space-y-3">
@@ -292,10 +311,7 @@ function ControlsGuideCompact() {
         tag="P1"
         tagColor="cyan"
         movement={['W', 'A', 'S', 'D']}
-        actions={[
-          { key: 'J', label: 'A' },
-          { key: 'K', label: 'B' },
-        ]}
+        actions={p1Actions}
         movementLabel={t('docs.controls.movement')}
         actionsLabel={t('docs.controls.actions')}
         movementDataTutorial="movement"
@@ -351,7 +367,7 @@ function PlayerControlsCard({
   tag: string;
   tagColor: 'cyan' | 'pink';
   movement: string[];
-  actions: { key: string; label: string }[];
+  actions: { key: string; label: string; group?: string }[];
   movementLabel?: string;
   actionsLabel?: string;
   movementDataTutorial?: string;
@@ -385,9 +401,9 @@ function PlayerControlsCard({
         <span className={cn('text-[10px] font-bold', c.label)}>{label}</span>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-5 gap-2">
         {/* Movement */}
-        <div {...(movementDataTutorial ? { 'data-tutorial': movementDataTutorial } : {})}>
+        <div className="col-span-2" {...(movementDataTutorial ? { 'data-tutorial': movementDataTutorial } : {})}>
           <div className="text-[9px] text-slate-500 uppercase tracking-wider mb-1">{movementLabel || 'Movement'}:</div>
           <div className="flex flex-wrap gap-0.5">
             {movement.map((key) => (
@@ -405,20 +421,29 @@ function PlayerControlsCard({
         </div>
 
         {/* Actions */}
-        <div {...(actionsDataTutorial ? { 'data-tutorial': actionsDataTutorial } : {})}>
-          <div className="text-[9px] text-slate-500 uppercase tracking-wider mb-1">{actionsLabel || 'Actions'}:</div>
-          <div className="space-y-0.5">
-            {actions.map((a) => (
-              <div key={a.key} className="flex items-center gap-1 text-[10px] text-slate-300">
-                <kbd className={cn(
-                  'inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded border font-mono font-semibold',
-                  c.kbd
-                )}>
-                  {a.key}
-                </kbd>
-                <span className="text-slate-400">{a.label}</span>
-              </div>
-            ))}
+        <div className="col-span-3" {...(actionsDataTutorial ? { 'data-tutorial': actionsDataTutorial } : {})}>
+          <div className="space-y-2">
+            {actions.map((a, i) => {
+              const showGroup = a.group && (i === 0 || a.group !== actions[i - 1].group);
+              return (
+                <div key={a.key} className="flex flex-col gap-1">
+                  {showGroup && (
+                    <div className="text-[8.5px] font-bold text-slate-500/80 uppercase tracking-widest mt-1 mb-0.5">
+                      {a.group}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1.5 text-[10px] text-slate-300">
+                    <kbd className={cn(
+                      'inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded border font-mono font-semibold',
+                      c.kbd
+                    )}>
+                      {a.key}
+                    </kbd>
+                    <span className="text-slate-400 font-medium">{a.label}</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

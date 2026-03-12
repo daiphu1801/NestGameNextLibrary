@@ -90,7 +90,7 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
     setError(null);
 
     try {
-      await emulatorService.loadGame(game.path, containerRef.current);
+      await emulatorService.loadGame(game.path, game.system || 'nes', containerRef.current);
       storageService.addRecentGame(game.id);
 
       // Record play history if user is logged in

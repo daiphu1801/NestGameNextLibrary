@@ -26,7 +26,8 @@
     "leaderboard": "Bảng xếp hạng",
     "random": "Ngẫu nhiên",
     "donate": "Ủng hộ",
-    "docs": "Hướng dẫn"
+    "docs": "Hướng dẫn",
+    "systems": "Các Hệ Máy"
   },
   "categories": {
     "all": "Tất cả",
@@ -43,6 +44,23 @@
     "arcade": "Arcade",
     "simulation": "Mô phỏng",
     "other": "Khác"
+  },
+  "system": {
+    "title": "Hệ Máy (System)",
+    "all": "Tất Cả",
+    "nes": "NES",
+    "snes": "SNES",
+    "gba": "GBA",
+    "genesis": "Sega Genesis",
+    "n64": "Nintendo 64",
+    "ps1": "PlayStation 1",
+    "arcade": "Arcade (Thùng)",
+    "comingSoon": "Sắp ra mắt",
+    "demo": "Thử nghiệm"
+  },
+  "systems": {
+    "title": "Hệ Máy Game",
+    "subtitle": "Lựa chọn và chơi các tựa game theo tuổi thơ của bạn"
   },
   "featured": {
     "title": "Games Hot 🔥",
@@ -379,6 +397,10 @@
     "keyB": "Nút B",
     "keyStart": "Start",
     "keySelect": "Select",
+    "keyX": "Nút X",
+    "keyY": "Nút Y",
+    "keyL": "Nút L (Trái)",
+    "keyR": "Nút R (Phải)",
     "saveControls": "Lưu cấu hình",
     "resetDefault": "Mặc định",
     "controlsSaved": "Đã lưu cấu hình phím!",

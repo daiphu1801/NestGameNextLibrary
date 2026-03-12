@@ -12,7 +12,7 @@ const ROM_FOLDERS = [
 const LIBRARY_PATH = path.join(process.cwd(), 'LibraryNes');
 
 // Allowed file extensions for ROM files (security)
-const ALLOWED_EXTENSIONS = ['.nes', '.zip'];
+const ALLOWED_EXTENSIONS = ['.nes', '.zip', '.sfc', '.smc', '.gba', '.md', '.gen', '.bin'];
 
 /**
  * Find ROM file with security checks.
@@ -80,6 +80,9 @@ async function handleRomRequest(
         let contentType = 'application/octet-stream';
         if (ext === '.zip') contentType = 'application/zip';
         else if (ext === '.nes') contentType = 'application/x-nes-rom';
+        else if (ext === '.sfc' || ext === '.smc') contentType = 'application/x-snes-rom';
+        else if (ext === '.gba') contentType = 'application/x-gba-rom';
+        else if (ext === '.md' || ext === '.gen' || ext === '.bin') contentType = 'application/x-genesis-rom';
 
         const stat = fs.statSync(romPath);
         const headers: Record<string, string> = {

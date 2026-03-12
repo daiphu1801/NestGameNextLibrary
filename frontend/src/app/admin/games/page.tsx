@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -14,6 +14,12 @@ import { ActionButton } from '../components/ActionButton';
 
 // �"?�"?�"? Constants �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
 const REGIONS = ['', 'JP', 'US', 'EU', 'World', 'KR', 'AU', 'FR', 'DE', 'IT', 'SP'];
+const SYSTEMS = [
+    { id: 'nes', name: 'NES' },
+    { id: 'snes', name: 'SNES' },
+    { id: 'genesis', name: 'Sega Genesis' },
+    { id: 'gba', name: 'Game Boy Advance' }
+];
 const ROM_FOLDERS = [
     'Nes ROMs Complete 1 Of 4',
     'Nes ROMs Complete 2 Of 4',
@@ -90,7 +96,7 @@ function ImagePreview({ url, label }: { url: string; label: string }) {
             ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-1" style={{ background: '#1C2434' }}>
                     <AlertCircle className="w-4 h-4 text-[#FB5454]" />
-                    <span className="text-[#FB5454] text-[10px]">Không tải �'ược</span>
+                    <span className="text-[#FB5454] text-[10px]">Không tải được</span>
                 </div>
             )}
         </div>
@@ -112,8 +118,8 @@ function RomDropZone({ onUploaded }: RomDropZoneProps) {
 
     const handleFile = async (file: File) => {
         const ext = file.name.split('.').pop()?.toLowerCase();
-        if (!['nes', 'zip'].includes(ext || '')) {
-            setError('Ch�? h�- trợ file .nes hoặc .zip');
+        if (!['nes', 'sfc', 'smc', 'gba', 'md', 'gen', 'bin', 'zip'].includes(ext || '')) {
+            setError('Chỉ hỗ trợ file .nes, .sfc, .gba, .md, .zip');
             return;
         }
         setError('');
@@ -148,7 +154,7 @@ function RomDropZone({ onUploaded }: RomDropZoneProps) {
             {/* Folder selector �?" only show for local mode */}
             {!isCloudinaryMode && !uploaded && (
                 <div>
-                    <label className="block text-xs font-medium text-[#A5B4CB] mb-1.5 uppercase tracking-wider">Thư mục �'ích (Local)</label>
+                    <label className="block text-xs font-medium text-[#A5B4CB] mb-1.5 uppercase tracking-wider">Thư mục đích (Local)</label>
                     <select
                         value={selectedFolder}
                         onChange={e => setSelectedFolder(e.target.value)}
@@ -172,7 +178,7 @@ function RomDropZone({ onUploaded }: RomDropZoneProps) {
                     border: `2px dashed ${dragging ? '#3C50E0' : uploaded ? '#10B981' : '#2E3A47'}`,
                 }}
             >
-                <input ref={inputRef} type="file" accept=".nes,.zip" className="hidden" onChange={onInputChange} />
+                <input ref={inputRef} type="file" accept=".nes,.zip,.sfc,.smc,.gba,.md,.gen,.bin" className="hidden" onChange={onInputChange} />
 
                 {uploading ? (
                     <div className="flex flex-col items-center gap-2">
@@ -205,7 +211,7 @@ function RomDropZone({ onUploaded }: RomDropZoneProps) {
                             <FileUp className="w-6 h-6" style={{ color: '#3C50E0' }} />
                         </div>
                         <p className="text-white text-sm font-medium">Kéo thả hoặc click để chọn ROM</p>
-                        <p className="text-[#637381] text-xs">Hỗ trợ .nes · .zip</p>
+                        <p className="text-[#637381] text-xs">Hỗ trợ .nes · .sfc · .gba · .md · .zip</p>
                     </div>
                 )}
             </div>
@@ -379,7 +385,7 @@ function AdminGamesContent() {
     const emptyForm = {
         name: '', fileName: '', path: '', categoryId: '' as any,
         description: '', rating: '', year: '', region: '',
-        isFeatured: false,
+        isFeatured: false, system: 'nes',
         imageBaseUrl: '', // NEW: used to auto-derive the 3 image fields
         imageUrl: '', imageSnap: '', imageTitle: '',
     };
@@ -432,6 +438,7 @@ function AdminGamesContent() {
             fileName: game.fileName || '',
             path: game.path || '',
             categoryId: game.categoryId || '',
+            system: game.system || 'nes',
             description: game.description || '',
             rating: game.rating || '',
             year: game.year || '',
@@ -544,7 +551,7 @@ function AdminGamesContent() {
                             <tr style={{ borderBottom: '1px solid #2E3A47' }}>
                                 <th className="text-left px-5 py-4 text-xs font-medium text-[#A5B4CB] uppercase tracking-wider">Tên game</th>
                                 <th className="text-left px-5 py-4 text-xs font-medium text-[#A5B4CB] uppercase tracking-wider">Danh mục</th>
-                                <th className="text-center px-5 py-4 text-xs font-medium text-[#A5B4CB] uppercase tracking-wider">Region</th>
+                                <th className="text-left px-5 py-4 text-xs font-medium text-[#A5B4CB] uppercase tracking-wider">Hệ máy</th>
                                 <th className="text-center px-5 py-4 text-xs font-medium text-[#A5B4CB] uppercase tracking-wider">Lượt chơi</th>
                                 <th className="text-center px-5 py-4 text-xs font-medium text-[#A5B4CB] uppercase tracking-wider">Featured</th>
                                 <th className="text-right px-5 py-4 text-xs font-medium text-[#A5B4CB] uppercase tracking-wider">Hành động</th>
@@ -568,7 +575,7 @@ function AdminGamesContent() {
                                         </div>
                                     </td>
                                     <td className="px-5 py-3.5 text-[#A5B4CB] text-sm">{game.categoryName || '—'}</td>
-                                    <td className="px-5 py-3.5 text-center text-[#A5B4CB] text-sm">{game.region || '—'}</td>
+                                    <td className="px-5 py-3.5 text-left text-[#A5B4CB] text-sm font-semibold uppercase">{game.system || 'NES'}</td>
                                     <td className="px-5 py-3.5 text-center text-sm font-mono" style={{ color: '#3C50E0' }}>{(game.playCount || 0).toLocaleString()}</td>
                                     <td className="px-5 py-3.5 text-center">
                                         <ActionButton
@@ -688,7 +695,7 @@ function AdminGamesContent() {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                                     {/* Danh mục */}
                                     <div>
                                         <label className={labelCls}>Danh mục</label>
@@ -696,6 +703,15 @@ function AdminGamesContent() {
                                             className={inputCls} style={inputStyle}>
                                             <option value="">— Chọn —</option>
                                             {categories.map(c => <option key={c.id} value={c.id}>{c.displayName}</option>)}
+                                        </select>
+                                    </div>
+
+                                    {/* System dropdown */}
+                                    <div>
+                                        <label className={labelCls}>Hệ máy (System)</label>
+                                        <select value={form.system} onChange={e => setForm(f => ({ ...f, system: e.target.value }))}
+                                            className={inputCls} style={inputStyle}>
+                                            {SYSTEMS.map(sys => <option key={sys.id} value={sys.id}>{sys.name}</option>)}
                                         </select>
                                     </div>
 

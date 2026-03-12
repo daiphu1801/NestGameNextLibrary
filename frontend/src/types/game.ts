@@ -13,6 +13,7 @@ export interface Game {
   rating?: number;
   year?: number;
   region?: string;
+  system?: string;
   isFeatured?: boolean;
   fileName?: string;
   playCount?: number;

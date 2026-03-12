@@ -228,7 +228,7 @@ export default function PlayPage() {
     setError(null);
 
     try {
-      await emulatorService.loadGame(game.path, containerRef.current);
+      await emulatorService.loadGame(game.path, game.system || 'nes', containerRef.current);
       storageService.addRecentGame(game.id);
 
       // Record play history if user is logged in
@@ -477,7 +477,8 @@ export default function PlayPage() {
         {/* LEFT — Controls Panel (Desktop only) */}
         {!isFullscreen && (
           <div className="hidden lg:block">
-            <ControlsPanel
+          <ControlsPanel
+              system={game?.system}
               isCollapsed={isControlsCollapsed}
               onToggleCollapse={() => setIsControlsCollapsed(!isControlsCollapsed)}
             />
@@ -627,6 +628,7 @@ export default function PlayPage() {
                     {/* Content */}
                     <div className="flex-1 overflow-auto max-h-[calc(75vh-5rem)]">
                       <PlayTutorialPanel
+                        system={game?.system}
                         hotGames={hotGames}
                         onGameClick={(gameId) => {
                           handleSwitchGame(gameId.toString());

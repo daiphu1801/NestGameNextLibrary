@@ -22,6 +22,7 @@ interface GameDTO {
   playCount?: number;
   createdAt?: string;
   updatedAt?: string;
+  system?: string;
 }
 
 class GameService {
@@ -50,7 +51,22 @@ class GameService {
       playCount: dto.playCount,
       createdAt: dto.createdAt,
       updatedAt: dto.updatedAt,
+      system: dto.system || this.detectSystemFromPath(dto.fileName || dto.path),
     };
+  }
+
+  // Auto-detect system from file extension as a fallback
+  private detectSystemFromPath(pathName: string): string {
+    if (!pathName) return 'nes'; // default
+    const lowerPath = pathName.toLowerCase();
+    
+    if (lowerPath.endsWith('.sfc') || lowerPath.endsWith('.smc')) return 'snes';
+    if (lowerPath.endsWith('.gba')) return 'gba';
+    if (lowerPath.endsWith('.md') || lowerPath.endsWith('.bin') || lowerPath.endsWith('.gen')) return 'genesis';
+    if (lowerPath.endsWith('.nes')) return 'nes';
+    
+    // For zip files or unknown, we just return 'nes' for now until backend is updated
+    return 'nes';
   }
 
   // Normalize category to match frontend keys
@@ -160,6 +176,11 @@ class GameService {
     });
   }
 
+  filterBySystem(games: Game[], system: string): Game[] {
+    if (system === 'all') return games;
+    return games.filter(game => game.system === system);
+  }
+
   searchGames(games: Game[], query: string): Game[] {
     if (!query.trim()) return games;
 
@@ -174,10 +195,7 @@ class GameService {
   sortGames(games: Game[], sortBy: SortOption): Game[] {
     const sorted = [...games];
 
-    // Helper to check if game is "hot"
-    const isHot = (game: Game) => game.isFeatured || (game.rating && game.rating >= 4.5);
-
-    // Sort by the selected option first
+    // Sort by the selected option
     let result: Game[];
     switch (sortBy) {
       case 'name-asc':
@@ -204,11 +222,7 @@ class GameService {
         result = sorted;
     }
 
-    // Then prioritize hot games to the top while maintaining sort order within each group
-    const hotGames = result.filter(isHot);
-    const regularGames = result.filter(g => !isHot(g));
-
-    return [...hotGames, ...regularGames];
+    return result;
   }
 
   async getTopGames(type: 'hot' | 'new' | 'top', limit: number = 5): Promise<Game[]> {
