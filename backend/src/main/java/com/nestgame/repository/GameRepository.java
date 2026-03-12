@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface GameRepository extends JpaRepository<Game, Long>, JpaSpecificationExecutor<Game> {
@@ -25,4 +26,6 @@ public interface GameRepository extends JpaRepository<Game, Long>, JpaSpecificat
     Page<Game> findByCategoryName(String categoryName, Pageable pageable);
 
     Page<Game> findByIsFeaturedTrue(Pageable pageable);
+
+    Set<Game> findByFileNameIn(Set<String> fileNames);
 }

@@ -1,5 +1,7 @@
 package com.nestgame.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nestgame.dto.*;
 import com.nestgame.dto.request.AdminCategoryRequest;
 import com.nestgame.dto.request.AdminGameRequest;
@@ -9,6 +11,7 @@ import com.nestgame.entity.*;
 import com.nestgame.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +39,7 @@ public class AdminService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final ObjectMapper objectMapper;
 
     // ==================== AUTH ====================
 
@@ -552,5 +557,85 @@ public class AdminService {
         gameRatingRepository.deleteById(ratingId);
         log.info("Deleted rating {}", ratingId);
         logActivity("system", "DELETE", "RATING", "ID: " + ratingId, "Xóa đánh giá ID: " + ratingId);
+    }
+
+    // ==================== RESEED FROM JSON ====================
+
+    /**
+     * Read games.json from classpath and insert only games whose fileName is not
+     * already present in the database. Returns a summary map.
+     */
+    @Transactional
+    public Map<String, Object> reseedFromJson() {
+        try {
+            ClassPathResource resource = new ClassPathResource("games.json");
+            InputStream inputStream = resource.getInputStream();
+            List<JsonGame> jsonGames = objectMapper.readValue(inputStream, new TypeReference<List<JsonGame>>() {});
+            log.info("[Reseed] Read {} games from games.json", jsonGames.size());
+
+            // Collect all existing fileNames in one query
+            Set<String> existingFileNames = gameRepository.findAll()
+                    .stream()
+                    .map(Game::getFileName)
+                    .collect(Collectors.toSet());
+
+            // Pre-load / create categories
+            Map<String, Category> categoryMap = new HashMap<>();
+            for (Category cat : categoryRepository.findAll()) {
+                categoryMap.put(cat.getName().toLowerCase(), cat);
+            }
+
+            int added = 0, skipped = 0;
+            for (JsonGame jg : jsonGames) {
+                String fileName = jg.getFileName();
+                if (fileName == null || existingFileNames.contains(fileName)) {
+                    skipped++;
+                    continue;
+                }
+
+                // Ensure category exists
+                String catKey = jg.getCategory() == null ? "other" : jg.getCategory().toLowerCase();
+                if (!categoryMap.containsKey(catKey)) {
+                    Category newCat = new Category();
+                    newCat.setName(catKey);
+                    newCat.setDisplayName(catKey.substring(0, 1).toUpperCase() + catKey.substring(1));
+                    newCat = categoryRepository.save(newCat);
+                    categoryMap.put(catKey, newCat);
+                }
+
+                Game game = Game.builder()
+                        .name(jg.getName())
+                        .fileName(fileName)
+                        .path(jg.getPath() != null ? jg.getPath() : fileName)
+                        .category(categoryMap.get(catKey))
+                        .description(jg.getDescription())
+                        .rating(jg.getRating())
+                        .year(jg.getYear())
+                        .region(jg.getRegion())
+                        .isFeatured(Boolean.TRUE.equals(jg.getIsFeatured()))
+                        .imageUrl(jg.getImage())
+                        .imageSnap(jg.getImageSnap())
+                        .imageTitle(jg.getImageTitle())
+                        .build();
+
+                gameRepository.save(game);
+                existingFileNames.add(fileName);
+                added++;
+            }
+
+            log.info("[Reseed] Done — added: {}, skipped (already exist): {}", added, skipped);
+            logActivity("system", "RESEED", "GAME", "games.json",
+                    String.format("Reseed: +%d mới, %d bỏ qua", added, skipped));
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("total", jsonGames.size());
+            result.put("added", added);
+            result.put("skipped", skipped);
+            return result;
+
+        } catch (Exception e) {
+            log.error("[Reseed] Failed: ", e);
+            throw new RuntimeException("Reseed thất bại: " + e.getMessage());
+        }
     }
 }

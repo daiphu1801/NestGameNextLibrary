@@ -140,6 +140,17 @@ public class AdminController {
         return ResponseEntity.ok(Map.of("message", "Xóa game thành công"));
     }
 
+    /**
+     * POST /admin/games/reseed
+     * Reads games.json from classpath and inserts only games not yet in the DB.
+     * Safe to call multiple times — existing games are never touched.
+     */
+    @PostMapping("/games/reseed")
+    public ResponseEntity<Map<String, Object>> reseedGames() {
+        Map<String, Object> result = adminService.reseedFromJson();
+        return ResponseEntity.ok(result);
+    }
+
     // ==================== CATEGORIES ====================
 
     @GetMapping("/categories")
