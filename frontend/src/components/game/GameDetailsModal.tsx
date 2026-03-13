@@ -33,7 +33,7 @@ export function GameDetailsModal({ game, isOpen, onClose, onPlayNow }: GameDetai
 
     useEffect(() => {
         if (isOpen && game) {
-            setImageUrl(game.image || game.thumbnail || '/placeholder.png');
+            setImageUrl(game.imageUrl || game.image || game.thumbnail || '/placeholder.png');
             setHasError(false);
             loadRatings();
         }

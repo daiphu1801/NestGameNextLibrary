@@ -88,6 +88,7 @@ public class DataInitializer implements CommandLineRunner {
                 game.setImageTitle(jsonGame.getImageTitle()); // Set imageTitle from JSON
                 game.setIsFeatured(Boolean.TRUE.equals(jsonGame.getIsFeatured())); // Fixed: setFeatured ->
                                                                                    // setIsFeatured
+                game.setSystem(jsonGame.getSystem() != null ? jsonGame.getSystem() : "nes");
 
                 // Set Category
                 String catKey = jsonGame.getCategory() == null ? "other" : jsonGame.getCategory().toLowerCase();

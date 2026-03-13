@@ -20,7 +20,7 @@ public class GameService {
     private final GameRepository gameRepository;
 
     public Page<GameDTO> getGames(String search, String category, String region, Boolean isFeatured,
-            Pageable pageable) {
+            String system, Pageable pageable) {
         Specification<Game> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -39,6 +39,10 @@ public class GameService {
 
             if (isFeatured != null && isFeatured) {
                 predicates.add(cb.isTrue(root.get("isFeatured")));
+            }
+
+            if (StringUtils.hasText(system) && !"all".equalsIgnoreCase(system)) {
+                predicates.add(cb.equal(root.get("system"), system));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
@@ -70,6 +74,7 @@ public class GameService {
                 .imageUrl(game.getImageUrl())
                 .imageSnap(game.getImageSnap())
                 .imageTitle(game.getImageTitle())
+                .system(game.getSystem())
                 .playCount(game.getPlayCount())
                 .createdAt(game.getCreatedAt())
                 .updatedAt(game.getUpdatedAt())

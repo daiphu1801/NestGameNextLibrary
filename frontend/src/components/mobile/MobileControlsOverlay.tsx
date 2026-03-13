@@ -77,8 +77,8 @@ export function MobileControlsOverlay({ enabled, system }: MobileControlsOverlay
         }}
       >
         {controlType === 'dpad'
-          ? <DPad onDirectionChange={handleDirectionChange} size={120} />
-          : <VirtualJoystick onDirectionChange={handleDirectionChange} size={120} />
+          ? <DPad onDirectionChange={handleDirectionChange} size={150} />
+          : <VirtualJoystick onDirectionChange={handleDirectionChange} size={150} />
         }
       </div>
 

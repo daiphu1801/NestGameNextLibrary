@@ -101,7 +101,7 @@ interface FeaturedGameCardProps {
 }
 
 function FeaturedGameCard({ game, onClick, index }: FeaturedGameCardProps) {
-    const [imageUrl, setImageUrl] = useState(game.image || game.thumbnail || '/placeholder.png');
+    const [imageUrl, setImageUrl] = useState(game.imageUrl || game.image || game.thumbnail || '/placeholder.png');
     const [hasError, setHasError] = useState(false);
 
     const handleImageError = () => {

@@ -145,7 +145,7 @@ export default function LeaderboardPage() {
                                 {/* Game Image */}
                                 <div className="relative w-24 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-black/50">
                                     <img
-                                        src={game.imageUrl || `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.imageSnap || ''}.jpg`}
+                                        src={game.imageUrl || game.image || `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.imageSnap || ''}.jpg`}
                                         alt={game.name}
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                         onError={(e) => {

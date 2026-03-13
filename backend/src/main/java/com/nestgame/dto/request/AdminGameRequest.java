@@ -27,4 +27,5 @@ public class AdminGameRequest {
     private String imageUrl;
     private String imageSnap;
     private String imageTitle;
+    private String system;
 }

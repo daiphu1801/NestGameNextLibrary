@@ -16,7 +16,7 @@ interface FavoriteGameCardProps {
 
 export function FavoriteGameCard({ game, onClick, onRemove }: FavoriteGameCardProps) {
     const { toggleFavorite } = useFavorites();
-    const [imageUrl, setImageUrl] = useState(game.image || game.thumbnail || '/placeholder.png');
+    const [imageUrl, setImageUrl] = useState(game.imageUrl || game.image || game.thumbnail || '/placeholder.png');
     const [fallbackUrls] = useState(() =>
         imageService.generateFallbackUrls(game.name, game.image)
     );

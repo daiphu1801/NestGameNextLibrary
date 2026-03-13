@@ -19,4 +19,5 @@ public class JsonGame {
     private String image;
     private String imageSnap;
     private String imageTitle;
+    private String system;
 }

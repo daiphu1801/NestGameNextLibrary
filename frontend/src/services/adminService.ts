@@ -139,10 +139,11 @@ export const adminService = {
     },
 
     // ==================== GAMES ====================
-    async getGames(page = 0, size = 20, search?: string, category?: string): Promise<PageResponse<any>> {
+    async getGames(page = 0, size = 20, search?: string, category?: string, system?: string): Promise<PageResponse<any>> {
         const params = new URLSearchParams({ page: String(page), size: String(size) });
         if (search) params.append('search', search);
         if (category) params.append('category', category);
+        if (system && system !== 'all') params.append('system', system);
         return apiRequest(`/games?${params}`);
     },
 

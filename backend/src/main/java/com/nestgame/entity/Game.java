@@ -41,6 +41,10 @@ public class Game {
     @Column(name = "is_featured")
     private Boolean isFeatured;
 
+    @Column(name = "game_system", nullable = false, columnDefinition = "varchar(255) default 'nes'")
+    @Builder.Default
+    private String system = "nes";
+
     @Column(name = "image_url")
     private String imageUrl;
 

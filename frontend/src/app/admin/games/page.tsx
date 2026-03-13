@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -225,63 +225,74 @@ function RomDropZone({ onUploaded }: RomDropZoneProps) {
     );
 }
 
-// --------------------------------------------------------------------------------------------------------------------- Libretro Image Finder ---------------------------------------------------------------------------------------------------------------------
-interface LibretroFinderProps {
+// --------------------------------------------------------------------------------------------------------------------- RAWG Image Finder ---------------------------------------------------------------------------------------------------------------------
+interface RAWGFinderProps {
     defaultName?: string;
     onApply: (imageUrl: string, imageSnap: string, imageTitle: string) => void;
 }
 
-type ImgStatus = 'idle' | 'loading' | 'found' | 'notfound';
-
-function LibretroFinder({ defaultName = '', onApply }: LibretroFinderProps) {
+function RAWGImageFinder({ defaultName = '', onApply }: RAWGFinderProps) {
     const [query, setQuery] = useState(defaultName);
     const [searching, setSearching] = useState(false);
-    const [results, setResults] = useState<{ boxart: string; snap: string; title: string } | null>(null);
-    const [statuses, setStatuses] = useState<{ boxart: ImgStatus; snap: ImgStatus; title: ImgStatus }>({ boxart: 'idle', snap: 'idle', title: 'idle' });
+    const [results, setResults] = useState<any[]>([]);
+    const [error, setError] = useState('');
+    const [selectedIdx, setSelectedIdx] = useState<number>(0);
 
-    // Sync default name when fileName changes from ROM upload
     useEffect(() => {
         if (defaultName && defaultName !== query) setQuery(defaultName);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [defaultName]);
 
-    const checkImage = (url: string, key: 'boxart' | 'snap' | 'title') =>
-        new Promise<boolean>(resolve => {
-            const img = new window.Image();
-            img.onload = () => { setStatuses(s => ({ ...s, [key]: 'found' })); resolve(true); };
-            img.onerror = () => { setStatuses(s => ({ ...s, [key]: 'notfound' })); resolve(false); };
-            img.src = url;
-        });
-
     const handleSearch = async () => {
         if (!query.trim()) return;
-        const name = stripRomExt(query.trim());
-        const urls = buildLibretroUrls(name);
-        setResults(urls);
-        setStatuses({ boxart: 'loading', snap: 'loading', title: 'loading' });
         setSearching(true);
-        await Promise.all([
-            checkImage(urls.boxart, 'boxart'),
-            checkImage(urls.snap, 'snap'),
-            checkImage(urls.title, 'title'),
-        ]);
-        setSearching(false);
+        setError('');
+        setResults([]);
+        
+        try {
+            const apiKey = process.env.NEXT_PUBLIC_RAWG_API_KEY;
+            if (!apiKey) {
+                throw new Error('Vui lòng thêm NEXT_PUBLIC_RAWG_API_KEY vào file .env');
+            }
+
+            // Clean query to improve search
+            const cleanQuery = stripRomExt(query).replace(/\(.*\)/g, '').trim();
+
+            // platforms: 49 (NES), 79 (SNES), 167 (Genesis), 24 (GBA), 43 (GBC), 26 (Game Boy)
+            const classicPlatforms = "49,79,167,24,43,26";
+            const res = await fetch(`https://api.rawg.io/api/games?search=${encodeURIComponent(cleanQuery)}&key=${apiKey}&page_size=5&platforms=${classicPlatforms}`);
+            if (!res.ok) throw new Error('Lỗi gọi API RAWG');
+            
+            const data = await res.json();
+            if (data.results && data.results.length > 0) {
+                setResults(data.results);
+                setSelectedIdx(0);
+            } else {
+                setError('Không tìm thấy game nào');
+            }
+        } catch (err: any) {
+            setError(err.message || 'Lỗi tìm kiếm');
+        } finally {
+            setSearching(false);
+        }
     };
 
-    const foundCount = Object.values(statuses).filter(s => s === 'found').length;
+    const handleApply = () => {
+        if (results.length === 0) return;
+        const game = results[selectedIdx];
+        
+        // Use background_image as boxart/cover
+        const boxart = game.background_image || '';
+        
+        // Get screenshots (avoid background_image itself if possible)
+        const screenshots = game.short_screenshots?.filter((s: any) => s.image !== boxart) || [];
+        
+        // Use first screenshot as snap, second as title (or fallback to background)
+        const snap = screenshots.length > 0 ? screenshots[0].image : boxart;
+        const title = screenshots.length > 1 ? screenshots[1].image : snap;
 
-    const statusBadge = (s: ImgStatus) => {
-        if (s === 'loading') return <Loader2 className="w-3 h-3 animate-spin" style={{ color: '#3C50E0' }} />;
-        if (s === 'found') return <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{ background: 'rgba(16,185,129,0.15)', color: '#10B981' }}>✓ Tìm thấy</span>;
-        if (s === 'notfound') return <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{ background: 'rgba(251,84,84,0.12)', color: '#FB5454' }}>✗ Không có</span>;
-        return null;
+        onApply(boxart, snap, title);
     };
-
-    const imgPanels = results ? [
-        { key: 'boxart' as const, url: results.boxart, label: 'Box Art' },
-        { key: 'snap' as const, url: results.snap, label: 'Snap' },
-        { key: 'title' as const, url: results.title, label: 'Title' },
-    ] : [];
 
     return (
         <div className="space-y-3">
@@ -293,7 +304,7 @@ function LibretroFinder({ defaultName = '', onApply }: LibretroFinderProps) {
                         value={query}
                         onChange={e => setQuery(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                        placeholder="Ví dụ: Super Mario Bros (USA)"
+                        placeholder="Ví dụ: Super Mario Bros"
                         className="w-full pl-8 pr-3 py-2 rounded-md text-white text-sm border focus:outline-none focus:ring-1 focus:ring-[#10B981]/50 transition-colors"
                         style={{ background: '#1C2434', borderColor: '#2E3A47' }}
                     />
@@ -306,59 +317,58 @@ function LibretroFinder({ defaultName = '', onApply }: LibretroFinderProps) {
                     style={{ background: '#10B981' }}
                 >
                     {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                    Tìm
+                    Tìm RAWG
                 </button>
             </div>
 
-            {/* Preview grid */}
-            {results && (
+            {error && <p className="text-[#FB5454] text-xs flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{error}</p>}
+
+            {/* Preview Results */}
+            {results.length > 0 && (
                 <div className="space-y-3">
-                    <div className="grid grid-cols-3 gap-3">
-                        {imgPanels.map(({ key, url, label }) => (
-                            <div key={key} className="space-y-1.5">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-[11px] text-[#A5B4CB]">{label}</span>
-                                    {statusBadge(statuses[key])}
-                                </div>
-                                <div className="aspect-video rounded-md overflow-hidden" style={{ border: '1px solid #2E3A47' }}>
-                                    {statuses[key] === 'found' ? (
-                                        <img src={url} alt={label} className="w-full h-full object-cover" />
-                                    ) : statuses[key] === 'loading' ? (
-                                        <div className="w-full h-full flex items-center justify-center" style={{ background: '#1C2434' }}>
-                                            <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#3C50E0' }} />
-                                        </div>
+                    <p className="text-xs text-[#A5B4CB]">Chọn kết quả chuẩn nhất ({results.length} games):</p>
+                    <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar">
+                        {results.map((game, idx) => (
+                            <div 
+                                key={game.id} 
+                                onClick={() => setSelectedIdx(idx)}
+                                className="flex-shrink-0 w-40 cursor-pointer rounded-lg overflow-hidden transition-all group relative"
+                                style={{ 
+                                    border: `2px solid ${idx === selectedIdx ? '#10B981' : '#2E3A47'}`,
+                                    background: '#1C2434',
+                                    opacity: idx === selectedIdx ? 1 : 0.7
+                                }}
+                            >
+                                <div className="aspect-video w-full relative">
+                                    {game.background_image ? (
+                                        <img src={game.background_image} alt={game.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                     ) : (
-                                        <div className="w-full h-full flex flex-col items-center justify-center gap-1" style={{ background: '#1C2434' }}>
-                                            <AlertCircle className="w-4 h-4 text-[#637381]" />
-                                            <span className="text-[#637381] text-[10px]">Không tìm thấy</span>
+                                        <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-5 h-5 text-[#637381]" /></div>
+                                    )}
+                                    {idx === selectedIdx && (
+                                        <div className="absolute top-1 right-1 bg-[#10B981] rounded-full p-0.5 shadow-md">
+                                            <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                                         </div>
                                     )}
+                                </div>
+                                <div className="p-2">
+                                    <p className="text-white text-xs font-semibold truncate" title={game.name}>{game.name}</p>
+                                    <p className="text-[#A5B4CB] text-[10px] truncate">{game.released?.split('-')[0] || ''} • RATING: {game.rating || 0}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
 
                     {/* Apply button */}
-                    {foundCount > 0 && (
-                        <button
-                            type="button"
-                            onClick={() => onApply(
-                                statuses.boxart === 'found' ? results.boxart : '',
-                                statuses.snap === 'found' ? results.snap : '',
-                                statuses.title === 'found' ? results.title : '',
-                            )}
-                            className="w-full py-2 rounded-md text-white text-sm font-semibold transition-all hover:brightness-105 cursor-pointer flex items-center justify-center gap-2"
-                            style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid #10B981', color: '#10B981' }}
-                        >
-                            <CheckCircle2 className="w-4 h-4" />
-                            Áp dụng {foundCount}/3 ảnh tìm được
-                        </button>
-                    )}
-                    {foundCount === 0 && !searching && (
-                        <p className="text-center text-[#637381] text-xs">
-                            Không tìm thấy ảnh nào · Thử đổi tên (ví dụ thêm "(USA)" hoặc "(JU)")
-                        </p>
-                    )}
+                    <button
+                        type="button"
+                        onClick={handleApply}
+                        className="w-full py-2 rounded-md text-white text-sm font-semibold transition-all hover:brightness-105 cursor-pointer flex items-center justify-center gap-2"
+                        style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid #10B981', color: '#10B981' }}
+                    >
+                        <CheckCircle2 className="w-4 h-4" />
+                        Áp dụng BoxArt & Screenshots từ RAWG
+                    </button>
                 </div>
             )}
         </div>
@@ -371,6 +381,7 @@ function AdminGamesContent() {
     const [categories, setCategories] = useState<any[]>([]);
     const searchParams = useSearchParams();
     const search = searchParams.get('q') || '';
+    const [systemFilter, setSystemFilter] = useState<string>('all');
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -395,7 +406,7 @@ function AdminGamesContent() {
     const loadGames = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await adminService.getGames(page, SIZE, search || undefined);
+            const data = await adminService.getGames(page, SIZE, search || undefined, undefined, systemFilter);
             setGames(data.content);
             setTotal(data.totalElements);
         } catch (err) { console.error(err); }
@@ -403,7 +414,7 @@ function AdminGamesContent() {
     }, [page, search]);
 
     useEffect(() => { loadGames(); }, [loadGames]);
-    useEffect(() => { setPage(0); }, [search]);
+    useEffect(() => { setPage(0); }, [search, systemFilter]);
     useEffect(() => { adminService.getCategories().then(setCategories).catch(console.error); }, []);
 
     // --------------------------------------------------------------------------------------------------------------------- Auto-fill helpers ---------------------------------------------------------------------------------------------------------------------
@@ -538,6 +549,17 @@ function AdminGamesContent() {
                     {reseeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                     {reseeding ? 'Đang sync...' : 'Sync DB'}
                 </button>
+                <div className="flex items-center gap-2">
+                    <select
+                        value={systemFilter}
+                        onChange={e => setSystemFilter(e.target.value)}
+                        className="px-3 py-2.5 rounded-md text-white text-sm border focus:outline-none focus:ring-1 focus:ring-[#3C50E0]/50 transition-colors"
+                        style={{ background: '#24303F', borderColor: '#2E3A47' }}
+                    >
+                        <option value="all">Tất cả hệ máy</option>
+                        {SYSTEMS.map(sys => <option key={sys.id} value={sys.id}>{sys.name}</option>)}
+                    </select>
+                </div>
                 <button onClick={openCreate} className="flex items-center gap-2 px-5 py-2.5 rounded-md text-white text-sm font-semibold hover:brightness-110 transition-all active:scale-[0.98] cursor-pointer" style={{ background: '#3C50E0' }}>
                     <Plus className="w-4 h-4" /> Thêm game
                 </button>
@@ -778,15 +800,15 @@ function AdminGamesContent() {
                                     Hình ảnh
                                 </h4>
 
-                                {/* --------------------------------------------------------------------------------------------------------------------- Libretro Finder --------------------------------------------------------------------------------------------------------------------- */}
+                                {/* --------------------------------------------------------------------------------------------------------------------- RAWG Finder --------------------------------------------------------------------------------------------------------------------- */}
                                 <div className="rounded-md p-3 space-y-2" style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)' }}>
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <Search className="w-3.5 h-3.5" style={{ color: '#10B981' }} />
-                                        <span className="text-xs font-semibold" style={{ color: '#10B981' }}>Tìm ảnh tự động từ Libretro</span>
-                                        <span className="text-[10px] text-[#637381]">({'>'}1000 game NES có ảnh)</span>
+                                        <span className="text-xs font-semibold" style={{ color: '#10B981' }}>Tìm ảnh tự động từ RAWG Database</span>
+                                        <span className="text-[10px] text-[#637381]">(Chất lượng cao - Miễn phí)</span>
                                     </div>
-                                    <LibretroFinder
-                                        defaultName={stripRomExt(form.fileName)}
+                                    <RAWGImageFinder
+                                        defaultName={stripRomExt(form.fileName || form.name)}
                                         onApply={(imgUrl, imgSnap, imgTitle) => setForm(f => ({
                                             ...f,
                                             imageBaseUrl: '',

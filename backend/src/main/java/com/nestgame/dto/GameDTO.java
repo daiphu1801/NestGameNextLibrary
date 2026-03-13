@@ -21,6 +21,7 @@ public record GameDTO(
                 String imageUrl,
                 String imageSnap,
                 String imageTitle,
+                String system,
                 Integer playCount,
                 LocalDateTime createdAt,
                 LocalDateTime updatedAt) {

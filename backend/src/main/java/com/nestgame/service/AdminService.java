@@ -190,6 +190,7 @@ public class AdminService {
                 .year(request.getYear())
                 .region(request.getRegion())
                 .isFeatured(request.getIsFeatured() != null ? request.getIsFeatured() : false)
+                .system(request.getSystem() != null ? request.getSystem() : "nes")
                 .imageUrl(request.getImageUrl())
                 .imageSnap(request.getImageSnap())
                 .imageTitle(request.getImageTitle())
@@ -220,6 +221,7 @@ public class AdminService {
         game.setYear(request.getYear());
         game.setRegion(request.getRegion());
         game.setIsFeatured(request.getIsFeatured());
+        game.setSystem(request.getSystem() != null ? request.getSystem() : game.getSystem());
         game.setImageUrl(request.getImageUrl());
         game.setImageSnap(request.getImageSnap());
         game.setImageTitle(request.getImageTitle());
@@ -407,6 +409,7 @@ public class AdminService {
                 .imageUrl(game.getImageUrl())
                 .imageSnap(game.getImageSnap())
                 .imageTitle(game.getImageTitle())
+                .system(game.getSystem())
                 .playCount(game.getPlayCount())
                 .createdAt(game.getCreatedAt())
                 .updatedAt(game.getUpdatedAt())
@@ -613,6 +616,7 @@ public class AdminService {
                         .year(jg.getYear())
                         .region(jg.getRegion())
                         .isFeatured(Boolean.TRUE.equals(jg.getIsFeatured()))
+                        .system(jg.getSystem() != null ? jg.getSystem() : "nes")
                         .imageUrl(jg.getImage())
                         .imageSnap(jg.getImageSnap())
                         .imageTitle(jg.getImageTitle())

@@ -26,7 +26,7 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
   const { showToast } = useToast();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useFavorites();
 
-  const [imageUrl, setImageUrl] = useState(game.image || game.thumbnail || '/placeholder.png');
+  const [imageUrl, setImageUrl] = useState(game.imageUrl || game.image || game.thumbnail || '/placeholder.png');
   const [fallbackUrls] = useState(() =>
     imageService.generateFallbackUrls(game.name, game.image)
   );

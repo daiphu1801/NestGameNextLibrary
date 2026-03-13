@@ -560,6 +560,7 @@ export default function PlayPage() {
             <>
               <MobileControlsOverlay
                 enabled={!isLoading && !error && !isTrialEnded}
+                system={game?.system}
               />
               <ExitOverlay
                 onExit={() => {
