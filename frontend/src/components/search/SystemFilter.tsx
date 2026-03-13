@@ -51,11 +51,29 @@ const SYSTEMS: SystemOption[] = [
   },
   { 
     id: 'gba', nameKey: 'system.gba', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
-    subtitle: 'Handheld',
+    subtitle: 'Advance Handheld',
     bgDesc: 'from-blue-600/20 to-blue-950/60',
     activeColor: 'bg-blue-500/20 text-blue-300', activeBorder: 'border-blue-500/50',
     lightActiveColor: 'bg-blue-100 text-blue-700', lightActiveBorder: 'border-blue-400',
     shadow: 'shadow-[0_0_30px_rgba(59,130,246,0.4)]',
+    disabled: true, comingSoon: true
+  },
+  { 
+    id: 'gb', nameKey: 'system.gb', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
+    subtitle: 'Classic Handheld',
+    bgDesc: 'from-zinc-600/20 to-zinc-950/60',
+    activeColor: 'bg-zinc-500/20 text-zinc-300', activeBorder: 'border-zinc-500/50',
+    lightActiveColor: 'bg-zinc-100 text-zinc-700', lightActiveBorder: 'border-zinc-400',
+    shadow: 'shadow-[0_0_30px_rgba(161,161,170,0.4)]',
+    demo: true
+  },
+  { 
+    id: 'gbc', nameKey: 'system.gbc', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
+    subtitle: 'Color Handheld',
+    bgDesc: 'from-pink-600/20 to-pink-950/60',
+    activeColor: 'bg-pink-500/20 text-pink-300', activeBorder: 'border-pink-500/50',
+    lightActiveColor: 'bg-pink-100 text-pink-700', lightActiveBorder: 'border-pink-400',
+    shadow: 'shadow-[0_0_30px_rgba(236,72,153,0.4)]',
     disabled: true, comingSoon: true
   },
   { 
@@ -65,24 +83,6 @@ const SYSTEMS: SystemOption[] = [
     activeColor: 'bg-indigo-500/20 text-indigo-300', activeBorder: 'border-indigo-500/50',
     lightActiveColor: 'bg-indigo-100 text-indigo-700', lightActiveBorder: 'border-indigo-400',
     shadow: 'shadow-[0_0_30px_rgba(99,102,241,0.4)]',
-    disabled: true, comingSoon: true
-  },
-  { 
-    id: 'n64', nameKey: 'system.n64', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-80" />, 
-    subtitle: '3D Revolution',
-    bgDesc: 'from-emerald-600/20 to-emerald-950/60',
-    activeColor: 'bg-emerald-500/20 text-emerald-300', activeBorder: 'border-emerald-500/50',
-    lightActiveColor: 'bg-emerald-100 text-emerald-700', lightActiveBorder: 'border-emerald-400',
-    shadow: 'shadow-[0_0_30px_rgba(16,185,129,0.4)]',
-    disabled: true, comingSoon: true
-  },
-  { 
-    id: 'ps1', nameKey: 'system.ps1', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
-    subtitle: 'CD Era',
-    bgDesc: 'from-zinc-600/20 to-zinc-950/60',
-    activeColor: 'bg-zinc-500/20 text-zinc-300', activeBorder: 'border-zinc-500/50',
-    lightActiveColor: 'bg-zinc-200 text-zinc-800', lightActiveBorder: 'border-zinc-400',
-    shadow: 'shadow-[0_0_30px_rgba(161,161,170,0.4)]',
     disabled: true, comingSoon: true
   },
   { 

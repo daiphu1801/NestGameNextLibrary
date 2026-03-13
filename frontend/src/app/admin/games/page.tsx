@@ -18,7 +18,10 @@ const SYSTEMS = [
     { id: 'nes', name: 'NES' },
     { id: 'snes', name: 'SNES' },
     { id: 'genesis', name: 'Sega Genesis' },
-    { id: 'gba', name: 'Game Boy Advance' }
+    { id: 'gba', name: 'Game Boy Advance' },
+    { id: 'gb', name: 'Game Boy' },
+    { id: 'gbc', name: 'Game Boy Color' },
+    { id: 'arcade', name: 'Arcade' }
 ];
 const ROM_FOLDERS = [
     'Nes ROMs Complete 1 Of 4',
@@ -248,7 +251,7 @@ function RAWGImageFinder({ defaultName = '', onApply }: RAWGFinderProps) {
         setSearching(true);
         setError('');
         setResults([]);
-        
+
         try {
             const apiKey = process.env.NEXT_PUBLIC_RAWG_API_KEY;
             if (!apiKey) {
@@ -262,7 +265,7 @@ function RAWGImageFinder({ defaultName = '', onApply }: RAWGFinderProps) {
             const classicPlatforms = "49,79,167,24,43,26";
             const res = await fetch(`https://api.rawg.io/api/games?search=${encodeURIComponent(cleanQuery)}&key=${apiKey}&page_size=5&platforms=${classicPlatforms}`);
             if (!res.ok) throw new Error('Lỗi gọi API RAWG');
-            
+
             const data = await res.json();
             if (data.results && data.results.length > 0) {
                 setResults(data.results);
@@ -280,13 +283,13 @@ function RAWGImageFinder({ defaultName = '', onApply }: RAWGFinderProps) {
     const handleApply = () => {
         if (results.length === 0) return;
         const game = results[selectedIdx];
-        
+
         // Use background_image as boxart/cover
         const boxart = game.background_image || '';
-        
+
         // Get screenshots (avoid background_image itself if possible)
         const screenshots = game.short_screenshots?.filter((s: any) => s.image !== boxart) || [];
-        
+
         // Use first screenshot as snap, second as title (or fallback to background)
         const snap = screenshots.length > 0 ? screenshots[0].image : boxart;
         const title = screenshots.length > 1 ? screenshots[1].image : snap;
@@ -329,11 +332,11 @@ function RAWGImageFinder({ defaultName = '', onApply }: RAWGFinderProps) {
                     <p className="text-xs text-[#A5B4CB]">Chọn kết quả chuẩn nhất ({results.length} games):</p>
                     <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar">
                         {results.map((game, idx) => (
-                            <div 
-                                key={game.id} 
+                            <div
+                                key={game.id}
                                 onClick={() => setSelectedIdx(idx)}
                                 className="flex-shrink-0 w-40 cursor-pointer rounded-lg overflow-hidden transition-all group relative"
-                                style={{ 
+                                style={{
                                     border: `2px solid ${idx === selectedIdx ? '#10B981' : '#2E3A47'}`,
                                     background: '#1C2434',
                                     opacity: idx === selectedIdx ? 1 : 0.7

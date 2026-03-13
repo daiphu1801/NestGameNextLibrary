@@ -52,8 +52,8 @@
     "snes": "SNES",
     "gba": "GBA",
     "genesis": "Sega Genesis",
-    "n64": "Nintendo 64",
-    "ps1": "PlayStation 1",
+    "gb": "Game Boy",
+    "gbc": "Game Boy Color",
     "arcade": "Arcade (Thùng)",
     "comingSoon": "Sắp ra mắt",
     "demo": "Thử nghiệm"
