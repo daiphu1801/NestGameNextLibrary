@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
     Plus, Pencil, Trash2, X, Star, ChevronLeft, ChevronRight,
     Loader2, Download, Upload, FolderOpen, Image as ImageIcon,
     Wand2, CheckCircle2, AlertCircle, FileUp, Search
 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
+import { debounce } from '@/lib/utils';
 import { useToast } from '../components/ToastProvider';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ActionButton } from '../components/ActionButton';
@@ -383,6 +384,7 @@ function AdminGamesContent() {
     const [games, setGames] = useState<any[]>([]);
     const [categories, setCategories] = useState<any[]>([]);
     const searchParams = useSearchParams();
+    const router = useRouter();
     const search = searchParams.get('q') || '';
     const [systemFilter, setSystemFilter] = useState<string>('all');
     const [total, setTotal] = useState(0);
@@ -414,7 +416,7 @@ function AdminGamesContent() {
             setTotal(data.totalElements);
         } catch (err) { console.error(err); }
         finally { setLoading(false); }
-    }, [page, search]);
+    }, [page, search, systemFilter]);
 
     useEffect(() => { loadGames(); }, [loadGames]);
     useEffect(() => { setPage(0); }, [search, systemFilter]);
@@ -541,18 +543,32 @@ function AdminGamesContent() {
     const inputStyle = { background: '#1C2434', borderColor: '#2E3A47' };
     const labelCls = "block text-xs font-medium text-[#A5B4CB] mb-1.5 uppercase tracking-wider";
 
+    const handleSearchInput = (value: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (value) params.set('q', value);
+        else params.delete('q');
+        router.push(`?${params.toString()}`);
+    };
+
     return (
         <div className="space-y-5">
             {/* Header */}
-            <div className="flex items-center justify-end gap-2">
-                <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2.5 rounded-md text-[#A5B4CB] text-sm border hover:text-white transition-all cursor-pointer" style={{ borderColor: '#2E3A47', background: '#24303F' }} title="Xuất CSV">
-                    <Download className="w-4 h-4" /> CSV
-                </button>
-                <button onClick={handleReseed} disabled={reseeding} className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm border hover:text-white transition-all cursor-pointer disabled:opacity-50" style={{ borderColor: '#2E3A47', background: '#24303F', color: reseeding ? '#637381' : '#A5B4CB' }} title="Sync games.json → DB">
-                    {reseeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                    {reseeding ? 'Đang sync...' : 'Sync DB'}
-                </button>
-                <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-end sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <div className="relative flex-1 sm:w-72">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#637381]" />
+                        <input
+                            type="text"
+                            defaultValue={search}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                debounce(() => handleSearchInput(val), 500)();
+                            }}
+                            placeholder="Tìm kiếm game..."
+                            className="w-full pl-10 pr-4 py-2.5 rounded-md text-white text-sm border focus:outline-none focus:ring-1 focus:ring-[#3C50E0]/50 transition-colors"
+                            style={{ background: '#24303F', borderColor: '#2E3A47' }}
+                        />
+                    </div>
                     <select
                         value={systemFilter}
                         onChange={e => setSystemFilter(e.target.value)}
@@ -563,9 +579,19 @@ function AdminGamesContent() {
                         {SYSTEMS.map(sys => <option key={sys.id} value={sys.id}>{sys.name}</option>)}
                     </select>
                 </div>
-                <button onClick={openCreate} className="flex items-center gap-2 px-5 py-2.5 rounded-md text-white text-sm font-semibold hover:brightness-110 transition-all active:scale-[0.98] cursor-pointer" style={{ background: '#3C50E0' }}>
-                    <Plus className="w-4 h-4" /> Thêm game
-                </button>
+                
+                <div className="flex items-center gap-2">
+                    <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2.5 rounded-md text-[#A5B4CB] text-sm border hover:text-white transition-all cursor-pointer" style={{ borderColor: '#2E3A47', background: '#24303F' }} title="Xuất CSV">
+                        <Download className="w-4 h-4" /> CSV
+                    </button>
+                    <button onClick={handleReseed} disabled={reseeding} className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm border hover:text-white transition-all cursor-pointer disabled:opacity-50" style={{ borderColor: '#2E3A47', background: '#24303F', color: reseeding ? '#637381' : '#A5B4CB' }} title="Sync games.json → DB">
+                        {reseeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                        {reseeding ? 'Đang sync...' : 'Sync DB'}
+                    </button>
+                    <button onClick={openCreate} className="flex items-center gap-2 px-5 py-2.5 rounded-md text-white text-sm font-semibold hover:brightness-110 transition-all active:scale-[0.98] cursor-pointer" style={{ background: '#3C50E0' }}>
+                        <Plus className="w-4 h-4" /> Thêm game
+                    </button>
+                </div>
             </div>
 
             {/* Table */}

@@ -302,17 +302,19 @@ export function Header() {
                       <Link
                         href="/systems"
                         className={cn(
-                          "relative flex items-center gap-3 px-4 py-3.5 text-sm font-bold transition-all group/systems",
+                          "relative flex items-center gap-3 px-4 py-3.5 text-sm font-bold transition-all group/systems overflow-hidden",
                           "bg-gradient-to-r from-purple-500/10 via-fuchsia-500/10 to-cyan-500/10",
                           "hover:from-purple-500/20 hover:via-fuchsia-500/20 hover:to-cyan-500/20",
+                          "hover:shadow-[0_0_20px_rgba(168,85,247,0.4)]",
                           pathname === '/systems' ? "text-purple-400" : ""
                         )}
                       >
-                        <Gamepad2 className="w-4 h-4 text-purple-400 group-hover/systems:animate-bounce" />
-                        <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-cyan-400 bg-clip-text" style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-white/10 to-cyan-500/0 -translate-x-full group-hover/systems:animate-[shimmer_1.5s_infinite]" />
+                        <Gamepad2 className="w-4 h-4 text-purple-400 group-hover/systems:animate-bounce relative z-10" />
+                        <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-cyan-400 bg-clip-text relative z-10 group-hover/systems:scale-[1.02] transition-transform" style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                           {t('nav.systems')}
                         </span>
-                        <span className="ml-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white leading-none">New</span>
+                        <span className="ml-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white leading-none relative z-10 shadow-[0_0_10px_rgba(168,85,247,0.5)]">New</span>
                       </Link>
                     </div>
                   </div>

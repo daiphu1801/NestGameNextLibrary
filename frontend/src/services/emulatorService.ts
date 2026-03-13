@@ -320,8 +320,9 @@ class EmulatorService {
       // Determine correct core for the system
       let core = 'fceumm'; // default NES
       if (system === 'snes') core = 'snes9x';
-      else if (system === 'gba') core = 'mgba';
+      else if (system === 'gba' || system === 'gb' || system === 'gbc') core = 'mgba';
       else if (system === 'genesis') core = 'genesis_plus_gx';
+      else if (system === 'arcade') core = 'fbneo';
 
       // Launch emulator with canvas, keyboard + gamepad controls
       this.currentEmulator = await Nostalgist.launch({
