@@ -451,12 +451,20 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
             <div className="text-xs font-bold text-red-400 mb-3 text-center">
               Player 2
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5 self-center">
               <ControlHintVertical keys="↑ ↓ ← →" label={t('docs.controls.movement') || 'Di chuyển'} />
-              <ControlHintVertical keys="1" label={t('modal.buttonA') || 'Nút A'} color="text-cyan-400" />
-              <ControlHintVertical keys="2" label={t('modal.buttonB') || 'Nút B'} color="text-cyan-400" />
-              <ControlHintVertical keys="3" label="Start" color="text-green-400" />
-              <ControlHintVertical keys="4" label="Select" color="text-yellow-400" />
+              <div className="grid grid-cols-2 gap-x-2 gap-y-1 mt-2">
+                <ControlHintVertical keys="NP1" label="B" color="text-cyan-400" />
+                <ControlHintVertical keys="NP2" label="A" color="text-cyan-400" />
+                <ControlHintVertical keys="NP4" label="Y" color="text-cyan-400" />
+                <ControlHintVertical keys="NP5" label="X" color="text-cyan-400" />
+                <ControlHintVertical keys="NP6" label="L" color="text-cyan-400" />
+                <ControlHintVertical keys="NP3" label="R" color="text-cyan-400" />
+              </div>
+              <div className="flex justify-center gap-2 mt-2 border-t border-white/5 pt-2">
+                <ControlHintVertical keys="NP7" label="S" color="text-green-400" />
+                <ControlHintVertical keys="NP8" label="Sl" color="text-yellow-400" />
+              </div>
               <div className="mt-4 px-1">
                 <p className="text-[10px] text-muted-foreground text-center italic leading-tight opacity-70">
                   {t('modal.controlsNote') || '*Vai trò (Nhảy/Đánh/...) của A/B tùy thuộc vào từng game'}

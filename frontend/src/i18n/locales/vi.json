@@ -55,6 +55,7 @@
     "gb": "Game Boy",
     "gbc": "Game Boy Color",
     "arcade": "Arcade (Thùng)",
+    "neogeo": "Neo Geo",
     "comingSoon": "Sắp ra mắt",
     "demo": "Thử nghiệm"
   },
@@ -435,6 +436,24 @@
       "step3": "Bấm vào ô nút NES → nhấn nút trên tay cầm để gán",
       "step4": "Bấm \"Lưu cấu hình\" để áp dụng",
       "noteRestart": "Lưu ý: Cấu hình mới có hiệu lực ngay khi bắt đầu game. Nếu đang chơi, hãy thoát và vào lại."
+    },
+    "combo": {
+      "title": "Combo",
+      "desc": "Phím tắt combo chiến đấu cho game đối kháng",
+      "slots": "Gán Combo",
+      "custom": "Tạo Combo",
+      "presetList": "Danh sách Combo có sẵn",
+      "createNew": "Tạo combo mới",
+      "noCustom": "Chưa có combo tùy chỉnh nào.",
+      "noCustomDesc": "Nhấn nút bên trên để tạo combo riêng.",
+      "save": "Lưu Combo",
+      "cancel": "Hủy",
+      "addStep": "Thêm step",
+      "comboName": "Tên combo",
+      "steps": "Steps",
+      "duration": "Thời gian giữ (ms)",
+      "test": "Thử combo",
+      "customizeHint": "Tùy chỉnh combo trong Cài đặt"
     }
   },
   "user": {

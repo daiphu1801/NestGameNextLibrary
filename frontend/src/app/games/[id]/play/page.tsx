@@ -26,6 +26,8 @@ import { ExitOverlay } from '@/components/mobile/ExitOverlay';
 import { PortraitOverlay } from '@/components/mobile/PortraitOverlay';
 import { useMobileDetection } from '@/hooks/useMobileDetection';
 import { useScreenOrientation } from '@/hooks/useScreenOrientation';
+import { comboService } from '@/services/comboService';
+import { COMBO_KEYBOARD_SHORTCUTS } from '@/data/comboPresets';
 import { cn } from '@/lib/utils';
 
 export default function PlayPage() {
@@ -186,6 +188,46 @@ export default function PlayPage() {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isFullscreen, showSaveModal, router, t]);
+
+  // Combo keyboard shortcuts (T/Y/G/H for P1, Numpad for P2)
+  useEffect(() => {
+    const isAdvanced = game?.system === 'snes' || game?.system === 'gba';
+    if (!isAdvanced || isLoading || error || isMobile) return;
+
+    const comboKeyMap: Record<string, { player: 'p1' | 'p2'; slot: number }> = {};
+    // P1: t, y, g, h
+    COMBO_KEYBOARD_SHORTCUTS.p1.forEach((key, i) => {
+      comboKeyMap[key] = { player: 'p1', slot: i };
+    });
+    // P2: keypad0, keypad9, kp_plus, kp_minus → use KeyboardEvent.code to detect
+    const p2CodeMap: Record<string, number> = {
+      'Numpad0': 0, 'Numpad9': 1, 'NumpadAdd': 2, 'NumpadSubtract': 3,
+      'NumpadMultiply': 4, 'NumpadDivide': 5,
+    };
+
+    const handleComboKey = (e: KeyboardEvent) => {
+      // Skip if any modal is open
+      if (showSaveModal || showLoginModal || showRegisterModal) return;
+
+      // P1: check by e.key
+      const p1Key = e.key.toLowerCase();
+      if (comboKeyMap[p1Key]) {
+        e.preventDefault();
+        const { player, slot } = comboKeyMap[p1Key];
+        comboService.executeSlot(slot, player);
+        return;
+      }
+
+      // P2: check by e.code (numpad)
+      if (p2CodeMap[e.code] !== undefined) {
+        e.preventDefault();
+        comboService.executeSlot(p2CodeMap[e.code], 'p2');
+      }
+    };
+
+    window.addEventListener('keydown', handleComboKey);
+    return () => window.removeEventListener('keydown', handleComboKey);
+  }, [game?.system, isLoading, error, isMobile, showSaveModal, showLoginModal, showRegisterModal]);
 
   const loadGameData = async () => {
     try {
@@ -477,7 +519,7 @@ export default function PlayPage() {
         {/* LEFT — Controls Panel (Desktop only) */}
         {!isFullscreen && (
           <div className="hidden lg:block">
-          <ControlsPanel
+            <ControlsPanel
               system={game?.system}
               isCollapsed={isControlsCollapsed}
               onToggleCollapse={() => setIsControlsCollapsed(!isControlsCollapsed)}
@@ -648,32 +690,32 @@ export default function PlayPage() {
 
       {/* Floating Bottom Control Hints — hidden on mobile (has virtual controls) */}
       {!isMobile && (
-      <div
-        className={cn(
-          "absolute bottom-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300",
-          !showControls && !isFullscreen && "translate-y-16 opacity-0"
-        )}
-      >
-        <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-black/60 backdrop-blur-xl border border-white/[0.08] shadow-2xl">
-          <div className="flex items-center gap-1.5">
-            <kbd className="px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-400 font-mono text-[10px] font-semibold border border-rose-500/20">ESC</kbd>
-            <span className="text-[10px] text-slate-500">{t('modal.back')}</span>
-          </div>
-          <div className="w-px h-3 bg-white/10" />
-          <div className="hidden sm:flex items-center gap-1.5">
-            <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-300 font-mono text-[10px] font-semibold border border-white/[0.08]">WASD</kbd>
-            <span className="text-[10px] text-slate-500">{t('docs.controls.movement') || 'Move'}</span>
-          </div>
-          <div className="hidden sm:flex items-center gap-1.5">
-            <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-300 font-mono text-[10px] font-semibold border border-white/[0.08]">J/K</kbd>
-            <span className="text-[10px] text-slate-500">A/B</span>
-          </div>
-          <div className="hidden lg:flex items-center gap-1.5">
-            <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-300 font-mono text-[10px] font-semibold border border-white/[0.08]">Enter</kbd>
-            <span className="text-[10px] text-slate-500">Start</span>
+        <div
+          className={cn(
+            "absolute bottom-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300",
+            !showControls && !isFullscreen && "translate-y-16 opacity-0"
+          )}
+        >
+          <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-black/60 backdrop-blur-xl border border-white/[0.08] shadow-2xl">
+            <div className="flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-400 font-mono text-[10px] font-semibold border border-rose-500/20">ESC</kbd>
+              <span className="text-[10px] text-slate-500">{t('modal.back')}</span>
+            </div>
+            <div className="w-px h-3 bg-white/10" />
+            <div className="hidden sm:flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-300 font-mono text-[10px] font-semibold border border-white/[0.08]">WASD</kbd>
+              <span className="text-[10px] text-slate-500">{t('docs.controls.movement') || 'Move'}</span>
+            </div>
+            <div className="hidden sm:flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-300 font-mono text-[10px] font-semibold border border-white/[0.08]">J/K</kbd>
+              <span className="text-[10px] text-slate-500">A/B</span>
+            </div>
+            <div className="hidden lg:flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-300 font-mono text-[10px] font-semibold border border-white/[0.08]">Enter</kbd>
+              <span className="text-[10px] text-slate-500">Start</span>
+            </div>
           </div>
         </div>
-      </div>
       )}
 
       {/* Save/Load Modal */}

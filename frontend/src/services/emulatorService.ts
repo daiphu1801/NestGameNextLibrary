@@ -37,12 +37,12 @@ export const DEFAULT_KEYBINDINGS: KeybindingConfig = {
     down: 's',
     left: 'a',
     right: 'd',
-    a: 'j',
-    b: 'k',
-    x: 'u',
-    y: 'i',
-    l: 'q',
-    r: 'e',
+    a: 'k',
+    b: 'j',
+    x: 'i',
+    y: 'u',
+    l: 'o',
+    r: 'l',
     start: 'enter',
     select: 'rshift',
   },
@@ -51,14 +51,14 @@ export const DEFAULT_KEYBINDINGS: KeybindingConfig = {
     down: 'down',
     left: 'left',
     right: 'right',
-    a: 'num1',
-    b: 'num2',
-    x: 'num4',
-    y: 'num5',
-    l: 'num7',
-    r: 'num8',
-    start: 'num3',
-    select: 'num6',
+    a: 'keypad2',
+    b: 'keypad1',
+    x: 'keypad5',
+    y: 'keypad4',
+    l: 'keypad6',
+    r: 'keypad3',
+    start: 'keypad7',
+    select: 'keypad8',
   },
 };
 
@@ -143,10 +143,29 @@ class EmulatorService {
     try {
       const stored = localStorage.getItem(this.KEYBINDINGS_KEY);
       if (stored) {
-        const parsed = JSON.parse(stored);
+        const parsed = JSON.parse(stored) as KeybindingConfig;
+
+        // Migration: Standardize P2 numpad keys to 'keypadX' format (RetroArch config format)
+        const migrate = (keys: PlayerKeys) => {
+          const newKeys = { ...keys };
+          (Object.keys(newKeys) as (keyof PlayerKeys)[]).forEach(k => {
+            const val = newKeys[k];
+            if (typeof val === 'string') {
+              // Đã đúng format 'keypadX' → giữ nguyên
+              if (/^keypad\d$/.test(val)) return;
+              // Chuyển 'numpadX', 'numX', 'kpX', 'NumpadX' → 'keypadX'
+              const numpadMatch = val.match(/^(?:numpad|num|kp|Numpad)(\d)$/i);
+              if (numpadMatch) {
+                newKeys[k] = `keypad${numpadMatch[1]}`;
+              }
+            }
+          });
+          return newKeys;
+        };
+
         return {
-          p1: { ...DEFAULT_KEYBINDINGS.p1, ...(parsed.p1 || {}) },
-          p2: { ...DEFAULT_KEYBINDINGS.p2, ...(parsed.p2 || {}) },
+          p1: parsed.p1 || DEFAULT_KEYBINDINGS.p1,
+          p2: migrate(parsed.p2 || DEFAULT_KEYBINDINGS.p2),
         };
       }
     } catch (error) {
@@ -358,8 +377,15 @@ class EmulatorService {
           input_player2_start: keys.p2.start,
           input_player2_select: keys.p2.select,
 
-          // ── Gamepad: Player 1 ──
+          // ── Device Configuration ──
+          input_libretro_device_p2: 1,      // 1 = RetroPad (Digital)
+
+          // ── Joypad Mapping ──
           input_player1_joypad_index: 0,
+          // Keyboard events for P2 are handled via keysym mapping. Explicitly setting P2 joypad index to 1
+          // overrides keyboard bindings if no second pad is plugged in. Leaving it out lets the core use the mapped keys.
+
+          // ── Gamepad: Player 1 Buttons ──
           input_player1_b_btn: String(gp.p1.b),
           input_player1_a_btn: String(gp.p1.a),
           input_player1_x_btn: String(gp.p1.x),
@@ -373,8 +399,7 @@ class EmulatorService {
           input_player1_start_btn: String(gp.p1.start),
           input_player1_select_btn: String(gp.p1.select),
 
-          // ── Gamepad: Player 2 ──
-          input_player2_joypad_index: 1,
+          // ── Gamepad: Player 2 Buttons ──
           input_player2_b_btn: String(gp.p2.b),
           input_player2_a_btn: String(gp.p2.a),
           input_player2_x_btn: String(gp.p2.x),
@@ -481,6 +506,18 @@ class EmulatorService {
       'left': { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
       'right': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
       'space': { key: ' ', code: 'Space', keyCode: 32 },
+      'digit8': { key: '8', code: 'Digit8', keyCode: 56 },
+      'digit9': { key: '9', code: 'Digit9', keyCode: 57 },
+      'keypad0': { key: '0', code: 'Numpad0', keyCode: 96 },
+      'keypad1': { key: '1', code: 'Numpad1', keyCode: 97 },
+      'keypad2': { key: '2', code: 'Numpad2', keyCode: 98 },
+      'keypad3': { key: '3', code: 'Numpad3', keyCode: 99 },
+      'keypad4': { key: '4', code: 'Numpad4', keyCode: 100 },
+      'keypad5': { key: '5', code: 'Numpad5', keyCode: 101 },
+      'keypad6': { key: '6', code: 'Numpad6', keyCode: 102 },
+      'keypad7': { key: '7', code: 'Numpad7', keyCode: 103 },
+      'keypad8': { key: '8', code: 'Numpad8', keyCode: 104 },
+      'keypad9': { key: '9', code: 'Numpad9', keyCode: 105 },
     };
     return map[retroKey.toLowerCase()] || { key: retroKey, code: `Key${retroKey.toUpperCase()}`, keyCode: retroKey.charCodeAt(0) };
   }

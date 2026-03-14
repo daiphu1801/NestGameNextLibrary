@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import {
     Plus, Pencil, Trash2, X, Star, ChevronLeft, ChevronRight,
     Loader2, Download, Upload, FolderOpen, Image as ImageIcon,
-    Wand2, CheckCircle2, AlertCircle, FileUp, Search
+    Wand2, CheckCircle2, AlertCircle, FileUp, Search, ChevronDown
 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
 import { debounce } from '@/lib/utils';
@@ -22,7 +22,8 @@ const SYSTEMS = [
     { id: 'gba', name: 'Game Boy Advance' },
     { id: 'gb', name: 'Game Boy' },
     { id: 'gbc', name: 'Game Boy Color' },
-    { id: 'arcade', name: 'Arcade' }
+    { id: 'arcade', name: 'Arcade' },
+    { id: 'neogeo', name: 'Neo Geo' }
 ];
 const ROM_FOLDERS = [
     'Nes ROMs Complete 1 Of 4',
@@ -385,10 +386,16 @@ function AdminGamesContent() {
     const [categories, setCategories] = useState<any[]>([]);
     const searchParams = useSearchParams();
     const router = useRouter();
+    
+    // Sync filters from URL
     const search = searchParams.get('q') || '';
-    const [systemFilter, setSystemFilter] = useState<string>('all');
+    const systemFilter = searchParams.get('system') || 'all';
+    const categoryFilter = searchParams.get('category') || 'all';
+    const featuredFilter = searchParams.get('featured') || 'all';
+    const regionFilter = searchParams.get('region') || 'all';
+    const page = parseInt(searchParams.get('page') || '0');
+
     const [total, setTotal] = useState(0);
-    const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
     const [editingGame, setEditingGame] = useState<any>(null);
@@ -411,15 +418,24 @@ function AdminGamesContent() {
     const loadGames = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await adminService.getGames(page, SIZE, search || undefined, undefined, systemFilter);
+            const isFeatured = featuredFilter === 'yes' ? true : featuredFilter === 'no' ? false : undefined;
+            const data = await adminService.getGames(
+                page, 
+                SIZE, 
+                search || undefined, 
+                categoryFilter === 'all' ? undefined : categoryFilter, 
+                systemFilter === 'all' ? undefined : systemFilter,
+                isFeatured,
+                regionFilter === 'all' ? undefined : regionFilter
+            );
             setGames(data.content);
             setTotal(data.totalElements);
         } catch (err) { console.error(err); }
         finally { setLoading(false); }
-    }, [page, search, systemFilter]);
+    }, [page, search, systemFilter, categoryFilter, featuredFilter, regionFilter]);
 
     useEffect(() => { loadGames(); }, [loadGames]);
-    useEffect(() => { setPage(0); }, [search, systemFilter]);
+
     useEffect(() => { adminService.getCategories().then(setCategories).catch(console.error); }, []);
 
     // --------------------------------------------------------------------------------------------------------------------- Auto-fill helpers ---------------------------------------------------------------------------------------------------------------------
@@ -543,54 +559,142 @@ function AdminGamesContent() {
     const inputStyle = { background: '#1C2434', borderColor: '#2E3A47' };
     const labelCls = "block text-xs font-medium text-[#A5B4CB] mb-1.5 uppercase tracking-wider";
 
-    const handleSearchInput = (value: string) => {
+    const updateFilter = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
-        if (value) params.set('q', value);
-        else params.delete('q');
+        if (value && value !== 'all') params.set(key, value);
+        else params.delete(key);
+        params.delete('page'); // Always reset page on filter change
         router.push(`?${params.toString()}`);
+    };
+
+    const clearFilters = () => {
+        router.push('?');
+    };
+
+    const handleSearchInput = (value: string) => {
+        updateFilter('q', value);
     };
 
     return (
         <div className="space-y-5">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row items-end sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                    <div className="relative flex-1 sm:w-72">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#637381]" />
-                        <input
-                            type="text"
-                            defaultValue={search}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                debounce(() => handleSearchInput(val), 500)();
-                            }}
-                            placeholder="Tìm kiếm game..."
-                            className="w-full pl-10 pr-4 py-2.5 rounded-md text-white text-sm border focus:outline-none focus:ring-1 focus:ring-[#3C50E0]/50 transition-colors"
-                            style={{ background: '#24303F', borderColor: '#2E3A47' }}
-                        />
+            {/* Header & Filters Card */}
+            <div className="rounded-[10px] border shadow-sm" style={{ background: '#24303F', borderColor: '#2E3A47' }}>
+                <div className="p-4 space-y-4">
+                    {/* Top Row: Search & Actions */}
+                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+                        <div className="relative w-full xl:w-96">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#637381]" />
+                            <input
+                                type="text"
+                                defaultValue={search}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    debounce(() => handleSearchInput(val), 500)();
+                                }}
+                                placeholder="Tìm kiếm game..."
+                                className="w-full pl-10 pr-4 py-2.5 rounded-md text-white text-sm border focus:outline-none focus:ring-1 focus:ring-[#3C50E0]/50 transition-colors"
+                                style={{ background: '#1C2434', borderColor: '#2E3A47' }}
+                            />
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                            <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2.5 rounded-md text-[#A5B4CB] text-sm border hover:text-white hover:bg-[#2E3A47] transition-all cursor-pointer" style={{ borderColor: '#2E3A47' }} title="Xuất CSV">
+                                <Download className="w-4 h-4" /> <span className="hidden sm:inline">CSV</span>
+                            </button>
+                            <button onClick={handleReseed} disabled={reseeding} className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm border hover:text-white hover:bg-[#2E3A47] transition-all cursor-pointer disabled:opacity-50" style={{ borderColor: '#2E3A47', color: reseeding ? '#637381' : '#A5B4CB' }}>
+                                {reseeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                                <span className="hidden sm:inline">{reseeding ? 'Đang sync...' : 'Sync DB'}</span>
+                            </button>
+                            <button onClick={openCreate} className="flex items-center gap-2 px-5 py-2.5 rounded-md text-white text-sm font-semibold hover:brightness-110 shadow-lg transition-all active:scale-[0.98] cursor-pointer" style={{ background: 'linear-gradient(135deg, #3C50E0 0%, #6577F3 100%)' }}>
+                                <Plus className="w-4 h-4" /> Thêm game mới
+                            </button>
+                        </div>
                     </div>
-                    <select
-                        value={systemFilter}
-                        onChange={e => setSystemFilter(e.target.value)}
-                        className="px-3 py-2.5 rounded-md text-white text-sm border focus:outline-none focus:ring-1 focus:ring-[#3C50E0]/50 transition-colors"
-                        style={{ background: '#24303F', borderColor: '#2E3A47' }}
-                    >
-                        <option value="all">Tất cả hệ máy</option>
-                        {SYSTEMS.map(sys => <option key={sys.id} value={sys.id}>{sys.name}</option>)}
-                    </select>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                    <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2.5 rounded-md text-[#A5B4CB] text-sm border hover:text-white transition-all cursor-pointer" style={{ borderColor: '#2E3A47', background: '#24303F' }} title="Xuất CSV">
-                        <Download className="w-4 h-4" /> CSV
-                    </button>
-                    <button onClick={handleReseed} disabled={reseeding} className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm border hover:text-white transition-all cursor-pointer disabled:opacity-50" style={{ borderColor: '#2E3A47', background: '#24303F', color: reseeding ? '#637381' : '#A5B4CB' }} title="Sync games.json → DB">
-                        {reseeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                        {reseeding ? 'Đang sync...' : 'Sync DB'}
-                    </button>
-                    <button onClick={openCreate} className="flex items-center gap-2 px-5 py-2.5 rounded-md text-white text-sm font-semibold hover:brightness-110 transition-all active:scale-[0.98] cursor-pointer" style={{ background: '#3C50E0' }}>
-                        <Plus className="w-4 h-4" /> Thêm game
-                    </button>
+
+                    {/* Divider */}
+                    <div className="h-px w-full" style={{ background: '#2E3A47' }} />
+
+                    {/* Bottom Row: Advanced Filters */}
+                    <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+                        <div className="flex items-center gap-2 text-[#637381] mr-1">
+                            <FolderOpen className="w-4 h-4" />
+                            <span className="text-xs font-medium uppercase tracking-wider">Bộ lọc:</span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-wrap items-center gap-2 flex-1">
+                            <div className="relative flex-1 min-w-[140px]">
+                                <select
+                                    value={systemFilter}
+                                    onChange={e => updateFilter('system', e.target.value)}
+                                    className="w-full px-3 py-2 rounded-md text-white text-xs border focus:outline-none focus:ring-1 focus:ring-[#3C50E0]/50 transition-colors appearance-none cursor-pointer"
+                                    style={{ background: '#1C2434', borderColor: '#2E3A47' }}
+                                >
+                                    <option value="all">Mọi hệ máy</option>
+                                    {SYSTEMS.map(sys => <option key={sys.id} value={sys.id}>{sys.name}</option>)}
+                                </select>
+                                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#637381]">
+                                    <ChevronDown className="w-3.5 h-3.5" />
+                                </div>
+                            </div>
+
+                            <div className="relative flex-1 min-w-[140px]">
+                                <select
+                                    value={categoryFilter}
+                                    onChange={e => updateFilter('category', e.target.value)}
+                                    className="w-full px-3 py-2 rounded-md text-white text-xs border focus:outline-none focus:ring-1 focus:ring-[#3C50E0]/50 transition-colors appearance-none cursor-pointer"
+                                    style={{ background: '#1C2434', borderColor: '#2E3A47' }}
+                                >
+                                    <option value="all">Mọi danh mục</option>
+                                    {categories.map(cat => <option key={cat.id} value={cat.name}>{cat.displayName}</option>)}
+                                </select>
+                                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#637381]">
+                                    <ChevronDown className="w-3.5 h-3.5" />
+                                </div>
+                            </div>
+
+                            <div className="relative flex-1 min-w-[140px]">
+                                <select
+                                    value={regionFilter}
+                                    onChange={e => updateFilter('region', e.target.value)}
+                                    className="w-full px-3 py-2 rounded-md text-white text-xs border focus:outline-none focus:ring-1 focus:ring-[#3C50E0]/50 transition-colors appearance-none cursor-pointer"
+                                    style={{ background: '#1C2434', borderColor: '#2E3A47' }}
+                                >
+                                    <option value="all">Mọi khu vực</option>
+                                    {REGIONS.filter(r => r).map(r => <option key={r} value={r}>{r}</option>)}
+                                </select>
+                                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#637381]">
+                                    <ChevronDown className="w-3.5 h-3.5" />
+                                </div>
+                            </div>
+
+                            <div className="relative flex-1 min-w-[140px]">
+                                <select
+                                    value={featuredFilter}
+                                    onChange={e => updateFilter('featured', e.target.value)}
+                                    className="w-full px-3 py-2 rounded-md text-white text-xs border focus:outline-none focus:ring-1 focus:ring-[#3C50E0]/50 transition-colors appearance-none cursor-pointer"
+                                    style={{ background: '#1C2434', borderColor: '#2E3A47' }}
+                                >
+                                    <option value="all">Mọi trạng thái</option>
+                                    <option value="yes">⭐ Nổi bật</option>
+                                    <option value="no">Bình thường</option>
+                                </select>
+                                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#637381]">
+                                    <ChevronDown className="w-3.5 h-3.5" />
+                                </div>
+                            </div>
+
+                            {(search || systemFilter !== 'all' || categoryFilter !== 'all' || regionFilter !== 'all' || featuredFilter !== 'all') && (
+                                <button 
+                                    onClick={clearFilters}
+                                    className="flex items-center gap-1.5 px-3 py-2 rounded-md text-red-400 hover:text-white hover:bg-red-500/20 border border-red-500/20 transition-all cursor-pointer text-xs font-semibold"
+                                    title="Xóa tất cả bộ lọc"
+                                >
+                                    <X className="w-3.5 h-3.5" />
+                                    <span>Làm mới</span>
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -655,9 +759,9 @@ function AdminGamesContent() {
                     <div className="flex items-center justify-between px-5 py-3" style={{ borderTop: '1px solid #2E3A47' }}>
                         <span className="text-[#637381] text-xs">{page * SIZE + 1}—{Math.min((page + 1) * SIZE, total)} / {total}</span>
                         <div className="flex items-center gap-1">
-                            <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="p-1.5 rounded-md text-[#A5B4CB] hover:text-white hover:bg-[#333A48] disabled:opacity-30 transition-colors cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                            <button onClick={() => updateFilter('page', String(Math.max(0, page - 1)))} disabled={page === 0} className="p-1.5 rounded-md text-[#A5B4CB] hover:text-white hover:bg-[#333A48] disabled:opacity-30 transition-colors cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
                             <span className="px-3 py-1 text-white text-xs font-medium">{page + 1} / {totalPages}</span>
-                            <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="p-1.5 rounded-md text-[#A5B4CB] hover:text-white hover:bg-[#333A48] disabled:opacity-30 transition-colors cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+                            <button onClick={() => updateFilter('page', String(Math.min(totalPages - 1, page + 1)))} disabled={page >= totalPages - 1} className="p-1.5 rounded-md text-[#A5B4CB] hover:text-white hover:bg-[#333A48] disabled:opacity-30 transition-colors cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
                         </div>
                     </div>
                 )}

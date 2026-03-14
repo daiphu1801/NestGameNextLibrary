@@ -7,7 +7,7 @@ import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { Header } from '@/components/layout/Header';
 import {
     User, Mail, Lock, Save, Loader2, Sparkles, Check, X,
-    ArrowLeft, Gamepad2, Keyboard, Shield, ChevronRight, Calendar,
+    ArrowLeft, Gamepad2, Keyboard, Shield, ChevronRight, Calendar, Zap,
 } from 'lucide-react';
 import { authService } from '@/services/authService';
 import { validatePassword, getStrengthColor, getStrengthLabel } from '@/lib/passwordValidation';
@@ -17,8 +17,9 @@ import { AvatarUpload } from '@/components/profile/AvatarUpload';
 import { BioEditor } from '@/components/profile/BioEditor';
 import { KeybindingSelector } from '@/components/settings/KeybindingSelector';
 import { GamepadSelector } from '@/components/settings/GamepadSelector';
+import { ComboEditor } from '@/components/settings/ComboEditor';
 
-type SettingSection = 'profile' | 'security' | 'keyboard' | 'gamepad';
+type SettingSection = 'profile' | 'security' | 'keyboard' | 'gamepad' | 'combo';
 
 const NAV_ITEMS: {
     id: SettingSection;
@@ -33,6 +34,7 @@ const NAV_ITEMS: {
         { id: 'security', icon: Shield, labelKey: 'settings.security', labelFb: 'Bảo mật', color: 'text-purple-400', activeBg: 'bg-purple-500/15 border-purple-500/30', gradient: 'from-purple-500/20 to-pink-500/10 border-purple-500/20' },
         { id: 'keyboard', icon: Keyboard, labelKey: 'settings.gamepad.tabKeyboard', labelFb: 'Phím', color: 'text-cyan-400', activeBg: 'bg-cyan-500/15 border-cyan-500/30', gradient: 'from-cyan-500/20 to-teal-500/10 border-cyan-500/20' },
         { id: 'gamepad', icon: Gamepad2, labelKey: 'settings.gamepad.tabGamepad', labelFb: 'Tay cầm', color: 'text-emerald-400', activeBg: 'bg-emerald-500/15 border-emerald-500/30', gradient: 'from-emerald-500/20 to-green-500/10 border-emerald-500/20' },
+        { id: 'combo', icon: Zap, labelKey: 'settings.combo.title', labelFb: 'Combo', color: 'text-orange-400', activeBg: 'bg-orange-500/15 border-orange-500/30', gradient: 'from-orange-500/20 to-amber-500/10 border-orange-500/20' },
     ];
 
 export default function SettingsPage() {
@@ -242,6 +244,7 @@ export default function SettingsPage() {
                                     {activeSection === 'security' && (t('settings.security') || 'Đổi mật khẩu bảo mật')}
                                     {activeSection === 'keyboard' && (t('settings.controlsDesc') || 'Tùy chỉnh phím bàn phím')}
                                     {activeSection === 'gamepad' && (t('settings.gamepad.desc') || 'Cấu hình nút tay cầm')}
+                                    {activeSection === 'combo' && (t('settings.combo.desc') || 'Phím tắt combo chiến đấu')}
                                 </p>
                             </div>
                         </div>
@@ -414,6 +417,13 @@ export default function SettingsPage() {
                         {activeSection === 'gamepad' && (
                             <div className="glass-card rounded-2xl p-4 sm:p-8 border border-white/10">
                                 <GamepadSelector />
+                            </div>
+                        )}
+
+                        {/* ── COMBO ── */}
+                        {activeSection === 'combo' && (
+                            <div className="glass-card rounded-2xl p-4 sm:p-8 border border-white/10">
+                                <ComboEditor />
                             </div>
                         )}
                     </div>

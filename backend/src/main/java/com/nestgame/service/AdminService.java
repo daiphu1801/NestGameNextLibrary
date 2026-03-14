@@ -9,11 +9,13 @@ import com.nestgame.dto.response.AuthResponse;
 import com.nestgame.entity.Category;
 import com.nestgame.entity.*;
 import com.nestgame.repository.*;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -155,16 +157,35 @@ public class AdminService {
     // ==================== GAMES ====================
 
     @Transactional(readOnly = true)
-    public Page<GameDTO> getGames(String search, String category, Pageable pageable) {
-        if (search != null && !search.trim().isEmpty()) {
-            return gameRepository.findByNameContainingIgnoreCase(search, pageable)
-                    .map(this::toGameDTO);
-        }
-        if (category != null && !category.trim().isEmpty()) {
-            return gameRepository.findByCategoryName(category, pageable)
-                    .map(this::toGameDTO);
-        }
-        return gameRepository.findAll(pageable).map(this::toGameDTO);
+    public Page<GameDTO> getGames(String search, String category, String system, Boolean isFeatured, String region, Pageable pageable) {
+        Specification<Game> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (search != null && !search.trim().isEmpty()) {
+                String searchLike = "%" + search.toLowerCase() + "%";
+                predicates.add(cb.like(cb.lower(root.get("name")), searchLike));
+            }
+
+            if (category != null && !category.trim().isEmpty() && !"all".equalsIgnoreCase(category)) {
+                predicates.add(cb.equal(root.get("category").get("name"), category));
+            }
+
+            if (system != null && !system.trim().isEmpty() && !"all".equalsIgnoreCase(system)) {
+                predicates.add(cb.equal(root.get("system"), system));
+            }
+
+            if (isFeatured != null) {
+                predicates.add(cb.equal(root.get("isFeatured"), isFeatured));
+            }
+
+            if (region != null && !region.trim().isEmpty() && !"all".equalsIgnoreCase(region)) {
+                predicates.add(cb.equal(root.get("region"), region));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return gameRepository.findAll(spec, pageable).map(this::toGameDTO);
     }
 
     @Transactional(readOnly = true)

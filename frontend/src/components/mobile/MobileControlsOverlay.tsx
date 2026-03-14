@@ -7,6 +7,8 @@ import { VirtualButtons } from './VirtualButtons';
 import { emulatorService, NESButton } from '@/services/emulatorService';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { useMobileControlSetting } from '@/hooks/useMobileControlSetting';
+import { useCombo } from '@/hooks/useCombo';
+import { COMBO_SLOT_LABELS } from '@/data/comboPresets';
 import { cn } from '@/lib/utils';
 
 interface MobileControlsOverlayProps {
@@ -19,6 +21,8 @@ export function MobileControlsOverlay({ enabled, system }: MobileControlsOverlay
   const { vibrate } = useHapticFeedback();
   const [pressed, setPressed] = useState<Record<string, boolean>>({});
   const [controlType, setControlType] = useMobileControlSetting();
+  const { combos, execute, isExecuting } = useCombo('p1');
+  const isAdvancedSystem = system === 'snes' || system === 'gba';
 
   const handleDirectionChange = useCallback((directions: {
     up: boolean; down: boolean; left: boolean; right: boolean;
@@ -92,6 +96,49 @@ export function MobileControlsOverlay({ enabled, system }: MobileControlsOverlay
       >
         <VirtualButtons system={system} onButtonDown={handleButtonDown as any} onButtonUp={handleButtonUp as any} />
       </div>
+
+      {/* Combo Buttons — Left side, above D-pad (SNES/GBA only) */}
+      {isAdvancedSystem && (
+        <div
+          className="absolute pointer-events-auto grid grid-cols-2 gap-1"
+          style={{
+            bottom: 'calc(185px + env(safe-area-inset-bottom, 0px))',
+            left: 'calc(12px + env(safe-area-inset-left, 0px))',
+          }}
+        >
+          {combos.map((combo, i) => {
+            if (!combo) return null;
+            const isActive = pressed[`combo_${i}`];
+            return (
+              <button
+                key={combo.id}
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (isExecuting) return;
+                  vibrate(20);
+                  setPressed(p => ({ ...p, [`combo_${i}`]: true }));
+                  execute(i).finally(() => setPressed(p => ({ ...p, [`combo_${i}`]: false })));
+                }}
+                onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                onTouchCancel={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                disabled={isExecuting}
+                className={cn(
+                  'flex items-center gap-1 px-2 py-1 rounded-full border transition-all duration-75 touch-none',
+                  'text-[9px] font-bold uppercase tracking-wider select-none min-w-[56px]',
+                  isActive
+                    ? 'bg-gradient-to-r from-purple-500/80 to-fuchsia-500/80 border-purple-300/60 scale-95 shadow-[0_0_14px_rgba(168,85,247,0.5)]'
+                    : 'bg-gradient-to-r from-purple-500/30 to-fuchsia-500/20 border-purple-400/20 backdrop-blur-sm',
+                  isExecuting && !isActive && 'opacity-50'
+                )}
+              >
+                <span className="text-[10px]">{combo.icon}</span>
+                <span className="text-white/80">{COMBO_SLOT_LABELS[i]}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* L/R Triggers for advanced systems */}
       {(system === 'snes' || system === 'gba') && (

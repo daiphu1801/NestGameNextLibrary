@@ -55,6 +55,7 @@
     "gb": "Game Boy",
     "gbc": "Game Boy Color",
     "arcade": "Arcade Games",
+    "neogeo": "Neo Geo",
     "comingSoon": "Coming soon",
     "demo": "Demo"
   },
@@ -435,6 +436,24 @@
       "step3": "Click a NES button box → press the gamepad button to assign",
       "step4": "Click \"Save controls\" to apply",
       "noteRestart": "Note: New config takes effect when starting the game. If you're mid-game, exit and re-enter."
+    },
+    "combo": {
+      "title": "Combo",
+      "desc": "One-button combo shortcuts for fighting games",
+      "slots": "Assign Combos",
+      "custom": "Create Combo",
+      "presetList": "Available Combo Presets",
+      "createNew": "Create new combo",
+      "noCustom": "No custom combos yet.",
+      "noCustomDesc": "Press the button above to create your own combo.",
+      "save": "Save Combo",
+      "cancel": "Cancel",
+      "addStep": "Add step",
+      "comboName": "Combo name",
+      "steps": "Steps",
+      "duration": "Hold duration (ms)",
+      "test": "Test combo",
+      "customizeHint": "Customize combos in Settings"
     }
   },
   "user": {

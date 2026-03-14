@@ -1,6 +1,8 @@
 # Backend
 backend/src/main/resources/application-local.yml
 backend/target/
+backend/docs/
+
 *.class
 
 # Docker

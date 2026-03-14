@@ -102,13 +102,16 @@ public class AdminController {
     public ResponseEntity<Page<GameDTO>> getGames(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) String system,
+            @RequestParam(required = false) Boolean isFeatured,
+            @RequestParam(required = false) String region,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         PageRequest pageRequest = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(adminService.getGames(search, category, pageRequest));
+        return ResponseEntity.ok(adminService.getGames(search, category, system, isFeatured, region, pageRequest));
     }
 
     @GetMapping("/games/featured")

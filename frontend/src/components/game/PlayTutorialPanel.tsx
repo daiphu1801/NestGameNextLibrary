@@ -283,68 +283,137 @@ export function PlayTutorialPanel({
 }
 
 // ============================================
-// Controls Guide — Clean grid for P1, P2, Common
+// Controls Guide — Balanced compact layout
 // ============================================
 function ControlsGuideCompact({ system = 'nes' }: { system?: string }) {
   const { t } = useLanguage();
-
   const isAdvancedSystem = ['snes', 'gba', 'genesis'].includes(system.toLowerCase());
 
-  const p1Actions: { key: string; label: string; group?: string }[] = [
-    { key: 'J', label: 'A', group: 'Cơ bản' },
-    { key: 'K', label: 'B', group: 'Cơ bản' },
-  ];
-
-  if (isAdvancedSystem) {
-    const advGroup = 'Hệ SNES, GBA, Genesis';
-    p1Actions.push({ key: 'U', label: 'X', group: advGroup });
-    p1Actions.push({ key: 'I', label: 'Y', group: advGroup });
-    p1Actions.push({ key: 'O', label: 'L', group: advGroup });
-    p1Actions.push({ key: 'P', label: 'R', group: advGroup });
-  }
-
   return (
-    <div className="space-y-3">
-      {/* Player 1 */}
-      <PlayerControlsCard
-        label={t('docs.controls.player1')}
-        tag="P1"
-        tagColor="cyan"
-        movement={['W', 'A', 'S', 'D']}
-        actions={p1Actions}
-        movementLabel={t('docs.controls.movement')}
-        actionsLabel={t('docs.controls.actions')}
-        movementDataTutorial="movement"
-        actionsDataTutorial="actions"
+    <div className="space-y-2.5">
+      {/* P1 & P2 — stacked, each with horizontal action rows */}
+      <BalancedPlayerCard
+        tag="P1" label={t('docs.controls.player1')} tagColor="cyan"
+        moveKeys={['W', 'A', 'S', 'D']}
+        actions={isAdvancedSystem
+          ? [['J', 'B'], ['K', 'A'], ['U', 'Y'], ['I', 'X'], ['O', 'L'], ['L', 'R']]
+          : [['J', 'B'], ['K', 'A']]
+        }
+      />
+      <BalancedPlayerCard
+        tag="P2" label={t('docs.controls.player2')} tagColor="pink"
+        moveKeys={['↑', '←', '↓', '→']}
+        actions={isAdvancedSystem
+          ? [['NP1', 'B'], ['NP2', 'A'], ['NP4', 'Y'], ['NP5', 'X'], ['NP6', 'L'], ['NP3', 'R']]
+          : [['NP1', 'B'], ['NP2', 'A']]
+        }
       />
 
-      {/* Player 2 */}
-      <PlayerControlsCard
-        label={t('docs.controls.player2')}
-        tag="P2"
-        tagColor="pink"
-        movement={['↑', '←', '↓', '→']}
-        actions={[
-          { key: '1', label: 'A' },
-          { key: '2', label: 'B' },
-        ]}
-        movementLabel={t('docs.controls.movement')}
-        actionsLabel={t('docs.controls.actions')}
-      />
-
-      {/* Common Controls */}
-      <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-2.5">
+      {/* Common */}
+      <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-3">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-5 h-5 rounded-md bg-emerald-500/10 flex items-center justify-center">
-            <Save className="w-2.5 h-2.5 text-emerald-400" />
-          </div>
-          <span className="text-[10px] font-bold text-emerald-400">{t('docs.controls.common')}</span>
+          <Save className="w-3 h-3 text-emerald-400" />
+          <span className="text-[10px] font-bold text-emerald-400 uppercase">{t('docs.controls.common')}</span>
         </div>
-        <div className="grid grid-cols-2 gap-1.5" data-tutorial="startselect">
-          <KeyRow keyName="Enter" label={t('docs.controls.start')} color="emerald" />
-          <KeyRow keyName="Shift" label={t('docs.controls.select')} color="emerald" />
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1.5" data-tutorial="startselect">
+          <KeyRow keyName="Enter" label="Start P1" color="emerald" />
+          <KeyRow keyName="NP7" label="Start P2" color="emerald" />
+          <KeyRow keyName="Shift" label="Select P1" color="emerald" />
+          <KeyRow keyName="NP8" label="Select P2" color="emerald" />
           <KeyRow keyName="F5" label={t('saveState.quickSave')} color="emerald" />
           <KeyRow keyName="F8" label={t('saveState.quickLoad')} color="emerald" />
+        </div>
+      </div>
+
+      {/* Combo (SNES/GBA only) */}
+      {isAdvancedSystem && (
+        <div className="rounded-xl bg-gradient-to-br from-purple-500/[0.06] to-fuchsia-500/[0.04] border border-purple-500/[0.12] p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <Zap className="w-3 h-3 text-purple-400" />
+            <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Combo</span>
+            <span className="ml-auto text-[8px] text-slate-600 italic">⚙ Tùy chỉnh trong Cài đặt</span>
+          </div>
+          <div className="space-y-2">
+            {[
+              { icon: '🔥', name: 'Chưởng (Hadouken)', desc: 'Cầu lửa cơ bản', motion: '↓↘→ + Y', p1: 'T', p2: 'NP0' },
+              { icon: '⚡', name: 'Đấm móc (Shoryuken)', desc: 'Phòng không cận chiến', motion: '→↓↘ + Y', p1: 'Y', p2: 'NP9' },
+              { icon: '🌀', name: 'Đá xoay (Tatsumaki)', desc: 'Tiếp cận từ xa', motion: '↓↙← + B', p1: 'G', p2: 'NP+' },
+              { icon: '💨', name: 'Nạp tới (Charge)', desc: 'Phải giữ lùi 0.6s (VD: Guile)', motion: '←(giữ) → + Y', p1: 'H', p2: 'NP-' },
+              { icon: '💥', name: 'Siêu chiêu (Super QCF)', desc: 'Cần 3 thanh nộ Max', motion: '↓↘→↓↘→ + 3P', p1: 'B', p2: 'NP*' },
+              { icon: '🌪️', name: 'Siêu lốc (Super QCB)', desc: 'Cần 3 thanh nộ Max', motion: '↓↙←↓↙← + 3K', p1: 'N', p2: 'NP/' },
+            ].map((c) => (
+              <div key={c.name} className="flex flex-col gap-0.5 border-b border-white/[0.02] pb-1.5 last:border-0 last:pb-0">
+                <div className="flex items-center gap-2 text-[10px]">
+                  <span className="w-4 text-center shrink-0">{c.icon}</span>
+                  <span className="font-semibold text-slate-300 truncate flex-1">{c.name}</span>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <kbd className="px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 font-mono text-[9px] font-semibold min-w-[20px] text-center">{c.p1}</kbd>
+                    <kbd className="px-1.5 py-0.5 rounded bg-pink-500/10 border border-pink-500/20 text-pink-300 font-mono text-[9px] font-semibold min-w-[24px] text-center">{c.p2}</kbd>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 pl-6">
+                  <span className="text-[8.5px] text-slate-500 italic flex-1 truncate">{c.desc}</span>
+                  <span className="text-slate-400 font-mono text-[8px] tracking-tighter shrink-0">{c.motion}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Balanced player card — movement horizontal, actions in 3-col grid
+function BalancedPlayerCard({ tag, label, tagColor, moveKeys, actions }: {
+  tag: string;
+  label: string;
+  tagColor: 'cyan' | 'pink';
+  moveKeys: string[];
+  actions: [string, string][];
+}) {
+  const colors = {
+    cyan: { bg: 'bg-cyan-500/[0.05]', border: 'border-cyan-500/[0.1]', tag: 'bg-cyan-500/15 text-cyan-400', kbd: 'bg-cyan-500/10 border-cyan-500/25 text-cyan-300' },
+    pink: { bg: 'bg-pink-500/[0.05]', border: 'border-pink-500/[0.1]', tag: 'bg-pink-500/15 text-pink-400', kbd: 'bg-pink-500/10 border-pink-500/25 text-pink-300' },
+  };
+  const c = colors[tagColor];
+
+  return (
+    <div className={cn('rounded-xl border p-3', c.bg, c.border)}>
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-2">
+        <span className={cn('text-[9px] font-black px-1.5 py-0.5 rounded', c.tag)}>{tag}</span>
+        <span className={cn('text-[10px] font-bold', c.tag.split(' ')[1])}>{label}</span>
+      </div>
+
+      <div className="flex items-start gap-3">
+        {/* Movement */}
+        <div>
+          <div className="text-[8px] text-slate-600 uppercase tracking-wider mb-1">{tag === 'P1' ? 'WASD' : 'Arrow'}</div>
+          <div className="grid grid-cols-3 gap-0.5 w-fit">
+            <div />
+            <kbd className={cn('flex items-center justify-center w-6 h-5 rounded border text-[10px] font-mono font-semibold', c.kbd)}>{moveKeys[0]}</kbd>
+            <div />
+            {moveKeys.slice(1).map(k => (
+              <kbd key={k} className={cn('flex items-center justify-center w-6 h-5 rounded border text-[10px] font-mono font-semibold', c.kbd)}>{k}</kbd>
+            ))}
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="w-px h-12 bg-white/[0.06] self-center" />
+
+        {/* Actions */}
+        <div className="flex-1">
+          <div className="text-[8px] text-slate-600 uppercase tracking-wider mb-1">Buttons</div>
+          <div className="grid grid-cols-3 gap-x-2 gap-y-1">
+            {actions.map(([key, lbl]) => (
+              <div key={key} className="flex items-center gap-1">
+                <kbd className={cn('inline-flex items-center justify-center min-w-[22px] h-5 px-1 rounded border text-[10px] font-mono font-semibold', c.kbd)}>{key}</kbd>
+                <span className="text-slate-400 text-[10px]">{lbl}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

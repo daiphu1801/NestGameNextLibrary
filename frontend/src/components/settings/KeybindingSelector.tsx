@@ -11,13 +11,21 @@ type PlayerKey = 'p1' | 'p2';
 // Map JS key events to RetroArch-friendly key names
 const mapKeyToRetroArch = (e: KeyboardEvent): string => {
     const key = e.key;
+    const code = e.code;
+
+    // Numpad keys: e.code = 'Numpad1'-'Numpad9', e.key = '1'-'9'
+    // Must check e.code to distinguish from digit row keys
+    if (code.startsWith('Numpad') && /^Numpad\d$/.test(code)) {
+        return `keypad${code.at(-1)}`; // 'keypad1'-'keypad9' format for RetroArch
+    }
+
     if (key.length === 1) return key.toLowerCase();
     switch (key) {
         case 'ArrowUp': return 'up';
         case 'ArrowDown': return 'down';
         case 'ArrowLeft': return 'left';
         case 'ArrowRight': return 'right';
-        case 'Enter': return 'enter';
+        case 'Enter': return code === 'NumpadEnter' ? 'kp_enter' : 'enter';
         case ' ': return 'space';
         case 'Shift': return e.location === 2 ? 'rshift' : 'lshift';
         case 'Control': return e.location === 2 ? 'rctrl' : 'lctrl';
@@ -41,6 +49,9 @@ const formatKeyDisplay = (key: string): string => {
         'ralt': 'R Alt', 'lalt': 'L Alt',
         'escape': 'Esc', 'tab': '⇥ Tab', 'backspace': '⌫',
         'capslock': 'Caps', 'del': 'Del',
+        'keypad1': 'Num 1', 'keypad2': 'Num 2', 'keypad3': 'Num 3', 'keypad4': 'Num 4',
+        'keypad5': 'Num 5', 'keypad6': 'Num 6', 'keypad7': 'Num 7', 'keypad8': 'Num 8',
+        'keypad9': 'Num 9', 'keypad0': 'Num 0',
         'num1': 'Num 1', 'num2': 'Num 2', 'num3': 'Num 3', 'num4': 'Num 4',
         'num5': 'Num 5', 'num6': 'Num 6', 'num7': 'Num 7', 'num8': 'Num 8',
         'num9': 'Num 9', 'num0': 'Num 0',

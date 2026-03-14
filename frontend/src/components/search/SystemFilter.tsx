@@ -56,7 +56,7 @@ const SYSTEMS: SystemOption[] = [
     activeColor: 'bg-blue-500/20 text-blue-300', activeBorder: 'border-blue-500/50',
     lightActiveColor: 'bg-blue-100 text-blue-700', lightActiveBorder: 'border-blue-400',
     shadow: 'shadow-[0_0_30px_rgba(59,130,246,0.4)]',
-    disabled: true, comingSoon: true
+    demo: true
   },
   { 
     id: 'gb', nameKey: 'system.gb', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
@@ -94,6 +94,15 @@ const SYSTEMS: SystemOption[] = [
     shadow: 'shadow-[0_0_30px_rgba(249,115,22,0.4)]',
     disabled: true, comingSoon: true
   },
+  { 
+    id: 'neogeo', nameKey: 'system.neogeo', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
+    subtitle: 'The 100 Mega Shock',
+    bgDesc: 'from-yellow-600/20 to-yellow-950/60',
+    activeColor: 'bg-yellow-500/20 text-yellow-300', activeBorder: 'border-yellow-500/50',
+    lightActiveColor: 'bg-yellow-100 text-yellow-700', lightActiveBorder: 'border-yellow-400',
+    shadow: 'shadow-[0_0_30px_rgba(234,179,8,0.4)]',
+    disabled: true, comingSoon: true
+  },
 ];
 
 export function SystemFilter() {
@@ -126,12 +135,12 @@ export function SystemFilter() {
         <div className="h-px flex-1 ml-4 bg-gradient-to-r from-white/20 to-transparent" />
       </div>
       
-      {/* Scrollable Container */}
-      <div className="flex overflow-x-auto pb-4 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide snap-x shadow-inner relative hide-scrollbar">
-        {/* Connecting background line */}
-        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/5 -translate-y-1/2 hidden md:block" />
+      {/* Grid Container */}
+      <div className="relative group/grid w-full">
+        {/* Connecting background line - only for desktop single row */}
+        <div className="absolute top-[45%] left-0 right-0 h-0.5 bg-white/5 -translate-y-1/2 hidden lg:block" />
 
-        <div className="flex items-stretch gap-3 md:gap-4 relative z-10 mx-auto min-w-max">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:flex lg:flex-wrap lg:justify-center gap-2 md:gap-3 lg:gap-4 relative z-10 w-full px-1">
           {SYSTEMS.map((system) => {
             const isActive = currentSystem === system.id;
             
@@ -141,12 +150,12 @@ export function SystemFilter() {
                 onClick={() => !system.disabled && handleSystemClick(system.id)}
                 disabled={system.disabled}
                 className={cn(
-                  "group relative snap-center flex flex-col justify-center items-center p-3 md:p-4 rounded-xl transition-all duration-500 border overflow-hidden min-w-[100px] md:min-w-[120px]",
+                  "group relative flex flex-col justify-center items-center p-2 md:p-3 lg:p-4 rounded-xl transition-all duration-500 border overflow-hidden min-w-0 lg:min-w-[120px] aspect-square lg:aspect-auto",
                   system.disabled ? "cursor-not-allowed opacity-60 grayscale hover:grayscale-0" : "",
                   // Active State (Dark)
-                  isActive && !isLight && `${system.activeColor} ${system.activeBorder} ${system.shadow} scale-105 -translate-y-1`,
+                  isActive && !isLight && `${system.activeColor} ${system.activeBorder} ${system.shadow} scale-105 -translate-y-1 z-20`,
                   // Active State (Light)
-                  isActive && isLight && `${system.lightActiveColor} ${system.lightActiveBorder} ${system.shadow} scale-105 -translate-y-1`,
+                  isActive && isLight && `${system.lightActiveColor} ${system.lightActiveBorder} ${system.shadow} scale-105 -translate-y-1 z-20`,
                   
                   // Inactive State
                   !isActive && !isLight && `bg-[#0a0a0a] border-white/10 hover:border-white/20 hover:bg-white/5 text-gray-500 hover:text-gray-300`,
@@ -167,17 +176,17 @@ export function SystemFilter() {
                 )}
                 
                 {/* Inner content */}
-                <div className="relative z-10 flex flex-col items-center">
+                <div className="relative z-10 flex flex-col items-center w-full">
                   <div className={cn(
                     "transition-transform duration-500",
-                    isActive ? "scale-110 drop-shadow-md pb-1" : "group-hover:scale-110 opacity-70 group-hover:opacity-100 pb-1.5",
-                    "[&>svg]:w-6 [&>svg]:h-6 md:[&>svg]:w-8 md:[&>svg]:h-8" // Resize icons smaller
+                    isActive ? "scale-105 drop-shadow-md pb-0.5" : "group-hover:scale-110 opacity-70 group-hover:opacity-100 pb-1",
+                    "[&>svg]:w-5 [&>svg]:h-5 md:[&>svg]:w-7 md:[&>svg]:h-7" 
                   )}>
                     {system.icon}
                   </div>
                   
                   <span className={cn(
-                    "font-bold text-xs md:text-sm tracking-widest uppercase transition-colors",
+                    "font-bold text-[9px] md:text-xs lg:text-sm tracking-widest uppercase transition-colors truncate w-full text-center px-1",
                     isActive ? "text-current" : ""
                   )}>
                     {t(system.nameKey, undefined, system.id === 'all' ? 'Tất cả' : system.id.toUpperCase())}
@@ -185,7 +194,7 @@ export function SystemFilter() {
                   
                   {/* Subtitle - only show when active to save space */}
                   <span className={cn(
-                    "text-[9px] font-medium tracking-widest mt-0.5 opacity-60 uppercase overflow-hidden transition-all duration-300",
+                    "text-[7px] md:text-[8px] font-medium tracking-tight mt-0.5 opacity-60 uppercase overflow-hidden transition-all duration-300 truncate w-full text-center px-1 hidden lg:block",
                     isActive ? "max-h-4 opacity-80" : "max-h-0 opacity-0"
                   )}>
                     {system.subtitle}
@@ -197,38 +206,24 @@ export function SystemFilter() {
                   <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ boxShadow: `inset 0 0 15px rgba(255,255,255,0.03)` }} />
                 )}
 
-                {/* Coming Soon Badge */}
-                {system.comingSoon && (
-                  <div className="absolute top-2 right-2 rotate-12">
-                     <span className="bg-primary/90 text-primary-foreground text-[8px] md:text-[9px] font-black uppercase px-2 py-0.5 rounded shadow-lg whitespace-nowrap border border-primary/20 block">
-                        {t('system.comingSoon')}
-                     </span>
-                  </div>
-                )}
-
-                {/* Demo Badge */}
-                {system.demo && (
-                  <div className="absolute top-2 right-2 rotate-12">
-                     <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-black text-[8px] md:text-[9px] font-black uppercase px-2 py-0.5 rounded shadow-lg whitespace-nowrap border border-amber-400/50 block animate-pulse">
-                        {t('system.demo')}
-                     </span>
-                  </div>
-                )}
+                {/* Badges - positioned more compactly for grid */}
+                <div className="absolute top-1 right-1 z-20">
+                  {system.comingSoon && (
+                    <span className="bg-primary/90 text-primary-foreground text-[6px] md:text-[8px] font-black uppercase px-1 py-0.5 rounded shadow whitespace-nowrap border border-primary/20 block rotate-3">
+                      {t('system.comingSoon')}
+                    </span>
+                  )}
+                  {system.demo && (
+                    <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-black text-[6px] md:text-[8px] font-black uppercase px-1 py-0.5 rounded shadow whitespace-nowrap border border-amber-400/50 block animate-pulse rotate-3">
+                      {t('system.demo')}
+                    </span>
+                  )}
+                </div>
               </button>
             );
           })}
         </div>
       </div>
-      
-      <style jsx global>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </div>
   );
 }
