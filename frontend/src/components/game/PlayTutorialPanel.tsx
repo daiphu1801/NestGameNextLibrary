@@ -287,7 +287,7 @@ export function PlayTutorialPanel({
 // ============================================
 function ControlsGuideCompact({ system = 'nes' }: { system?: string }) {
   const { t } = useLanguage();
-  const isAdvancedSystem = ['snes', 'gba', 'genesis'].includes(system.toLowerCase());
+  const isAdvancedSystem = ['snes', 'gba', 'genesis', 'arcade'].includes(system.toLowerCase());
 
   return (
     <div className="space-y-2.5">
@@ -296,16 +296,16 @@ function ControlsGuideCompact({ system = 'nes' }: { system?: string }) {
         tag="P1" label={t('docs.controls.player1')} tagColor="cyan"
         moveKeys={['W', 'A', 'S', 'D']}
         actions={isAdvancedSystem
-          ? [['J', 'B'], ['K', 'A'], ['U', 'Y'], ['I', 'X'], ['O', 'L'], ['L', 'R']]
-          : [['J', 'B'], ['K', 'A']]
+          ? [['K', 'A'], ['J', 'B'], ['O', 'L'], ['L', 'R'], ['I', 'X'], ['U', 'Y']]
+          : [['K', 'A'], ['J', 'B']]
         }
       />
       <BalancedPlayerCard
         tag="P2" label={t('docs.controls.player2')} tagColor="pink"
         moveKeys={['↑', '←', '↓', '→']}
         actions={isAdvancedSystem
-          ? [['NP1', 'B'], ['NP2', 'A'], ['NP4', 'Y'], ['NP5', 'X'], ['NP6', 'L'], ['NP3', 'R']]
-          : [['NP1', 'B'], ['NP2', 'A']]
+          ? [['NP2', 'A'], ['NP1', 'B'], ['NP6', 'L'], ['NP3', 'R'], ['NP5', 'X'], ['NP4', 'Y']]
+          : [['NP2', 'A'], ['NP1', 'B']]
         }
       />
 
@@ -347,8 +347,8 @@ function ControlsGuideCompact({ system = 'nes' }: { system?: string }) {
                   <span className="w-4 text-center shrink-0">{c.icon}</span>
                   <span className="font-semibold text-slate-300 truncate flex-1">{c.name}</span>
                   <div className="flex items-center gap-1 shrink-0">
-                    <kbd className="px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 font-mono text-[9px] font-semibold min-w-[20px] text-center">{c.p1}</kbd>
-                    <kbd className="px-1.5 py-0.5 rounded bg-pink-500/10 border border-pink-500/20 text-pink-300 font-mono text-[9px] font-semibold min-w-[24px] text-center">{c.p2}</kbd>
+                    <kbd className="px-1 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 font-mono text-[8.5px] font-semibold min-w-[16px] text-center shrink-0 max-w-[40px] truncate">{c.p1}</kbd>
+                    <kbd className="px-1 py-0.5 rounded bg-pink-500/10 border border-pink-500/20 text-pink-300 font-mono text-[8.5px] font-semibold min-w-[20px] text-center shrink-0 max-w-[40px] truncate">{c.p2}</kbd>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 pl-6">
