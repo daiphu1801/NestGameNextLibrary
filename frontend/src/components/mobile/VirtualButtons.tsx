@@ -17,16 +17,18 @@ const getActionButtons = (system?: string) => {
   
   if (isFourButton) {
     return [
-      { name: 'y' as const, posClass: 'left-0 top-[53px]' },
-      { name: 'x' as const, posClass: 'left-[53px] top-0' },
-      { name: 'b' as const, posClass: 'left-[53px] bottom-0' },
-      { name: 'a' as const, posClass: 'right-0 top-[53px]' },
+      { name: 'l' as const, posClass: 'left-[-15px] top-[15px] -rotate-12 scale-[0.85]' },
+      { name: 'r' as const, posClass: 'right-[15px] top-[-15px] rotate-12 scale-[0.85]' },
+      { name: 'y' as const, posClass: 'left-0 top-[65px]' },
+      { name: 'x' as const, posClass: 'left-[53px] top-[12px]' },
+      { name: 'b' as const, posClass: 'left-[53px] bottom-[-12px]' },
+      { name: 'a' as const, posClass: 'right-0 top-[65px]' },
     ];
   }
   
   return [
-    { name: 'b' as const, posClass: 'left-0 bottom-0' },
-    { name: 'a' as const, posClass: 'right-0 top-0' },
+    { name: 'b' as const, posClass: 'left-[15px] bottom-0' },
+    { name: 'a' as const, posClass: 'right-[15px] top-[20px]' },
   ];
 };
 
@@ -90,6 +92,13 @@ export function VirtualButtons({ system, onButtonDown, onButtonUp }: VirtualButt
       };
     }
     switch (name) {
+      case 'l':
+      case 'r': return {
+        normal: 'bg-gradient-to-br from-slate-400/90 to-slate-600/90 border-slate-300/50 shadow-lg shadow-slate-900/30',
+        pressed: 'bg-gradient-to-br from-slate-300 to-slate-500 border-slate-200/90 scale-90 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)]',
+        glow: '0 0 18px 6px rgba(148,163,184,0.45)',
+        ripple: 'border-slate-300/60',
+      };
       case 'a': return {
         normal: 'bg-gradient-to-br from-red-500/90 to-red-700/90 border-red-400/50 shadow-lg shadow-red-900/30',
         pressed: 'bg-gradient-to-br from-red-400 to-red-600 border-red-300/90 scale-90 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)]',
@@ -130,13 +139,16 @@ export function VirtualButtons({ system, onButtonDown, onButtonUp }: VirtualButt
           const isPressed = pressed[name];
           const key = rippleKey[name];
           const colors = getButtonColors(name);
+          // Determine if it's a bumper (L/R) button to stretch it horizontally
+          const isBumper = name === 'l' || name === 'r';
           return (
             <div key={name} className={cn('absolute', posClass)}>
               {key && (
                 <span
                   key={key}
                   className={cn(
-                    "absolute inset-[-6px] rounded-full border-2 pointer-events-none animate-[ripple_350ms_ease-out_forwards]",
+                    "absolute inset-[-6px] border-2 pointer-events-none animate-[ripple_350ms_ease-out_forwards]",
+                    isBumper ? "rounded-2xl" : "rounded-full",
                     colors.ripple
                   )}
                 />
@@ -153,18 +165,23 @@ export function VirtualButtons({ system, onButtonDown, onButtonUp }: VirtualButt
                 onTouchEnd={handleTouchEnd(name)}
                 onTouchCancel={handleTouchEnd(name)}
                 className={cn(
-                  'w-[65px] h-[65px] rounded-full flex items-center justify-center',
+                  'flex items-center justify-center font-black select-none pointer-events-none drop-shadow-md z-10 uppercase',
                   'border-2 transition-all duration-75 touch-none overflow-hidden relative',
+                  isBumper ? 'w-[75px] h-[45px] rounded-2xl text-lg' : 'w-[65px] h-[65px] rounded-full text-xl',
                   isPressed ? colors.pressed : colors.normal
                 )}
               >
-                <div className="absolute top-1.5 left-2.5 w-3.5 h-2 rounded-full bg-white/30 blur-[2px] pointer-events-none" />
+                <div className={cn(
+                  "absolute top-1.5 left-2.5 h-2 rounded-full bg-white/30 blur-[2px] pointer-events-none",
+                  isBumper ? "w-6" : "w-3.5"
+                )} />
                 {isPressed && (
-                  <span className="absolute inset-0 rounded-full bg-white/15 pointer-events-none" />
+                  <span className={cn(
+                    "absolute inset-0 bg-white/15 pointer-events-none",
+                    isBumper ? "rounded-2xl" : "rounded-full"
+                  )} />
                 )}
-                <span className="text-white font-black text-xl select-none pointer-events-none drop-shadow-md z-10 uppercase">
-                  {name}
-                </span>
+                <span className="text-white relative z-10">{name}</span>
               </button>
             </div>
           );
