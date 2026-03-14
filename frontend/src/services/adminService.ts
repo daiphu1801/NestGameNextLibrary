@@ -275,22 +275,59 @@ export const adminService = {
     },
 
     // ==================== ROM UPLOAD ====================
-    async uploadRom(file: File, folder?: string): Promise<{ fileName: string; path: string; folder: string; sizeBytes: number }> {
-        const formData = new FormData();
-        formData.append('file', file);
-        if (folder) formData.append('folder', folder);
-
-        const response = await fetch('/api/roms/upload', {
+    async uploadRom(file: File, folder?: string): Promise<{ fileName: string; path: string; folder?: string; sizeBytes: number; mode?: string }> {
+        // Step 1: Request presigned URL
+        const presignRes = await fetch('/api/roms/presign', {
             method: 'POST',
-            body: formData,
-            // Do NOT set Content-Type — browser sets multipart/form-data with boundary
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fileName: file.name }),
         });
 
-        if (!response.ok) {
-            const err = await response.json().catch(() => ({}));
-            throw new Error(err.error || 'Upload ROM thất bại');
+        if (!presignRes.ok) {
+            const err = await presignRes.json().catch(() => ({}));
+            throw new Error(err.error || 'Lỗi lấy presigned URL');
         }
 
-        return response.json();
+        const presignData = await presignRes.json();
+
+        // Step 2a: If local mode, fallback to standard route
+        if (presignData.mode === 'local') {
+            const formData = new FormData();
+            formData.append('file', file);
+            if (folder) formData.append('folder', folder);
+
+            const response = await fetch('/api/roms/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.error || 'Upload ROM thất bại');
+            }
+
+            return response.json();
+        }
+
+        // Step 2b: Production mode - Upload directly to R2
+        const uploadRes = await fetch(presignData.presignedUrl, {
+            method: 'PUT',
+            body: file,
+            headers: {
+                'Content-Type': presignData.contentType || file.type || 'application/octet-stream'
+            }
+        });
+
+        if (!uploadRes.ok) {
+            throw new Error('Lỗi upload file trực tiếp tới máy chủ lưu trữ (Mã lỗi: ' + uploadRes.status + ')');
+        }
+
+        return {
+            success: true,
+            mode: 'r2',
+            fileName: presignData.fileName,
+            path: presignData.publicUrl,
+            sizeBytes: file.size
+        } as any;
     },
 };
