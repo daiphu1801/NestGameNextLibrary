@@ -32,6 +32,15 @@ public class GameController {
         return ResponseEntity.ok(gameService.getGames(search, category, region, isFeatured, system, pageRequest));
     }
 
+    @GetMapping("/special/game-of-the-month")
+    public ResponseEntity<GameDTO> getGameOfTheMonth() {
+        GameDTO game = gameService.getGameOfTheMonth();
+        if (game == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(game);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<GameDTO> getGameById(@PathVariable Long id) {
         return ResponseEntity.ok(gameService.getGameById(id));

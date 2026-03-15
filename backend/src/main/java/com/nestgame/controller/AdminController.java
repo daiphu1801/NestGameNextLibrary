@@ -187,6 +187,14 @@ public class AdminController {
         return ResponseEntity.ok(adminService.toggleFeatured(id));
     }
 
+    @PutMapping("/games/{id}/game-of-month")
+    public ResponseEntity<GameDTO> setGameOfTheMonth(
+            @PathVariable Long id,
+            @RequestBody(required = false) Map<String, String> body) {
+        String period = body != null ? body.get("period") : null;
+        return ResponseEntity.ok(adminService.setGameOfTheMonth(id, period));
+    }
+
     // ==================== USER DETAIL ====================
 
     @GetMapping("/users/{id}/detail")

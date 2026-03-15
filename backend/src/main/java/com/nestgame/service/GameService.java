@@ -57,6 +57,12 @@ public class GameService {
                 .orElseThrow(() -> new RuntimeException("Game not found"));
     }
 
+    public GameDTO getGameOfTheMonth() {
+        return gameRepository.findFirstByIsGameOfMonthTrue()
+                .map(this::mapToDTO)
+                .orElse(null);
+    }
+
     private GameDTO mapToDTO(Game game) {
         return GameDTO.builder()
                 .id(game.getId())
@@ -71,6 +77,8 @@ public class GameService {
                 .year(game.getYear())
                 .region(game.getRegion())
                 .isFeatured(game.getIsFeatured())
+                .isGameOfMonth(game.getIsGameOfMonth())
+                .gameOfMonthPeriod(game.getGameOfMonthPeriod())
                 .imageUrl(game.getImageUrl())
                 .imageSnap(game.getImageSnap())
                 .imageTitle(game.getImageTitle())

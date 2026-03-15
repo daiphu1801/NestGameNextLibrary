@@ -402,6 +402,7 @@ function AdminGamesContent() {
     const [saving, setSaving] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<any>(null);
     const [togglingFeatured, setTogglingFeatured] = useState<number | null>(null);
+    const [togglingGameOfMonth, setTogglingGameOfMonth] = useState<number | null>(null);
     const { showToast } = useToast();
     const SIZE = 15;
 
@@ -525,6 +526,19 @@ function AdminGamesContent() {
             setGames(prev => prev.map(g => g.id === gameId ? { ...g, isFeatured: !g.isFeatured } : g));
         } catch (err: any) { showToast('error', err.message); }
         finally { setTogglingFeatured(null); }
+    };
+
+    const handleToggleGameOfMonth = async (gameId: number) => {
+        setTogglingGameOfMonth(gameId);
+        try {
+            await adminService.setGameOfTheMonth(gameId);
+            setGames(prev => prev.map(g => ({
+                ...g,
+                isGameOfMonth: g.id === gameId
+            })));
+            showToast('success', 'Đã đặt làm Game của Tháng!');
+        } catch (err: any) { showToast('error', err.message); }
+        finally { setTogglingGameOfMonth(null); }
     };
 
     const [reseeding, setReseeding] = useState(false);
@@ -733,17 +747,33 @@ function AdminGamesContent() {
                                     <td className="px-5 py-3.5 text-left text-[#A5B4CB] text-sm font-semibold uppercase">{game.system || 'NES'}</td>
                                     <td className="px-5 py-3.5 text-center text-sm font-mono" style={{ color: '#3C50E0' }}>{(game.playCount || 0).toLocaleString()}</td>
                                     <td className="px-5 py-3.5 text-center">
-                                        <ActionButton
-                                            icon={togglingFeatured === game.id ? Loader2 : Star}
-                                            label={game.isFeatured ? 'Bỏ nổi bật' : 'Nổi bật'}
-                                            onClick={() => handleToggleFeatured(game.id)}
-                                            variant="warning"
-                                            disabled={togglingFeatured === game.id}
-                                            active={game.isFeatured}
-                                        />
+                                        <div className="flex flex-col items-center gap-2">
+                                            <ActionButton
+                                                icon={togglingFeatured === game.id ? Loader2 : Star}
+                                                label={game.isFeatured ? 'Bỏ nổi bật' : 'Nổi bật'}
+                                                onClick={() => handleToggleFeatured(game.id)}
+                                                variant="warning"
+                                                disabled={togglingFeatured === game.id}
+                                                active={game.isFeatured}
+                                            />
+                                            {game.isGameOfMonth && (
+                                                <span className="text-[10px] bg-[#10B981]/10 text-[#10B981] px-2 py-0.5 rounded-md font-semibold border border-[#10B981]/20">
+                                                    Game của Tháng
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-5 py-3.5 text-right">
-                                        <div className="flex items-center justify-end gap-1">
+                                        <div className="flex items-center justify-end gap-1 flex-wrap">
+                                            {!game.isGameOfMonth && (
+                                                <ActionButton
+                                                    icon={togglingGameOfMonth === game.id ? Loader2 : Wand2}
+                                                    label="Game Tháng"
+                                                    onClick={() => handleToggleGameOfMonth(game.id)}
+                                                    variant="default"
+                                                    disabled={togglingGameOfMonth === game.id}
+                                                />
+                                            )}
                                             <ActionButton icon={Pencil} label="Sửa" onClick={() => openEdit(game)} variant="primary" />
                                             <ActionButton icon={Trash2} label="Xóa" onClick={() => setDeleteTarget(game)} variant="danger" />
                                         </div>

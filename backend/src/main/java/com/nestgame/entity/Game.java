@@ -41,6 +41,13 @@ public class Game {
     @Column(name = "is_featured")
     private Boolean isFeatured;
 
+    @Column(name = "is_game_of_month")
+    @Builder.Default
+    private Boolean isGameOfMonth = false;
+
+    @Column(name = "game_of_month_period")
+    private String gameOfMonthPeriod;
+
     @Column(name = "game_system", nullable = false, columnDefinition = "varchar(255) default 'nes'")
     @Builder.Default
     private String system = "nes";

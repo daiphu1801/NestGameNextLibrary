@@ -152,6 +152,20 @@ class GameService {
     return this.games.find(game => game.id === id);
   }
 
+  async getGameOfTheMonth(): Promise<Game | undefined> {
+    if (this.useBackend) {
+      try {
+        const response = await apiClient.get<GameDTO>('/games/special/game-of-the-month');
+        if (response.data) {
+           return this.mapGameDTO(response.data);
+        }
+      } catch (error) {
+        console.warn('⚠️ Failed to fetch Game of the Month from backend');
+      }
+    }
+    return undefined;
+  }
+
   filterByCategory(games: Game[], category: GameCategoryKey): Game[] {
     if (category === 'all') return games;
     return games.filter(game => game.category === category);

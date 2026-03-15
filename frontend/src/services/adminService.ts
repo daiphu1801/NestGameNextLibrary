@@ -216,6 +216,14 @@ export const adminService = {
         return apiRequest(`/games/${gameId}/featured`, { method: 'PUT' });
     },
 
+    // ==================== GAME OF THE MONTH ====================
+    async setGameOfTheMonth(gameId: number, period?: string): Promise<any> {
+        return apiRequest(`/games/${gameId}/game-of-month`, { 
+            method: 'PUT',
+            body: period ? JSON.stringify({ period }) : undefined
+        });
+    },
+
     // ==================== USER DETAIL ====================
     async getUserDetail(userId: number): Promise<any> {
         return apiRequest(`/users/${userId}/detail`);

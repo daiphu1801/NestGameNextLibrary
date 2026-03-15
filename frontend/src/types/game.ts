@@ -16,6 +16,8 @@ export interface Game {
   system?: string;
   isFeatured?: boolean;
   fileName?: string;
+  isGameOfMonth?: boolean;
+  gameOfMonthPeriod?: string;
   playCount?: number;
   imageUrl?: string;
   categoryName?: string;
@@ -45,6 +47,13 @@ export interface GameCategory {
   icon: string;
   label: string;
   color?: string;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  displayName: string;
+  icon?: string;
 }
 
 // Filter Types

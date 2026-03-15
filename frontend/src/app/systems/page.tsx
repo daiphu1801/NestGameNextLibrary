@@ -144,7 +144,6 @@ export default function SystemsPage() {
                         {t('systems.subtitle') || 'Lựa chọn và chơi các tựa game theo tuổi thơ của bạn'}
                     </p>
                 </div>
-
                 {/* System Filter (The main focus here) */}
                 <div className="mb-8">
                     <SystemFilter />

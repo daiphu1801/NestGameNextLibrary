@@ -215,7 +215,13 @@ public class AdminService {
                 .imageUrl(request.getImageUrl())
                 .imageSnap(request.getImageSnap())
                 .imageTitle(request.getImageTitle())
+                .isGameOfMonth(request.getIsGameOfMonth() != null ? request.getIsGameOfMonth() : false)
+                .gameOfMonthPeriod(request.getGameOfMonthPeriod())
                 .build();
+
+        if (Boolean.TRUE.equals(game.getIsGameOfMonth())) {
+            unsetExistingGameOfMonth();
+        }
 
         game = gameRepository.save(game);
         log.info("Created game: {}", game.getName());
@@ -246,6 +252,16 @@ public class AdminService {
         game.setImageUrl(request.getImageUrl());
         game.setImageSnap(request.getImageSnap());
         game.setImageTitle(request.getImageTitle());
+
+        if (request.getIsGameOfMonth() != null) {
+            if (Boolean.TRUE.equals(request.getIsGameOfMonth()) && !Boolean.TRUE.equals(game.getIsGameOfMonth())) {
+                unsetExistingGameOfMonth();
+            }
+            game.setIsGameOfMonth(request.getIsGameOfMonth());
+        }
+        if (request.getGameOfMonthPeriod() != null) {
+            game.setGameOfMonthPeriod(request.getGameOfMonthPeriod());
+        }
 
         game = gameRepository.save(game);
         log.info("Updated game: {}", game.getName());
@@ -334,6 +350,35 @@ public class AdminService {
         game = gameRepository.save(game);
         log.info("Toggled featured for game {} to {}", gameId, game.getIsFeatured());
         return toGameDTO(game);
+    }
+
+    // ==================== GAME OF THE MONTH ====================
+
+    @Transactional
+    public GameDTO setGameOfTheMonth(Long gameId, String period) {
+        // Unset any existing Game of the Month
+        unsetExistingGameOfMonth();
+
+        // Set the new Game of the Month
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy game"));
+        game.setIsGameOfMonth(true);
+        if (period == null || period.trim().isEmpty()) {
+             period = LocalDateTime.now().getYear() + "-" + String.format("%02d", LocalDateTime.now().getMonthValue());
+        }
+        game.setGameOfMonthPeriod(period);
+        game = gameRepository.save(game);
+        
+        log.info("Set Game of the Month to game {} for period {}", gameId, game.getGameOfMonthPeriod());
+        logActivity("system", "UPDATE", "GAME", game.getName(), "Đặt làm Game của Tháng: " + game.getName());
+        return toGameDTO(game);
+    }
+
+    private void unsetExistingGameOfMonth() {
+        gameRepository.findFirstByIsGameOfMonthTrue().ifPresent(existing -> {
+            existing.setIsGameOfMonth(false);
+            gameRepository.save(existing);
+        });
     }
 
     // ==================== USER DETAIL ====================
@@ -427,6 +472,8 @@ public class AdminService {
                 .year(game.getYear())
                 .region(game.getRegion())
                 .isFeatured(game.getIsFeatured())
+                .isGameOfMonth(game.getIsGameOfMonth())
+                .gameOfMonthPeriod(game.getGameOfMonthPeriod())
                 .imageUrl(game.getImageUrl())
                 .imageSnap(game.getImageSnap())
                 .imageTitle(game.getImageTitle())

@@ -296,6 +296,7 @@
 .portrait-overlay {
   display: none;
 }
+
 @media (orientation: portrait) and (pointer: coarse) {
   .portrait-overlay {
     display: flex;
@@ -304,13 +305,27 @@
 
 /* Animations */
 @keyframes tilt {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(-90deg); }
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(-90deg);
+  }
 }
 
 @keyframes ripple {
-  from { transform: scale(1); opacity: 0.7; }
-  to   { transform: scale(2.2); opacity: 0; }
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+
+  to {
+    transform: scale(2.2);
+    opacity: 0;
+  }
 }
 
 @keyframes float {

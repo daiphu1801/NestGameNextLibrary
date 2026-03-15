@@ -316,6 +316,19 @@ export function Header() {
                         </span>
                         <span className="ml-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white leading-none relative z-10 shadow-[0_0_10px_rgba(168,85,247,0.5)]">New</span>
                       </Link>
+                      <div className="h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
+                      <Link
+                        href="/game-of-the-month"
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-3.5 text-sm font-bold transition-all hover:bg-amber-500/10",
+                          "text-amber-500",
+                          pathname === '/game-of-the-month' ? "bg-amber-500/10" : ""
+                        )}
+                      >
+                        <Crown className="w-4 h-4 text-amber-500" />
+                        <span>Game Của Tháng</span>
+                        <span className="ml-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-500 text-white leading-none shadow-[0_0_10px_rgba(245,158,11,0.5)]">Hot</span>
+                      </Link>
                     </div>
                   </div>
                 )}
@@ -678,6 +691,14 @@ export function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {t('nav.systems')}
+                  </MobileNavLink>
+                  <MobileNavLink
+                    href="/game-of-the-month"
+                    icon={<Crown className="w-4 h-4 text-amber-500" />}
+                    active={pathname === '/game-of-the-month'}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Game Của Tháng
                   </MobileNavLink>
                 </div>
               </div>

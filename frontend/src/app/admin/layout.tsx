@@ -15,6 +15,7 @@ const NAV_ITEMS = [
     { href: '/admin/users', label: 'Người dùng', icon: Users },
     { href: '/admin/games', label: 'Games', icon: Gamepad2 },
     { href: '/admin/featured-games', label: 'Game nổi bật', icon: Crown },
+    { href: '/admin/game-month', label: 'Game Tháng', icon: Crown },
     { href: '/admin/categories', label: 'Danh mục', icon: FolderTree },
     { href: '/admin/images', label: 'Ảnh Game', icon: ImageIcon },
     { href: '/admin/comments', label: 'Bình luận', icon: MessageSquare },

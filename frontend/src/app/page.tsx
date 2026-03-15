@@ -7,7 +7,7 @@ import { gameService } from '@/services/gameService';
 import { Header } from '@/components/layout/Header';
 import { FeaturedGames } from '@/components/game/FeaturedGames';
 import { validateEnv } from '@/config/env';
-import { Sparkles, Zap, Save, Play, Gamepad2, ArrowRight, Shield, Globe, Users, Star } from 'lucide-react';
+import { Sparkles, Zap, Save, Play, Gamepad2, ArrowRight, Shield, Globe, Users, Star, Github } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { Game } from '@/types';
@@ -113,13 +113,16 @@ export default function LandingPage() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left Column - Hero Content */}
             <div className="space-y-8">
-              {/* Live Badge */}
-              <div className="badge-live">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                </span>
-                <span>{t('welcome.badge').replace('{count}', '1700')}</span>
+              {/* Badges/Tags */}
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Live Badge */}
+                <div className="badge-live">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                  </span>
+                  <span>{t('welcome.badge').replace('{count}', '1700')}</span>
+                </div>
               </div>
 
               {/* Main Heading */}
@@ -144,6 +147,15 @@ export default function LandingPage() {
                   <span className="flex items-center gap-2">
                     {t('nav.docs') || 'Hướng Dẫn'}
                   </span>
+                </Link>
+                <Link 
+                  href="https://github.com/daiphu1801/NestGameNextLibrary" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="btn-outline inline-flex items-center gap-2 border-muted-foreground/30 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-black/20"
+                >
+                  <Github className="w-4 h-4" />
+                  Github
                 </Link>
               </div>
 

@@ -110,16 +110,21 @@ export function Footer() {
                     </div>
                 </div>
 
-                {/* Community Disclaimer */}
-                <div className="py-5 border-t border-white/5">
-                    <div className="flex items-start gap-3 px-1">
-                        <span className="text-lg flex-shrink-0 mt-0.5">⚠️</span>
-                        <div className="space-y-1.5 text-xs text-muted-foreground leading-relaxed">
-                            <p>
-                                {t('footer.disclaimer.projectPurpose')}
+                {/* DMCA / Copyright Notice */}
+                <div className="py-4 border-t border-white/5 bg-red-500/5 px-4 rounded-lg mt-2 mb-2">
+                    <div className="flex items-start gap-3">
+                        <span className="text-lg flex-shrink-0 mt-0.5 text-red-500">🛡️</span>
+                        <div className="space-y-2 text-xs text-muted-foreground/80 leading-relaxed">
+                            <p className="font-medium text-red-400/90 flex items-center gap-2">
+                                Báo cáo vi phạm bản quyền / DMCA Takedown Notice
                             </p>
-                            <p>
-                                {t('footer.disclaimer.romsPurpose')}
+                            <div className="space-y-1 pb-1 border-b border-white/5">
+                                <p>
+                                    NestGame is a Student Project built for researching and learning Web programming, Emulation, and Deployment techniques. The project is completely non-profit, open-source, and strictly does not charge fees in any form. This website operates for the purpose of preserving and sharing classic gaming passion. If you are the copyright owner of any content on this website and wish to have it removed, please contact us. We will strictly comply with legal regulations and remove the infringing content immediately.
+                                </p>
+                            </div>
+                            <p className="text-[10px] text-muted-foreground/60 italic pt-1">
+                                Dự án NestGame được xây dựng dưới dạng Đồ án Sinh viên với mục đích nghiên cứu, học tập kỹ thuật lập trình Web, giả lập (Emulation) và triển khai hệ thống (Deployment). Dự án hoàn toàn phi lợi nhuận (Non-profit), mã nguồn mở và tuyệt đối không thu phí dưới mọi hình thức. Trang web này hoạt động với mục đích bảo tồn và chia sẻ đam mê game cổ điển. Nếu bạn là chủ sở hữu bản quyền của bất kỳ nội dung nào trên trang web này và muốn gỡ bỏ nó, vui lòng liên hệ. Chúng tôi sẽ tuân thủ nghiêm ngặt các quy định pháp luật và gỡ bỏ nội dung vi phạm ngay lập tức.
                             </p>
                         </div>
                     </div>
@@ -131,8 +136,6 @@ export function Footer() {
                         {/* Copyright */}
                         <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono-tech">
                             <span>© {currentYear} NestGame.</span>
-                            <span className="hidden md:inline">•</span>
-                            <span>{t('footer.rights') || 'All rights reserved.'}</span>
                         </div>
 
                         {/* Made with love */}

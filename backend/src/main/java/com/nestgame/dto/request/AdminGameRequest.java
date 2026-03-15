@@ -28,4 +28,6 @@ public class AdminGameRequest {
     private String imageSnap;
     private String imageTitle;
     private String system;
+    private Boolean isGameOfMonth;
+    private String gameOfMonthPeriod;
 }
