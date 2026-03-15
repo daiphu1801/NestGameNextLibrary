@@ -20,7 +20,7 @@ export function VirtualJoystick({ onDirectionChange, size = 120 }: VirtualJoysti
   const [dirs, setDirs] = useState({ up: false, down: false, left: false, right: false });
 
   const angleToDirections = useCallback((angle: number, distance: number) => {
-    if (distance < 0.3) {
+    if (distance < 0.4) {
       return { up: false, down: false, left: false, right: false };
     }
 
@@ -54,7 +54,7 @@ export function VirtualJoystick({ onDirectionChange, size = 120 }: VirtualJoysti
       nipple.on('start', () => setIsActive(true));
 
       nipple.on('move', (_evt: any, data: any) => {
-        if (!data?.angle?.degree || data?.distance === undefined) return;
+        if (data?.angle?.degree == null || data?.distance == null) return;
 
         const normalizedDistance = data.distance / (size / 2);
         const newDirs = angleToDirections(data.angle.degree, normalizedDistance);

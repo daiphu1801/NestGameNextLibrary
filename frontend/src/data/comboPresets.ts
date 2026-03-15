@@ -52,19 +52,25 @@ export const PRESET_COMBOS: ComboDefinition[] = [
     ],
   },
   {
-    id: 'hcf',
-    name: 'Half Circle Forward',
-    nameVi: 'Nửa vòng tới',
+    id: 'super_qcf_lv1',
+    name: 'Super QCF (Lv1)',
+    nameVi: 'Siêu chiêu (1 nộ)',
     icon: '💨',
-    motionDisplay: '← ↙ ↓ ↘ → + A',
+    motionDisplay: '↓↘→ ↓↘→ + Y',
     isPreset: true,
     steps: [
-      { buttons: ['left'], duration: 50 },
-      { buttons: ['down', 'left'], duration: 50 },
+      // First QCF
       { buttons: ['down'], duration: 50 },
       { buttons: ['down', 'right'], duration: 50 },
       { buttons: ['right'], duration: 50 },
-      { buttons: ['right', 'a'], duration: 100 },
+      // Neutral gap
+      { buttons: [], duration: 33 },
+      // Second QCF
+      { buttons: ['down'], duration: 50 },
+      { buttons: ['down', 'right'], duration: 50 },
+      { buttons: ['right'], duration: 50 },
+      // Single punch (1 bar = 1 button)
+      { buttons: ['right', 'y'], duration: 100 },
       { buttons: [], duration: 0 },
     ],
   },
@@ -117,7 +123,7 @@ export const PRESET_COMBOS: ComboDefinition[] = [
 ];
 
 /** Default slot assignments for new users (6 slots) */
-export const DEFAULT_COMBO_SLOTS: ComboSlots = ['qcf', 'dp', 'qcb', 'hcf', 'double_qcf', 'double_qcb_lv3'];
+export const DEFAULT_COMBO_SLOTS: ComboSlots = ['qcf', 'dp', 'qcb', 'super_qcf_lv1', 'double_qcf', 'double_qcb_lv3'];
 
 /** Keyboard shortcuts per player (6 slots) */
 export const COMBO_KEYBOARD_SHORTCUTS: ComboKeyboardShortcuts = {
