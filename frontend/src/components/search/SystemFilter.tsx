@@ -103,24 +103,6 @@ const SYSTEMS: SystemOption[] = [
     shadow: 'shadow-[0_0_30px_rgba(234,179,8,0.4)]',
     disabled: true, comingSoon: true
   },
-  { 
-    id: 'ps1', nameKey: 'system.ps1', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
-    subtitle: '32-bit Revolution',
-    bgDesc: 'from-slate-600/20 to-slate-900/60',
-    activeColor: 'bg-slate-500/20 text-slate-300', activeBorder: 'border-slate-500/50',
-    lightActiveColor: 'bg-slate-100 text-slate-700', lightActiveBorder: 'border-slate-400',
-    shadow: 'shadow-[0_0_30px_rgba(148,163,184,0.4)]',
-    demo: true
-  },
-  { 
-    id: 'psp', nameKey: 'system.psp', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
-    subtitle: 'Powerful Portable',
-    bgDesc: 'from-blue-800/20 to-indigo-950/60',
-    activeColor: 'bg-blue-600/20 text-blue-300', activeBorder: 'border-blue-500/50',
-    lightActiveColor: 'bg-blue-200 text-blue-800', lightActiveBorder: 'border-blue-500',
-    shadow: 'shadow-[0_0_30px_rgba(37,99,235,0.4)]',
-    demo: true
-  },
 ];
 
 export function SystemFilter() {
