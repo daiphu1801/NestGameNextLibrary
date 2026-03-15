@@ -22,7 +22,7 @@ export function MobileControlsOverlay({ enabled, system }: MobileControlsOverlay
   const [pressed, setPressed] = useState<Record<string, boolean>>({});
   const [controlType, setControlType] = useMobileControlSetting();
   const { combos, execute, isExecuting } = useCombo('p1');
-  const isAdvancedSystem = system === 'snes' || system === 'gba';
+  const isAdvancedSystem = ['snes', 'gba', 'genesis', 'arcade', 'ps1', 'psx', 'psp'].includes(system?.toLowerCase() || '');
 
   const handleDirectionChange = useCallback((directions: {
     up: boolean; down: boolean; left: boolean; right: boolean;

@@ -72,7 +72,7 @@ export function VirtualButtons({ system, onButtonDown, onButtonUp }: VirtualButt
   const [pressed, setPressed] = useState<Record<string, boolean>>({});
   const [rippleKey, setRippleKey] = useState<Record<string, number>>({});
 
-  const isSixButton = system === 'snes' || system === 'gba' || system === 'genesis' || system === 'arcade';
+  const isSixButton = ['snes', 'gba', 'genesis', 'arcade', 'ps1', 'psx', 'psp'].includes(system?.toLowerCase() || '');
 
   // Release all held buttons on orientation change or visibility change
   useEffect(() => {

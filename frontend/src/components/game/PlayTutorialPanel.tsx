@@ -287,7 +287,7 @@ export function PlayTutorialPanel({
 // ============================================
 function ControlsGuideCompact({ system = 'nes' }: { system?: string }) {
   const { t } = useLanguage();
-  const isAdvancedSystem = ['snes', 'gba', 'genesis', 'arcade'].includes(system.toLowerCase());
+  const isAdvancedSystem = ['snes', 'gba', 'genesis', 'arcade', 'ps1', 'psx', 'psp'].includes(system.toLowerCase());
 
   return (
     <div className="space-y-2.5">
