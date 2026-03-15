@@ -12,36 +12,67 @@ interface VirtualButtonsProps {
   onButtonUp: (button: ButtonName) => void;
 }
 
-const getActionButtons = (system?: string) => {
-  const isFourButton = system === 'snes' || system === 'gba';
-  
-  if (isFourButton) {
-    return [
-      { name: 'l' as const, posClass: 'left-[-15px] top-[15px] -rotate-12 scale-[0.85]' },
-      { name: 'r' as const, posClass: 'right-[15px] top-[-15px] rotate-12 scale-[0.85]' },
-      { name: 'y' as const, posClass: 'left-0 top-[65px]' },
-      { name: 'x' as const, posClass: 'left-[53px] top-[12px]' },
-      { name: 'b' as const, posClass: 'left-[53px] bottom-[-12px]' },
-      { name: 'a' as const, posClass: 'right-0 top-[65px]' },
-    ];
-  }
-  
-  return [
-    { name: 'b' as const, posClass: 'left-[15px] bottom-0' },
-    { name: 'a' as const, posClass: 'right-[15px] top-[20px]' },
-  ];
+// Glass-style color accents
+const GLASS_ACCENTS: Record<string, {
+  idle: string;
+  active: string;
+  text: string;
+  textActive: string;
+  glow: string;
+}> = {
+  a: {
+    idle: 'border-red-400/20',
+    active: 'border-red-400/60',
+    text: 'text-red-300/70',
+    textActive: 'text-red-200',
+    glow: '0 0 20px 6px rgba(248,113,113,0.35), inset 0 0 12px rgba(248,113,113,0.15)',
+  },
+  b: {
+    idle: 'border-amber-400/20',
+    active: 'border-amber-400/60',
+    text: 'text-amber-300/70',
+    textActive: 'text-amber-200',
+    glow: '0 0 20px 6px rgba(251,191,36,0.35), inset 0 0 12px rgba(251,191,36,0.15)',
+  },
+  x: {
+    idle: 'border-blue-400/20',
+    active: 'border-blue-400/60',
+    text: 'text-blue-300/70',
+    textActive: 'text-blue-200',
+    glow: '0 0 20px 6px rgba(96,165,250,0.35), inset 0 0 12px rgba(96,165,250,0.15)',
+  },
+  y: {
+    idle: 'border-green-400/20',
+    active: 'border-green-400/60',
+    text: 'text-green-300/70',
+    textActive: 'text-green-200',
+    glow: '0 0 20px 6px rgba(74,222,128,0.35), inset 0 0 12px rgba(74,222,128,0.15)',
+  },
+  l: {
+    idle: 'border-purple-400/20',
+    active: 'border-purple-400/60',
+    text: 'text-purple-300/70',
+    textActive: 'text-purple-200',
+    glow: '0 0 20px 6px rgba(168,85,247,0.35), inset 0 0 12px rgba(168,85,247,0.15)',
+  },
+  r: {
+    idle: 'border-fuchsia-400/20',
+    active: 'border-fuchsia-400/60',
+    text: 'text-fuchsia-300/70',
+    textActive: 'text-fuchsia-200',
+    glow: '0 0 20px 6px rgba(232,121,249,0.35), inset 0 0 12px rgba(232,121,249,0.15)',
+  },
 };
+
+const DEFAULT_ACCENT = GLASS_ACCENTS.a;
 
 export function VirtualButtons({ system, onButtonDown, onButtonUp }: VirtualButtonsProps) {
   const { vibrate } = useHapticFeedback();
   const activeButtonsRef = useRef<Set<string>>(new Set());
   const [pressed, setPressed] = useState<Record<string, boolean>>({});
   const [rippleKey, setRippleKey] = useState<Record<string, number>>({});
-  
-  const actionButtons = getActionButtons(system);
-  const containerStyle = system === 'snes' || system === 'gba' 
-    ? { width: 175, height: 175 } 
-    : { width: 150, height: 100 };
+
+  const isSixButton = system === 'snes' || system === 'gba' || system === 'genesis' || system === 'arcade';
 
   // Release all held buttons on orientation change or visibility change
   useEffect(() => {
@@ -79,113 +110,101 @@ export function VirtualButtons({ system, onButtonDown, onButtonUp }: VirtualButt
     onButtonUp(button);
   }, [onButtonUp]);
 
-  const isFourButton = system === 'snes' || system === 'gba';
+  // Render a single glass button
+  const renderButton = (name: ButtonName, label?: string) => {
+    const isPressed = pressed[name];
+    const rKey = rippleKey[name];
+    const accent = GLASS_ACCENTS[name] || DEFAULT_ACCENT;
+    const btnSize = isSixButton ? 'w-[56px] h-[56px]' : 'w-[62px] h-[62px]';
 
-  // SNES-style per-button colors
-  const getButtonColors = (name: string) => {
-    if (!isFourButton) {
-      return {
-        normal: 'bg-gradient-to-br from-red-500/90 to-red-700/90 border-red-400/50 shadow-lg shadow-red-900/30',
-        pressed: 'bg-gradient-to-br from-red-400 to-red-600 border-red-300/90 scale-90 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)]',
-        glow: '0 0 18px 6px rgba(239,68,68,0.45)',
-        ripple: 'border-red-400/60',
-      };
-    }
-    switch (name) {
-      case 'l':
-      case 'r': return {
-        normal: 'bg-gradient-to-br from-slate-400/90 to-slate-600/90 border-slate-300/50 shadow-lg shadow-slate-900/30',
-        pressed: 'bg-gradient-to-br from-slate-300 to-slate-500 border-slate-200/90 scale-90 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)]',
-        glow: '0 0 18px 6px rgba(148,163,184,0.45)',
-        ripple: 'border-slate-300/60',
-      };
-      case 'a': return {
-        normal: 'bg-gradient-to-br from-red-500/90 to-red-700/90 border-red-400/50 shadow-lg shadow-red-900/30',
-        pressed: 'bg-gradient-to-br from-red-400 to-red-600 border-red-300/90 scale-90 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)]',
-        glow: '0 0 18px 6px rgba(239,68,68,0.45)',
-        ripple: 'border-red-400/60',
-      };
-      case 'b': return {
-        normal: 'bg-gradient-to-br from-yellow-500/90 to-amber-700/90 border-yellow-400/50 shadow-lg shadow-yellow-900/30',
-        pressed: 'bg-gradient-to-br from-yellow-400 to-amber-600 border-yellow-300/90 scale-90 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)]',
-        glow: '0 0 18px 6px rgba(245,158,11,0.45)',
-        ripple: 'border-yellow-400/60',
-      };
-      case 'x': return {
-        normal: 'bg-gradient-to-br from-blue-500/90 to-blue-700/90 border-blue-400/50 shadow-lg shadow-blue-900/30',
-        pressed: 'bg-gradient-to-br from-blue-400 to-blue-600 border-blue-300/90 scale-90 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)]',
-        glow: '0 0 18px 6px rgba(59,130,246,0.45)',
-        ripple: 'border-blue-400/60',
-      };
-      case 'y': return {
-        normal: 'bg-gradient-to-br from-green-500/90 to-green-700/90 border-green-400/50 shadow-lg shadow-green-900/30',
-        pressed: 'bg-gradient-to-br from-green-400 to-green-600 border-green-300/90 scale-90 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)]',
-        glow: '0 0 18px 6px rgba(34,197,94,0.45)',
-        ripple: 'border-green-400/60',
-      };
-      default: return {
-        normal: 'bg-gradient-to-br from-red-500/90 to-red-700/90 border-red-400/50 shadow-lg shadow-red-900/30',
-        pressed: 'bg-gradient-to-br from-red-400 to-red-600 border-red-300/90 scale-90 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)]',
-        glow: '0 0 18px 6px rgba(239,68,68,0.45)',
-        ripple: 'border-red-400/60',
-      };
-    }
+    return (
+      <div key={name} className="relative">
+        {/* Ripple */}
+        {rKey && (
+          <span
+            key={rKey}
+            className={cn(
+              "absolute inset-[-8px] rounded-full border-2 pointer-events-none animate-[ripple_400ms_ease-out_forwards]",
+              accent.active.replace('/60', '/40'),
+            )}
+          />
+        )}
+
+        {/* Glow ring */}
+        <div
+          className={cn(
+            'absolute inset-[-3px] rounded-full pointer-events-none transition-all duration-150',
+            isPressed ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
+          )}
+          style={{ boxShadow: accent.glow }}
+        />
+
+        {/* Glass button */}
+        <button
+          onTouchStart={handleTouchStart(name)}
+          onTouchEnd={handleTouchEnd(name)}
+          onTouchCancel={handleTouchEnd(name)}
+          className={cn(
+            btnSize, 'rounded-full flex items-center justify-center',
+            'border-2 transition-all duration-100 touch-none overflow-hidden relative',
+            'backdrop-blur-md',
+            isPressed
+              ? cn('bg-white/25 scale-90', accent.active)
+              : cn('bg-white/[0.08]', accent.idle),
+            !isPressed && 'shadow-[0_0_0_2px_rgba(255,255,255,0.06)]',
+          )}
+        >
+          {/* Inner glass highlight */}
+          <div className="absolute top-1 left-2 w-5 h-2 rounded-full bg-white/20 blur-[3px] pointer-events-none" />
+
+          {/* Pressed flash */}
+          {isPressed && (
+            <span className="absolute inset-0 rounded-full bg-white/20 pointer-events-none" />
+          )}
+
+          {/* Label */}
+          <span className={cn(
+            'font-black text-lg uppercase select-none pointer-events-none z-10 transition-colors duration-75',
+            'drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]',
+            isPressed ? accent.textActive : accent.text,
+          )}>
+            {label || name}
+          </span>
+        </button>
+      </div>
+    );
   };
 
+  // ── 6-button layout: 2 rows × 3 columns (fighting game style) ──
+  // Top row:    Y   X   L   (Punch: Light → Medium → Heavy)
+  // Bottom row: B   A   R   (Kick:  Light → Medium → Heavy)
+  if (isSixButton) {
+    return (
+      <div className="touch-none select-none flex flex-col items-end gap-2">
+        {/* Top row — "Punch" */}
+        <div className="flex items-center gap-2">
+          {renderButton('y')}
+          {renderButton('x')}
+          {renderButton('l')}
+        </div>
+        {/* Bottom row — "Kick" */}
+        <div className="flex items-center gap-2">
+          {renderButton('b')}
+          {renderButton('a')}
+          {renderButton('r')}
+        </div>
+      </div>
+    );
+  }
+
+  // ── 2-button layout (NES) — diagonal ──
   return (
-    <div className="relative touch-none select-none">
-      <div className="relative" style={containerStyle}>
-        {actionButtons.map(({ name, posClass }) => {
-          const isPressed = pressed[name];
-          const key = rippleKey[name];
-          const colors = getButtonColors(name);
-          // Determine if it's a bumper (L/R) button to stretch it horizontally
-          const isBumper = name === 'l' || name === 'r';
-          return (
-            <div key={name} className={cn('absolute', posClass)}>
-              {key && (
-                <span
-                  key={key}
-                  className={cn(
-                    "absolute inset-[-6px] border-2 pointer-events-none animate-[ripple_350ms_ease-out_forwards]",
-                    isBumper ? "rounded-2xl" : "rounded-full",
-                    colors.ripple
-                  )}
-                />
-              )}
-              <div
-                className={cn(
-                  'absolute inset-[-4px] rounded-full pointer-events-none transition-opacity duration-100',
-                  isPressed ? 'opacity-100' : 'opacity-0'
-                )}
-                style={{ boxShadow: colors.glow }}
-              />
-              <button
-                onTouchStart={handleTouchStart(name)}
-                onTouchEnd={handleTouchEnd(name)}
-                onTouchCancel={handleTouchEnd(name)}
-                className={cn(
-                  'flex items-center justify-center font-black select-none pointer-events-none drop-shadow-md z-10 uppercase',
-                  'border-2 transition-all duration-75 touch-none overflow-hidden relative',
-                  isBumper ? 'w-[75px] h-[45px] rounded-2xl text-lg' : 'w-[65px] h-[65px] rounded-full text-xl',
-                  isPressed ? colors.pressed : colors.normal
-                )}
-              >
-                <div className={cn(
-                  "absolute top-1.5 left-2.5 h-2 rounded-full bg-white/30 blur-[2px] pointer-events-none",
-                  isBumper ? "w-6" : "w-3.5"
-                )} />
-                {isPressed && (
-                  <span className={cn(
-                    "absolute inset-0 bg-white/15 pointer-events-none",
-                    isBumper ? "rounded-2xl" : "rounded-full"
-                  )} />
-                )}
-                <span className="text-white relative z-10">{name}</span>
-              </button>
-            </div>
-          );
-        })}
+    <div className="relative touch-none select-none" style={{ width: 150, height: 100 }}>
+      <div className="absolute left-0 bottom-0">
+        {renderButton('b')}
+      </div>
+      <div className="absolute right-0 top-0">
+        {renderButton('a')}
       </div>
     </div>
   );

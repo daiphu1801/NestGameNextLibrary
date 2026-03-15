@@ -338,7 +338,7 @@ function ControlsGuideCompact({ system = 'nes' }: { system?: string }) {
               { icon: '🔥', name: 'Chưởng (Hadouken)', desc: 'Cầu lửa cơ bản', motion: '↓↘→ + Y', p1: 'T', p2: 'NP0' },
               { icon: '⚡', name: 'Đấm móc (Shoryuken)', desc: 'Phòng không cận chiến', motion: '→↓↘ + Y', p1: 'Y', p2: 'NP9' },
               { icon: '🌀', name: 'Đá xoay (Tatsumaki)', desc: 'Tiếp cận từ xa', motion: '↓↙← + B', p1: 'G', p2: 'NP+' },
-              { icon: '💨', name: 'Nạp tới (Charge)', desc: 'Phải giữ lùi 0.6s (VD: Guile)', motion: '←(giữ) → + Y', p1: 'H', p2: 'NP-' },
+              { icon: '💨', name: 'Nửa vòng tới (HCF)', desc: 'Chiêu ném/đặc biệt phổ thông', motion: '← ↙ ↓ ↘ → + A', p1: 'H', p2: 'NP-' },
               { icon: '💥', name: 'Siêu chiêu (Super QCF)', desc: 'Cần 3 thanh nộ Max', motion: '↓↘→↓↘→ + 3P', p1: 'B', p2: 'NP*' },
               { icon: '🌪️', name: 'Siêu lốc (Super QCB)', desc: 'Cần 3 thanh nộ Max', motion: '↓↙←↓↙← + 3K', p1: 'N', p2: 'NP/' },
             ].map((c) => (

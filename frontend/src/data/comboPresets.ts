@@ -52,16 +52,19 @@ export const PRESET_COMBOS: ComboDefinition[] = [
     ],
   },
   {
-    id: 'charge_f',
-    name: 'Charge Forward',
-    nameVi: 'Chiêu nạp tới',
+    id: 'hcf',
+    name: 'Half Circle Forward',
+    nameVi: 'Nửa vòng tới',
     icon: '💨',
-    motionDisplay: '←(hold) → + Y',
+    motionDisplay: '← ↙ ↓ ↘ → + A',
     isPreset: true,
     steps: [
-      { buttons: ['left'], duration: 600 },
-      { buttons: ['right'], duration: 67 },
-      { buttons: ['right', 'y'], duration: 100 },
+      { buttons: ['left'], duration: 50 },
+      { buttons: ['down', 'left'], duration: 50 },
+      { buttons: ['down'], duration: 50 },
+      { buttons: ['down', 'right'], duration: 50 },
+      { buttons: ['right'], duration: 50 },
+      { buttons: ['right', 'a'], duration: 100 },
       { buttons: [], duration: 0 },
     ],
   },
@@ -114,7 +117,7 @@ export const PRESET_COMBOS: ComboDefinition[] = [
 ];
 
 /** Default slot assignments for new users (6 slots) */
-export const DEFAULT_COMBO_SLOTS: ComboSlots = ['qcf', 'dp', 'qcb', 'charge_f', 'double_qcf', 'double_qcb_lv3'];
+export const DEFAULT_COMBO_SLOTS: ComboSlots = ['qcf', 'dp', 'qcb', 'hcf', 'double_qcf', 'double_qcb_lv3'];
 
 /** Keyboard shortcuts per player (6 slots) */
 export const COMBO_KEYBOARD_SHORTCUTS: ComboKeyboardShortcuts = {
