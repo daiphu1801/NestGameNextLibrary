@@ -342,6 +342,9 @@ class EmulatorService {
       else if (system === 'gba' || system === 'gb' || system === 'gbc') core = 'mgba';
       else if (system === 'genesis') core = 'genesis_plus_gx';
       else if (system === 'arcade') core = 'fbneo';
+      else if (system === 'ps1' || system === 'psx') core = 'pcsx_rearmed';
+      else if (system === 'psp') core = 'ppsspp';
+      else if (system === 'saturn') core = 'beetle_saturn';
 
       // Launch emulator with canvas, keyboard + gamepad controls
       this.currentEmulator = await Nostalgist.launch({

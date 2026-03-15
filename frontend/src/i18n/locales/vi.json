@@ -56,6 +56,8 @@
     "gbc": "Game Boy Color",
     "arcade": "Arcade (Thùng)",
     "neogeo": "Neo Geo",
+    "ps1": "PlayStation 1",
+    "psp": "PlayStation Portable",
     "comingSoon": "Sắp ra mắt",
     "demo": "Thử nghiệm"
   },
