@@ -6,6 +6,7 @@ import { gameService } from '@/services/gameService';
 import { Play, Download, Settings, Loader2, Gamepad2, Info, ChevronRight, Star, Calendar, Users, Cpu } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import Link from 'next/link';
+import { GameModal } from '@/components/game/GameModal';
 
 export default function GameOfTheMonthPage() {
   const [game, setGame] = useState<Game | null>(null);
@@ -158,39 +159,39 @@ export default function GameOfTheMonthPage() {
                         </p>
 
                         {/* Call to Actions */}
-                        <div className="pt-6 flex flex-col sm:flex-row items-center gap-6">
-                           {['ps1', 'psp', 'saturn'].includes(game.system?.toLowerCase() || '') ? (
-                              <div className="w-full sm:w-auto flex flex-col gap-3">
-                                  <Link
-                                      href={`/games/${game.id}/play`}
-                                      className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 text-lg font-black text-white transition-all duration-300 ease-in-out rounded-2xl shadow-[0_0_40px_rgba(16,185,129,0.3)] hover:shadow-[0_0_60px_rgba(16,185,129,0.5)] hover:-translate-y-1 overflow-hidden w-full sm:w-auto"
-                                      style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)' }}
-                                  >
-                                      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
-                                      <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
-                                      <Download className="w-6 h-6 relative z-10 group-hover:scale-110 group-hover:-translate-y-1 transition-transform" />
-                                      <span className="relative z-10 uppercase tracking-widest text-shadow-sm">Lưu Cache & Chơi ngay</span>
-                                  </Link>
-                                  <div className="flex items-start gap-2 bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-xl max-w-md">
-                                      <Info className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                                      <p className="text-sm text-emerald-100/80 leading-snug">
-                                        <strong className="text-emerald-400">Trải nghiệm Game Nặng (300MB+):</strong> Dữ liệu sẽ được lưu tự động vào trình duyệt (IndexedDB) để chơi offline vào những lần sau, tốc độ cực nhanh.
-                                      </p>
-                                  </div>
-                              </div>
-                          ) : (
-                              <Link
-                                  href={`/games/${game.id}/play`}
-                                  className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 text-lg font-black text-white transition-all duration-300 ease-in-out rounded-2xl shadow-[0_0_40px_rgba(60,80,224,0.4)] hover:shadow-[0_0_60px_rgba(60,80,224,0.6)] hover:-translate-y-1 overflow-hidden w-full sm:w-auto"
-                                  style={{ background: 'linear-gradient(135deg, #3C50E0 0%, #6577F3 100%)' }}
-                              >
-                                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
-                                  <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
-                                  <Play className="w-6 h-6 relative z-10 group-hover:scale-110 group-hover:translate-x-1 transition-transform" />
-                                  <span className="relative z-10 uppercase tracking-widest text-shadow-sm">Chơi Game Ngay</span>
-                              </Link>
-                          )}
-                        </div>
+                         <div className="pt-6 flex flex-col sm:flex-row items-center gap-6">
+                            {['ps1', 'psp', 'saturn'].includes(game.system?.toLowerCase() || '') ? (
+                               <div className="w-full sm:w-auto flex flex-col gap-3">
+                                   <Link
+                                       href={`/games/${game.id}/play`}
+                                       className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 text-lg font-black text-white transition-all duration-300 ease-in-out rounded-2xl shadow-[0_0_40px_rgba(16,185,129,0.3)] hover:shadow-[0_0_60px_rgba(16,185,129,0.5)] hover:-translate-y-1 overflow-hidden w-full sm:w-auto"
+                                       style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)' }}
+                                   >
+                                       <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+                                       <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
+                                       <Download className="w-6 h-6 relative z-10 group-hover:scale-110 group-hover:-translate-y-1 transition-transform" />
+                                       <span className="relative z-10 uppercase tracking-widest text-shadow-sm">Lưu Cache & Chơi ngay</span>
+                                   </Link>
+                                   <div className="flex items-start gap-2 bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-xl max-w-md">
+                                       <Info className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                                       <p className="text-sm text-emerald-100/80 leading-snug">
+                                         <strong className="text-emerald-400">Trải nghiệm Game Nặng (300MB+):</strong> Dữ liệu sẽ được lưu tự động vào trình duyệt (IndexedDB) để chơi offline vào những lần sau, tốc độ cực nhanh.
+                                       </p>
+                                   </div>
+                               </div>
+                           ) : (
+                               <Link
+                                   href={`/games/${game.id}/play`}
+                                   className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 text-lg font-black text-white transition-all duration-300 ease-in-out rounded-2xl shadow-[0_0_40px_rgba(60,80,224,0.4)] hover:shadow-[0_0_60px_rgba(60,80,224,0.6)] hover:-translate-y-1 overflow-hidden w-full sm:w-auto"
+                                   style={{ background: 'linear-gradient(135deg, #3C50E0 0%, #6577F3 100%)' }}
+                               >
+                                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+                                   <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
+                                   <Play className="w-6 h-6 relative z-10 group-hover:scale-110 group-hover:translate-x-1 transition-transform" />
+                                   <span className="relative z-10 uppercase tracking-widest text-shadow-sm">Chơi Game Ngay</span>
+                               </Link>
+                           )}
+                         </div>
                      </div>
 
                      {/* Right Cover Art - Stunning Visual */}

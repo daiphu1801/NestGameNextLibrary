@@ -12,7 +12,7 @@ const ROM_FOLDERS = [
 const LIBRARY_PATH = path.join(process.cwd(), 'LibraryNes');
 
 // Allowed file extensions for ROM files (security)
-const ALLOWED_EXTENSIONS = ['.nes', '.zip', '.sfc', '.smc', '.gba', '.md', '.gen', '.bin'];
+const ALLOWED_EXTENSIONS = ['.nes', '.zip', '.sfc', '.smc', '.gba', '.md', '.gen', '.bin', '.cue', '.iso', '.chd', '.pbp', '.cso'];
 
 /**
  * Find ROM file with security checks.
@@ -82,7 +82,10 @@ async function handleRomRequest(
         else if (ext === '.nes') contentType = 'application/x-nes-rom';
         else if (ext === '.sfc' || ext === '.smc') contentType = 'application/x-snes-rom';
         else if (ext === '.gba') contentType = 'application/x-gba-rom';
-        else if (ext === '.md' || ext === '.gen' || ext === '.bin') contentType = 'application/x-genesis-rom';
+        else if (ext === '.md' || ext === '.gen') contentType = 'application/x-genesis-rom';
+        else if (ext === '.bin' || ext === '.iso' || ext === '.chd' || ext === '.cue' || ext === '.pbp' || ext === '.cso') {
+            contentType = 'application/octet-stream';
+        }
 
         const stat = fs.statSync(romPath);
         const headers: Record<string, string> = {
@@ -98,8 +101,10 @@ async function handleRomRequest(
             return new NextResponse(null, { status: 200, headers });
         }
 
-        const fileBuffer = fs.readFileSync(romPath);
-        return new NextResponse(fileBuffer, { status: 200, headers });
+        // Use readable stream for better performance with large files (PS1/PSP)
+        const fileStream = fs.createReadStream(romPath);
+        // @ts-ignore - NextResponse accepts ReadableStream
+        return new NextResponse(fileStream, { status: 200, headers });
     } catch (error) {
         console.error('Error serving ROM:', error);
         return NextResponse.json({ error: 'Failed to serve ROM file' }, { status: 500 });

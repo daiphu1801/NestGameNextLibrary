@@ -109,7 +109,18 @@
     "information": "Thông tin",
     "ratingSuccess": "Đánh giá thành công!",
     "addedToFavorites": "Đã thêm vào yêu thích",
-    "removedFromFavorites": "Đã xóa khỏi yêu thích"
+    "removedFromFavorites": "Đã xóa khỏi yêu thích",
+    "loadingTips": "BẠN CÓ BIẾT?",
+    "loadingTipsList": [
+      "Bạn có thể lưu trạng thái game (Save State) bất cứ lúc nào bằng phím F5.",
+      "Sử dụng phím F8 để tải nhanh trạng thái game đã lưu gần nhất.",
+      "Chơi trên trình duyệt giúp bạn không cần cài đặt bất kỳ phần mềm giả lập nào.",
+      "Hệ máy PS1/PSP yêu cầu tải dữ liệu lớn, hãy kiên nhẫn một chút nhé!",
+      "Dữ liệu game sẽ được lưu vào bộ nhớ đệm trình duyệt để lần sau load nhanh hơn.",
+      "Bạn có thể kết nối tay cầm (Gamepad) qua cổng USB hoặc Bluetooth để chơi dễ hơn.",
+      "Phím ESC giúp bạn quay lại menu hoặc đóng trình giả lập.",
+      "Đừng quên đăng nhập để lưu lịch sử chơi game và đồng bộ phím điều khiển."
+    ]
   },
   "stats": {
     "games": "GAMES",

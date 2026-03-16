@@ -109,7 +109,18 @@
     "information": "Information",
     "ratingSuccess": "Rating submitted successfully!",
     "addedToFavorites": "Added to favorites",
-    "removedFromFavorites": "Removed from favorites"
+    "removedFromFavorites": "Removed from favorites",
+    "loadingTips": "DID YOU KNOW?",
+    "loadingTipsList": [
+      "You can save your game progress (Save State) at any time using F5.",
+      "Use F8 to quickly load your most recent saved state.",
+      "Playing in the browser means no emulator software installation required.",
+      "PS1/PSP games require large data downloads, please be patient!",
+      "Game data is cached in your browser for faster loading next time.",
+      "Connect a Gamepad via USB or Bluetooth for better control.",
+      "Press ESC to return to the menu or close the emulator.",
+      "Don't forget to login to save your history and sync controls."
+    ]
   },
   "stats": {
     "games": "GAMES",

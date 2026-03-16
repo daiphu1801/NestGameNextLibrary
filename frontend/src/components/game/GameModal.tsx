@@ -9,6 +9,7 @@ import { useLanguage } from '@/components/providers/LanguageProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { LoginModal, RegisterModal, ForgotPasswordModal } from '@/components/auth';
 import { GameTutorial } from './GameTutorial';
+import { GameLoadingOverlay } from './GameLoadingOverlay';
 
 interface GameModalProps {
   game: Game;
@@ -91,6 +92,13 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
 
     try {
       await emulatorService.loadGame(game.path, game.system || 'nes', containerRef.current);
+      
+      // Check if modal still open after potentially long load
+      if (!isOpen) {
+        emulatorService.unload();
+        return;
+      }
+
       storageService.addRecentGame(game.id);
 
       // Record play history if user is logged in
@@ -374,11 +382,7 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
           <div className="flex-1 relative bg-black min-w-0">
             {/* Loading State */}
             {isLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black z-10">
-                <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-                <p className="text-lg font-medium text-white">{t('game.loading') || 'Đang tải game'}...</p>
-                <p className="text-sm text-muted-foreground">{t('modal.pleaseWait') || 'Vui lòng đợi'}</p>
-              </div>
+              <GameLoadingOverlay game={game} />
             )}
 
             {/* Error State */}

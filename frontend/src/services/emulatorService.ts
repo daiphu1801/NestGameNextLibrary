@@ -128,6 +128,7 @@ export type NESButton = 'up' | 'down' | 'left' | 'right' | 'a' | 'b' | 'x' | 'y'
 class EmulatorService {
   private currentEmulator: any = null;
   private isLoading = false;
+  private currentLoadId = 0;
   private _isOfflineMode = false;
   private readonly KEYBINDINGS_KEY = 'nestgame_keybindings';
   private readonly GAMEPAD_KEY = 'nestgame_gamepad';
@@ -294,6 +295,7 @@ class EmulatorService {
       return;
     }
 
+    const loadId = ++this.currentLoadId;
     this.isLoading = true;
 
     try {
@@ -301,12 +303,19 @@ class EmulatorService {
       if (this.currentEmulator) {
         await this.unload();
       }
+      
+      if (this.currentLoadId !== loadId) return;
 
       // Dynamic import Nostalgist
       const { Nostalgist } = await import('nostalgist');
+      
+      if (this.currentLoadId !== loadId) return;
 
       // Get ROM URL (tries local first, then R2)
       const romUrl = await this.getRomUrl(gamePath);
+      
+      if (this.currentLoadId !== loadId) return;
+      
       console.log('Loading ROM from:', romUrl);
 
       // Clear container and create canvas
@@ -345,6 +354,8 @@ class EmulatorService {
       else if (system === 'ps1' || system === 'psx') core = 'pcsx_rearmed';
       else if (system === 'psp') core = 'ppsspp';
       else if (system === 'saturn') core = 'beetle_saturn';
+
+      if (this.currentLoadId !== loadId) return;
 
       // Launch emulator with canvas, keyboard + gamepad controls
       this.currentEmulator = await Nostalgist.launch({
@@ -427,6 +438,9 @@ class EmulatorService {
   }
 
   async unload(): Promise<void> {
+    // Cancel any pending loads
+    this.currentLoadId++;
+    
     if (this.currentEmulator) {
       try {
         await this.currentEmulator.exit();
