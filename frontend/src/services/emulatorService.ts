@@ -291,7 +291,6 @@ class EmulatorService {
   async loadGame(gamePath: string, system: string = 'nes', container: HTMLElement): Promise<void> {
     // Cancel any previous pending load and start a new one.
     // This prevents a "stuck" state where subsequent calls are ignored.
-    this.currentLoadId++;
     const loadId = ++this.currentLoadId;
     this.isLoading = true;
     console.log('[emulatorService] loadGame start', { gamePath, system, loadId });
@@ -466,10 +465,16 @@ class EmulatorService {
     
     if (this.currentEmulator) {
       try {
+        // Clear any canvas elements created by the emulator
+        const canvas = document.querySelector('canvas.emulator-canvas');
+        if (canvas && canvas.parentElement) {
+          canvas.parentElement.innerHTML = '';
+        }
         await this.currentEmulator.exit();
         this.currentEmulator = null;
       } catch (error) {
         console.error('Failed to unload emulator:', error);
+        this.currentEmulator = null;
       }
     }
   }

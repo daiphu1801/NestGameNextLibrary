@@ -48,7 +48,6 @@ export default function PlayPage() {
   const pageRef = useRef<HTMLDivElement>(null);
 
   const [game, setGame] = useState<Game | null>(null);
-  const [isGameOfMonth, setIsGameOfMonth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -254,14 +253,6 @@ export default function PlayPage() {
 
       setGame(gameData);
 
-      // Check if this game is the Game of the Month
-      try {
-        const gotm = await gameService.getGameOfTheMonth();
-        setIsGameOfMonth(!!gotm && gotm.id === gameData.id);
-      } catch (err) {
-        setIsGameOfMonth(false);
-      }
-
       // Load hot games (exclude current game)
       const featured = gameService.getFeaturedGames(6);
       setHotGames(featured.filter(g => g.id !== gameData.id).slice(0, 5));
@@ -296,6 +287,7 @@ export default function PlayPage() {
       }
 
       setIsLoading(false);
+      setGlobalLoading?.(false);
 
       // Show tutorial if first time
       const tutorialSeen = localStorage.getItem('nestgame_tutorial_seen');
@@ -548,7 +540,7 @@ export default function PlayPage() {
           className="flex-1 flex items-center justify-center bg-black relative transition-all duration-300 overflow-hidden"
         >
           {/* Loading State */}
-          {isLoading && game && isGameOfMonth && (
+          {isLoading && game && (
             <GameLoadingOverlay
               game={game}
               onClose={() => router.back()}
