@@ -304,17 +304,26 @@ class EmulatorService {
         await this.unload();
       }
       
-      if (this.currentLoadId !== loadId) return;
+      if (this.currentLoadId !== loadId) {
+        this.isLoading = false;
+        return;
+      }
 
       // Dynamic import Nostalgist
       const { Nostalgist } = await import('nostalgist');
       
-      if (this.currentLoadId !== loadId) return;
+      if (this.currentLoadId !== loadId) {
+        this.isLoading = false;
+        return;
+      }
 
       // Get ROM URL (tries local first, then R2)
       const romUrl = await this.getRomUrl(gamePath);
       
-      if (this.currentLoadId !== loadId) return;
+      if (this.currentLoadId !== loadId) {
+        this.isLoading = false;
+        return;
+      }
       
       console.log('Loading ROM from:', romUrl);
 
@@ -355,7 +364,10 @@ class EmulatorService {
       else if (system === 'psp') core = 'ppsspp';
       else if (system === 'saturn') core = 'beetle_saturn';
 
-      if (this.currentLoadId !== loadId) return;
+      if (this.currentLoadId !== loadId) {
+        this.isLoading = false;
+        return;
+      }
 
       // Launch emulator with canvas, keyboard + gamepad controls
       this.currentEmulator = await Nostalgist.launch({
@@ -440,6 +452,8 @@ class EmulatorService {
   async unload(): Promise<void> {
     // Cancel any pending loads
     this.currentLoadId++;
+    // Ensure loading flag is cleared when unloading
+    this.isLoading = false;
     
     if (this.currentEmulator) {
       try {

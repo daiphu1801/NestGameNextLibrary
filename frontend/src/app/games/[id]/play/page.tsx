@@ -8,6 +8,7 @@ import {
   ArrowLeft, Loader2, AlertCircle, Maximize2, Minimize2,
   Save, FolderOpen, X, Trash2, LogIn, Heart, Gamepad2
 } from 'lucide-react';
+import { GameLoadingOverlay } from '@/components/game/GameLoadingOverlay';
 import { Game } from '@/types';
 import { gameService } from '@/services/gameService';
 import { emulatorService } from '@/services/emulatorService';
@@ -45,6 +46,7 @@ export default function PlayPage() {
   const pageRef = useRef<HTMLDivElement>(null);
 
   const [game, setGame] = useState<Game | null>(null);
+  const [isGameOfMonth, setIsGameOfMonth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -247,6 +249,14 @@ export default function PlayPage() {
       }
 
       setGame(gameData);
+
+      // Check if this game is the Game of the Month
+      try {
+        const gotm = await gameService.getGameOfTheMonth();
+        setIsGameOfMonth(!!gotm && gotm.id === gameData.id);
+      } catch (err) {
+        setIsGameOfMonth(false);
+      }
 
       // Load hot games (exclude current game)
       const featured = gameService.getFeaturedGames(6);
@@ -532,11 +542,11 @@ export default function PlayPage() {
           className="flex-1 flex items-center justify-center bg-black relative transition-all duration-300 overflow-hidden"
         >
           {/* Loading State */}
-          {isLoading && game && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black z-10">
-              <Loader2 className="h-12 w-12 animate-spin text-purple-500 mb-4" />
-              <p className="text-lg font-medium text-white">{t('game.loading')}...</p>
-            </div>
+          {isLoading && game && isGameOfMonth && (
+            <GameLoadingOverlay
+              game={game}
+              onClose={() => router.back()}
+            />
           )}
 
           {/* Error State */}
