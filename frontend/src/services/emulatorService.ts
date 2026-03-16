@@ -289,14 +289,12 @@ class EmulatorService {
   }
 
   async loadGame(gamePath: string, system: string = 'nes', container: HTMLElement): Promise<void> {
-    // Skip if already loading
-    if (this.isLoading) {
-      console.log('Game is already loading, skipping...');
-      return;
-    }
-
+    // Cancel any previous pending load and start a new one.
+    // This prevents a "stuck" state where subsequent calls are ignored.
+    this.currentLoadId++;
     const loadId = ++this.currentLoadId;
     this.isLoading = true;
+    console.log('[emulatorService] loadGame start', { gamePath, system, loadId });
 
     try {
       // Unload previous game if any
@@ -319,6 +317,7 @@ class EmulatorService {
 
       // Get ROM URL (tries local first, then R2)
       const romUrl = await this.getRomUrl(gamePath);
+      console.log('[emulatorService] romUrl resolved', romUrl);
       
       if (this.currentLoadId !== loadId) {
         this.isLoading = false;
@@ -347,6 +346,13 @@ class EmulatorService {
       `;
 
       container.appendChild(canvas);
+      // Log canvas/client sizes for debugging
+      try {
+        const rect = container.getBoundingClientRect();
+        console.log('[emulatorService] container size', { width: rect.width, height: rect.height });
+      } catch (err) {
+        // ignore
+      }
 
       // Get custom keybindings
       const keys = this.getKeybindings();
@@ -441,10 +447,13 @@ class EmulatorService {
         },
       });
 
+      console.log('[emulatorService] emulator launched successfully', { loadId });
       this.isLoading = false;
     } catch (error) {
       this.isLoading = false;
-      console.error('Failed to load game:', error);
+      // Ensure no emulator reference remains
+      this.currentEmulator = null;
+      console.error('[emulatorService] Failed to load game:', error);
       throw error;
     }
   }
