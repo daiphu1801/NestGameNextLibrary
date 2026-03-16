@@ -16,6 +16,7 @@ import { saveStateService, SaveSlotInfo } from '@/services/saveStateService';
 import { userService } from '@/services/userService';
 import { storageService } from '@/services/storageService';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useLoading } from '@/components/providers/LoadingProvider';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { useToast } from '@/components/providers/ToastProvider';
@@ -38,6 +39,7 @@ export default function PlayPage() {
   const { t, locale } = useLanguage();
   const { showToast } = useToast();
   const { isFavorite: checkIsFavorite, toggleFavorite: toggleFav } = useFavorites();
+  const { isLoading: globalIsLoading, setIsLoading: setGlobalLoading } = useLoading();
 
   const isMobile = useMobileDetection();
   const { lockLandscape, unlock } = useScreenOrientation();
@@ -234,6 +236,8 @@ export default function PlayPage() {
   const loadGameData = async () => {
     try {
       setIsLoading(true);
+      // also show global loading overlay
+      setGlobalLoading?.(true);
 
       // Load game by ID
       let allGames = gameService.getAllGames();
@@ -267,6 +271,7 @@ export default function PlayPage() {
       router.push('/library');
     } finally {
       setIsLoading(false);
+      setGlobalLoading?.(false);
     }
   };
 
@@ -275,8 +280,8 @@ export default function PlayPage() {
       setError('Game path not found');
       return;
     }
-
     setIsLoading(true);
+    setGlobalLoading?.(true);
     setError(null);
 
     try {
@@ -304,6 +309,7 @@ export default function PlayPage() {
       console.error('Failed to load game:', err);
       setError('Failed to load game. Please check your configuration.');
       setIsLoading(false);
+      setGlobalLoading?.(false);
     }
   };
 
