@@ -50,6 +50,16 @@ const nextConfig = {
         hostname: 'cache.downloadroms.io',
       },
       {
+        // RAWG API images
+        protocol: 'https',
+        hostname: 'media.rawg.io',
+      },
+      {
+        // IGDB images (used in leaderboard)
+        protocol: 'https',
+        hostname: 'images.igdb.com',
+      },
+      {
         // General wildcard for other image sources found by Auto-Fix
         protocol: 'https',
         hostname: '**',
