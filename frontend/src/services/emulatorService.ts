@@ -261,20 +261,21 @@ class EmulatorService {
    * Priority: Cloudinary URL (proxied) → local API → R2 fallback
    */
   private async getRomUrl(gamePath: string): Promise<string> {
-    // Cloudinary URLs: proxy through our API to avoid 401/CORS issues
+    // For Vercel Production, passing large ROMs through /api/roms/proxy often hits
+    // the 4.5MB payload limit or 10s Serverless Function timeout, resulting in a broken zip.
+    // Since Cloudflare R2 now has CORS configured, we will load Cloudinary/R2 URLs DIRECTLY
+    // instead of proxying them.
+    
     if (gamePath.startsWith('https://res.cloudinary.com/')) {
-      const proxyUrl = `/api/roms/proxy?url=${encodeURIComponent(gamePath)}`;
-      console.log('☁️ Loading ROM via Cloudinary proxy:', proxyUrl);
+      console.log('☁️ Loading ROM direct from Cloudinary:', gamePath);
       this._isOfflineMode = false;
-      return proxyUrl;
+      return gamePath;
     }
 
-    // R2 public bucket URLs: also proxy to avoid CORS issues
     if (/^https:\/\/pub-[a-z0-9]+\.r2\.dev\//.test(gamePath)) {
-      const proxyUrl = `/api/roms/proxy?url=${encodeURIComponent(gamePath)}`;
-      console.log('☁️ Loading ROM via R2 proxy:', proxyUrl);
+      console.log('☁️ Loading ROM direct from R2:', gamePath);
       this._isOfflineMode = false;
-      return proxyUrl;
+      return gamePath;
     }
 
     // Other full URLs (CDN, etc.): use directly
@@ -499,12 +500,24 @@ class EmulatorService {
 
       console.log('[emulatorService] emulator launched successfully', { loadId });
       this.isLoading = false;
-    } catch (error) {
+    } catch (error: any) {
       this.isLoading = false;
       // Ensure no emulator reference remains
       this.currentEmulator = null;
       console.error('[emulatorService] Failed to load game:', error);
-      throw error;
+      
+      let errorMsg = 'Failed to load game. Please check your configuration.';
+      const errMsgStr = error?.message || String(error);
+      
+      if (errMsgStr.includes('Failed to fetch') || errMsgStr.includes('NetworkError')) {
+          errorMsg = 'Lỗi kết nối mạng hoặc không tải được ROM. Có thể do trình duyệt chặn CORS (thử dùng trình duyệt khác).';
+      } else if (errMsgStr.includes('SharedArrayBuffer')) {
+          errorMsg = 'Trình duyệt của bạn không hỗ trợ SharedArrayBuffer (bắt buộc cho giả lập). Hãy dùng Chrome/Edge/Firefox bản mới nhất.';
+      } else if (errMsgStr.includes('core')) {
+          errorMsg = 'Không tải được lõi giả lập (Core). Vui lòng kiểm tra lại kết nối mạng.';
+      }
+      
+      throw new Error(errorMsg);
     }
   }
 

@@ -300,9 +300,10 @@ export default function PlayPage() {
 
       // Don't auto-focus to prevent auto-scroll
       // containerRef.current?.focus();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to load game:', err);
-      setError('Failed to load game. Please check your configuration.');
+      // Surface actual error from emulator service, else fallback
+      setError(err?.message || 'Failed to load game. Please check your configuration.');
       setIsLoading(false);
       setGlobalLoading?.(false);
     }
