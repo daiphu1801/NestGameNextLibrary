@@ -75,7 +75,7 @@ function ImagePreview({ url, label }: { url: string; label: string }) {
         <div className="aspect-video rounded-md overflow-hidden relative" style={{ border: '1px solid #2E3A47' }}>
             {loading && <div className="absolute inset-0 flex items-center justify-center" style={{ background: '#1C2434' }}><Loader2 className="w-4 h-4 animate-spin text-[#3C50E0]" /></div>}
             {ok ? (
-                <img src={url} alt={label} className="w-full h-full object-cover" />
+                <img src={url} alt={label} crossOrigin="anonymous" className="w-full h-full object-cover" />
             ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-1" style={{ background: '#1C2434' }}>
                     <AlertCircle className="w-4 h-4 text-[#FB5454]" />
@@ -235,7 +235,7 @@ function RAWGImageFinder({ onApply }: { onApply: (data: any) => void }) {
                     <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
                         {results.map((g, i) => (
                             <div key={g.id} onClick={() => setSelectedIdx(i)} className={`flex-shrink-0 w-32 cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${i === selectedIdx ? 'border-primary' : 'border-[#2E3A47] opacity-60'}`}>
-                                <img src={g.background_image} className="aspect-video w-full object-cover" />
+                                <img src={g.background_image} crossOrigin="anonymous" className="aspect-video w-full object-cover" />
                                 <p className="p-1.5 text-[10px] text-white font-bold truncate">{g.name}</p>
                             </div>
                         ))}
@@ -367,7 +367,7 @@ export default function AdminGameMonthPage() {
                     {gotm ? (
                         <div className="flex flex-col md:flex-row gap-10">
                             <div className="w-full md:w-48 aspect-[3/4] rounded-2xl overflow-hidden bg-black/50 border border-[#2E3A47] shadow-xl">
-                                {gotm.imageUrl ? <img src={gotm.imageUrl} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Gamepad2 className="w-12 h-12 text-[#333A48]" /></div>}
+                                {gotm.imageUrl ? <img src={gotm.imageUrl} crossOrigin="anonymous" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Gamepad2 className="w-12 h-12 text-[#333A48]" /></div>}
                             </div>
                             <div className="flex-1 space-y-6">
                                 <div>
