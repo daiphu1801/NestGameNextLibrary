@@ -97,7 +97,7 @@ function ImagePreview({ url, label }: { url: string; label: string }) {
         <div className="aspect-video rounded-md overflow-hidden relative" style={{ border: '1px solid #2E3A47' }}>
             {loading && <div className="absolute inset-0 flex items-center justify-center" style={{ background: '#1C2434' }}><Loader2 className="w-4 h-4 animate-spin text-[#3C50E0]" /></div>}
             {ok ? (
-                <img src={url} alt={label} crossOrigin="anonymous" className="w-full h-full object-cover" />
+                <img src={url} alt={label} className="w-full h-full object-cover" />
             ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-1" style={{ background: '#1C2434' }}>
                     <AlertCircle className="w-4 h-4 text-[#FB5454]" />
@@ -346,7 +346,7 @@ function RAWGImageFinder({ defaultName = '', onApply }: RAWGFinderProps) {
                             >
                                 <div className="aspect-video w-full relative">
                                     {game.background_image ? (
-                                        <img src={game.background_image} alt={game.name} crossOrigin="anonymous" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                        <img src={game.background_image} alt={game.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-5 h-5 text-[#637381]" /></div>
                                     )}
@@ -736,7 +736,7 @@ function AdminGamesContent() {
                                     <td className="px-5 py-3.5">
                                         <div className="flex items-center gap-3">
                                             {game.imageUrl ? (
-                                                <img src={game.imageUrl} alt="" crossOrigin="anonymous" className="w-10 h-10 rounded-md object-cover" style={{ border: '1px solid #2E3A47' }} />
+                                                <img src={game.imageUrl} alt="" className="w-10 h-10 rounded-md object-cover" style={{ border: '1px solid #2E3A47' }} />
                                             ) : (
                                                 <div className="w-10 h-10 rounded-md flex items-center justify-center text-[#637381] text-xs" style={{ background: '#1C2434' }}>N/A</div>
                                             )}

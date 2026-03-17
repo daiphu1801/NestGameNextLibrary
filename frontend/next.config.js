@@ -60,6 +60,11 @@ const nextConfig = {
         hostname: 'images.igdb.com',
       },
       {
+        // IGN images (often found in search results)
+        protocol: 'https',
+        hostname: 'assets-prd.ignimgs.com',
+      },
+      {
         // General wildcard for other image sources found by Auto-Fix
         protocol: 'https',
         hostname: '**',

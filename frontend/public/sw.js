@@ -30,13 +30,28 @@ self.addEventListener('activate', (event) => {
 // Fetch: network-first for pages, cache-first for static assets
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
-
+  
   // Skip non-GET requests
   if (request.method !== 'GET') return;
 
+  // Only handle http and https requests
+  if (!request.url.startsWith('http')) return;
+
+  const url = new URL(request.url);
+
   // Skip API requests and ROM proxies
   if (url.pathname.startsWith('/api/')) return;
+
+  // Skip external image domains that cause COEP/CORP issues in Service Workers
+  const externalDomains = [
+    'media.rawg.io',
+    'thumbnails.libretro.com',
+    'assets-prd.ignimgs.com',
+    'images.igdb.com'
+  ];
+  if (externalDomains.some(domain => url.hostname.includes(domain))) {
+    return;
+  }
 
   // Cache-first for static assets (JS, CSS, images, WASM)
   if (
@@ -47,6 +62,8 @@ self.addEventListener('fetch', (event) => {
       caches.match(request).then((cached) => {
         if (cached) return cached;
         return fetch(request).then((response) => {
+          // Opaque responses (status 0) can still be cached if they are basic resources,
+          // but for external images we already skipped them above.
           if (response.ok) {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
