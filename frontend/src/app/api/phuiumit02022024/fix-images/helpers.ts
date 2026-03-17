@@ -1,10 +1,10 @@
 /**
  * Shared helpers for admin image fix routes.
- * Used by both /api/admin/fix-images (bulk SSE) and /api/admin/fix-images/single.
+ * Used by both /api/phuiumit02022024/fix-images (bulk SSE) and /api/phuiumit02022024/fix-images/single.
  */
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-const ADMIN_API = `${API_BASE}/admin`;
+const ADMIN_API = `${API_BASE}/phuiumit02022024`;
 
 const NES_LIBRETRO_BASE =
     'https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%20Entertainment%20System';

@@ -16,12 +16,14 @@ import { cn } from '@/lib/utils';
 
 interface ControlsPanelProps {
   system?: string;
+  isZapper?: boolean;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
 }
 
 export function ControlsPanel({
   system = 'nes',
+  isZapper = false,
   isCollapsed = false,
   onToggleCollapse,
 }: ControlsPanelProps) {
@@ -70,7 +72,7 @@ export function ControlsPanel({
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto custom-scrollbar p-3">
-            <ControlsGuideCompact system={system} />
+            <ControlsGuideCompact system={system} isZapper={isZapper} />
           </div>
         </>
       )}
@@ -229,9 +231,9 @@ export function HotGamesPanel({
 
 // ================================================================
 // LEGACY EXPORT — for mobile drawer compatibility
-// ================================================================
 interface PlayTutorialPanelProps {
   system?: string;
+  isZapper?: boolean;
   hotGames?: Game[];
   onGameClick?: (gameId: number) => void;
   isCollapsed?: boolean;
@@ -242,6 +244,7 @@ interface PlayTutorialPanelProps {
 
 export function PlayTutorialPanel({
   system = 'nes',
+  isZapper = false,
   hotGames = [],
   onGameClick,
 }: PlayTutorialPanelProps) {
@@ -260,7 +263,7 @@ export function PlayTutorialPanel({
           </div>
         </div>
         <div className="p-3">
-          <ControlsGuideCompact system={system} />
+          <ControlsGuideCompact system={system} isZapper={isZapper} />
         </div>
       </div>
 
@@ -285,7 +288,7 @@ export function PlayTutorialPanel({
 // ============================================
 // Controls Guide — Balanced compact layout
 // ============================================
-function ControlsGuideCompact({ system = 'nes' }: { system?: string }) {
+function ControlsGuideCompact({ system = 'nes', isZapper = false }: { system?: string, isZapper?: boolean }) {
   const { t } = useLanguage();
   const isAdvancedSystem = ['snes', 'gba', 'genesis', 'arcade', 'ps1', 'psx', 'psp'].includes(system.toLowerCase());
 
@@ -300,6 +303,7 @@ function ControlsGuideCompact({ system = 'nes' }: { system?: string }) {
           : [['K', 'A'], ['J', 'B']]
         }
       />
+      
       <BalancedPlayerCard
         tag="P2" label={t('docs.controls.player2')} tagColor="pink"
         moveKeys={['↑', '←', '↓', '→']}
@@ -308,6 +312,22 @@ function ControlsGuideCompact({ system = 'nes' }: { system?: string }) {
           : [['NP2', 'A'], ['NP1', 'B']]
         }
       />
+      
+      {isZapper && (
+        <div className="rounded-xl border bg-pink-500/[0.05] border-pink-500/[0.1] p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-pink-500/15 text-pink-400">P2 (Zapper)</span>
+            <span className="text-[10px] font-bold text-pink-400">Light Gun</span>
+          </div>
+          <div className="flex flex-col gap-2 mt-3">
+            <KeyRow keyName="Click Trái" label="Bắn đạn" color="emerald" />
+            <KeyRow keyName="Click Phải" label="Bắn trượt" color="emerald" />
+            <div className="text-[9px] text-slate-500 mt-2 mb-1 border-t border-white/5 pt-2 uppercase tracking-wider">Bàn phím:</div>
+            <KeyRow keyName="N" label="Bắn đạn" color="white" />
+            <KeyRow keyName="M" label="Bắn trượt" color="white" />
+          </div>
+        </div>
+      )}
 
       {/* Common */}
       <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-3">

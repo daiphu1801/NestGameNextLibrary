@@ -87,7 +87,7 @@ export default function AdminImagesPage() {
         const mode = autoFixMode ? 'fix' : 'preview';
 
         try {
-            const res = await fetch(`/api/admin/fix-images?mode=${mode}`, {
+            const res = await fetch(`/api/phuiumit02022024/fix-images?mode=${mode}`, {
                 signal: ctrl.signal,
                 headers: { 'Authorization': getToken() ? `Bearer ${getToken()}` : '' },
             });
@@ -154,7 +154,7 @@ export default function AdminImagesPage() {
     const findImageForGame = useCallback(async (gameId: number) => {
         setBrokenGames(prev => prev.map(g => g.id === gameId ? { ...g, searching: true, foundUrl: undefined } : g));
         try {
-            const res = await fetch(`/api/admin/fix-images/single?gameId=${gameId}`, {
+            const res = await fetch(`/api/phuiumit02022024/fix-images/single?gameId=${gameId}`, {
                 headers: { 'Authorization': getToken() ? `Bearer ${getToken()}` : '' },
             });
             if (res.ok) {

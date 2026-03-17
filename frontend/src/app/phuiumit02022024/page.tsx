@@ -126,10 +126,10 @@ export default function AdminDashboardPage() {
                                 <p className="text-[#A5B4CB] text-sm">{today}</p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Link href="/admin/games" className="flex items-center gap-2 px-4 py-2.5 rounded-md text-white text-sm font-medium hover:brightness-110 transition-all" style={{ background: '#3C50E0' }}>
+                                <Link href="/phuiumit02022024/games" className="flex items-center gap-2 px-4 py-2.5 rounded-md text-white text-sm font-medium hover:brightness-110 transition-all" style={{ background: '#3C50E0' }}>
                                     <Gamepad2 className="w-4 h-4" /> Quản lý Games
                                 </Link>
-                                <Link href="/admin/activity" className="flex items-center gap-2 px-4 py-2.5 rounded-md text-[#A5B4CB] text-sm font-medium border hover:text-white hover:border-[#3C50E0]/50 transition-all" style={{ borderColor: '#2E3A47' }}>
+                                <Link href="/phuiumit02022024/activity" className="flex items-center gap-2 px-4 py-2.5 rounded-md text-[#A5B4CB] text-sm font-medium border hover:text-white hover:border-[#3C50E0]/50 transition-all" style={{ borderColor: '#2E3A47' }}>
                                     <Activity className="w-4 h-4" /> Lịch sử
                                 </Link>
                             </div>

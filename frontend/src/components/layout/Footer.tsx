@@ -10,7 +10,7 @@ export function Footer() {
     const pathname = usePathname();
     const currentYear = new Date().getFullYear();
 
-    if (pathname?.startsWith('/admin') || pathname?.includes('/play')) {
+    if (pathname?.startsWith('/phuiumit02022024') || pathname?.includes('/play')) {
         return null;
     }
 

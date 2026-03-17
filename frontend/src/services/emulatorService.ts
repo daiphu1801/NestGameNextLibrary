@@ -133,6 +133,28 @@ class EmulatorService {
   private readonly KEYBINDINGS_KEY = 'nestgame_keybindings';
   private readonly GAMEPAD_KEY = 'nestgame_gamepad';
 
+  // Danh sách game NES sử dụng Zapper (Light Gun)
+  private readonly ZAPPER_GAMES = [
+    'duck hunt',
+    'hogan\'s alley',
+    'wild gunman',
+    'barker bill\'s trick shooting',
+    'bayou billy',
+    'freedom force',
+    'gotcha',
+    'gumshoe',
+    'laser invasion',
+    'mechanized attack',
+    'operation wolf',
+    'shooting range',
+    'to the earth',
+  ];
+
+  isZapperGame(gameName: string): boolean {
+    const name = gameName.toLowerCase();
+    return this.ZAPPER_GAMES.some(z => name.includes(z));
+  }
+
   /**
    * Get current keybindings
    * Priority: LocalStorage -> Default
@@ -247,7 +269,15 @@ class EmulatorService {
       return proxyUrl;
     }
 
-    // Other full URLs (R2, CDN, etc.): use directly
+    // R2 public bucket URLs: also proxy to avoid CORS issues
+    if (/^https:\/\/pub-[a-z0-9]+\.r2\.dev\//.test(gamePath)) {
+      const proxyUrl = `/api/roms/proxy?url=${encodeURIComponent(gamePath)}`;
+      console.log('☁️ Loading ROM via R2 proxy:', proxyUrl);
+      this._isOfflineMode = false;
+      return proxyUrl;
+    }
+
+    // Other full URLs (CDN, etc.): use directly
     if (gamePath.startsWith('http://') || gamePath.startsWith('https://')) {
       console.log('🌐 Loading ROM from full URL:', gamePath);
       this._isOfflineMode = false;
@@ -261,12 +291,12 @@ class EmulatorService {
     try {
       const response = await fetch(localApiUrl, { method: 'HEAD' });
       if (response.ok) {
-        console.log('✅ ROM found locally:', cleanPath);
+        //console.log('✅ ROM found locally:', cleanPath);
         this._isOfflineMode = true;
         return localApiUrl;
       }
     } catch (error) {
-      console.log('⚠️ Local ROM check failed, trying online...');
+      //console.log('⚠️ Local ROM check failed, trying online...');
     }
 
     // Fallback to R2 cloud URL
@@ -276,7 +306,6 @@ class EmulatorService {
 
     const baseUrl = env.r2Url.endsWith('/') ? env.r2Url : `${env.r2Url}/`;
     const r2Url = `${baseUrl}${cleanPath}`;
-    console.log('🌐 Loading ROM from R2:', r2Url);
     this._isOfflineMode = false;
     return r2Url;
   }
@@ -288,7 +317,7 @@ class EmulatorService {
     return this._isOfflineMode;
   }
 
-  async loadGame(gamePath: string, system: string = 'nes', container: HTMLElement): Promise<void> {
+  async loadGame(gamePath: string, system: string = 'nes', container: HTMLElement, options?: { gameName?: string; inputDevice?: 'zapper' | 'standard' }): Promise<void> {
     // Cancel any previous pending load and start a new one.
     // This prevents a "stuck" state where subsequent calls are ignored.
     const loadId = ++this.currentLoadId;
@@ -300,7 +329,7 @@ class EmulatorService {
       if (this.currentEmulator) {
         await this.unload();
       }
-      
+
       if (this.currentLoadId !== loadId) {
         this.isLoading = false;
         return;
@@ -308,7 +337,7 @@ class EmulatorService {
 
       // Dynamic import Nostalgist
       const { Nostalgist } = await import('nostalgist');
-      
+
       if (this.currentLoadId !== loadId) {
         this.isLoading = false;
         return;
@@ -316,14 +345,14 @@ class EmulatorService {
 
       // Get ROM URL (tries local first, then R2)
       const romUrl = await this.getRomUrl(gamePath);
-      console.log('[emulatorService] romUrl resolved', romUrl);
-      
+      //console.log('[emulatorService] romUrl resolved', romUrl);
+
       if (this.currentLoadId !== loadId) {
         this.isLoading = false;
         return;
       }
-      
-      console.log('Loading ROM from:', romUrl);
+
+      //console.log('Loading ROM from:', romUrl);
 
       // Clear container and create canvas
       container.innerHTML = '';
@@ -331,6 +360,10 @@ class EmulatorService {
       canvas.className = 'emulator-canvas';
 
       // Force canvas to fill container width while maintaining aspect ratio
+      // Detect Zapper / Light Gun game
+      const isZapper = options?.inputDevice === 'zapper' ||
+        (system === 'nes' && options?.gameName ? this.isZapperGame(options.gameName) : false);
+
       canvas.style.cssText = `
         width: 100% !important;
         height: auto !important;
@@ -342,6 +375,7 @@ class EmulatorService {
         image-rendering: crisp-edges;
         display: block !important;
         margin: 0 auto !important;
+        ${isZapper ? 'cursor: crosshair !important;' : ''}
       `;
 
       container.appendChild(canvas);
@@ -379,6 +413,13 @@ class EmulatorService {
         core: core,
         rom: romUrl,
         element: canvas,
+        retroarchCoreConfig: {
+          ...(isZapper && core === 'fceumm' ? {
+            fceumm_zapper_mode: 'mouse',
+            fceumm_show_crosshair: 'enabled',
+            input_libretro_device_p2: '260'
+          } : {})
+        },
         retroarchConfig: {
           // ── Keyboard: Player 1 ──
           input_player1_up: keys.p1.up,
@@ -409,7 +450,8 @@ class EmulatorService {
           input_player2_select: keys.p2.select,
 
           // ── Device Configuration ──
-          input_libretro_device_p2: 1,      // 1 = RetroPad (Digital)
+          // Zapper / Light Gun: device 260 = RETRO_DEVICE_LIGHTGUN on port 2
+          input_libretro_device_p2: isZapper ? 260 : 1,
 
           // ── Joypad Mapping ──
           input_player1_joypad_index: 0,
@@ -443,6 +485,15 @@ class EmulatorService {
           input_player2_right_btn: String(gp.p2.right),
           input_player2_start_btn: String(gp.p2.start),
           input_player2_select_btn: String(gp.p2.select),
+
+          // ── Zapper / Light Gun Mouse Mapping ──
+          ...(isZapper ? {
+            input_player2_gun_trigger_mbtn: '1',          // Left click = shoot
+            input_player2_gun_offscreen_shot_mbtn: '2',   // Right click = offscreen shot
+            input_player2_gun_trigger: 'n',               // Keyboard fallback (N)
+            input_player2_gun_offscreen_shot: 'm',        // Keyboard fallback (M)
+            input_player2_mouse_index: '0',               // Use first mouse
+          } : {}),
         },
       });
 
@@ -462,7 +513,7 @@ class EmulatorService {
     this.currentLoadId++;
     // Ensure loading flag is cleared when unloading
     this.isLoading = false;
-    
+
     if (this.currentEmulator) {
       try {
         // Clear any canvas elements created by the emulator

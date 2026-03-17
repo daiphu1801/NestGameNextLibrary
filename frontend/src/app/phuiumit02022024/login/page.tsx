@@ -16,7 +16,7 @@ export default function AdminLoginPage() {
     // If already authenticated, redirect to dashboard
     useEffect(() => {
         if (adminService.isAuthenticated()) {
-            router.replace('/admin');
+            router.replace('/phuiumit02022024');
         }
     }, [router]);
 
@@ -27,7 +27,7 @@ export default function AdminLoginPage() {
 
         try {
             await adminService.login(email, password);
-            router.push('/admin');
+            router.push('/phuiumit02022024');
         } catch (err: any) {
             setError(err.message || 'Đăng nhập thất bại');
         } finally {

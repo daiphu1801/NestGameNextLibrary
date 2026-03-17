@@ -1,6 +1,6 @@
 import { getAuthHeaders } from './authService';
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/admin`;
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/phuiumit02022024`;
 
 const ADMIN_USER_KEY = 'admin_user';
 
@@ -47,7 +47,7 @@ async function apiRequest(endpoint: string, options: RequestInit = {}) {
 
     if (response.status === 401 || response.status === 403) {
         adminService.logout();
-        window.location.href = '/admin/login';
+        window.location.href = '/phuiumit02022024/login';
         throw new Error('Phiên đăng nhập hết hạn');
     }
 

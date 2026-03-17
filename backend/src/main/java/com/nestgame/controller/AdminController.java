@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/phuiumit02022024")
 @RequiredArgsConstructor
 public class AdminController {
 
@@ -144,7 +144,7 @@ public class AdminController {
     }
 
     /**
-     * POST /admin/games/reseed
+     * POST /phuiumit02022024/games/reseed
      * Reads games.json from classpath and inserts only games not yet in the DB.
      * Safe to call multiple times — existing games are never touched.
      */

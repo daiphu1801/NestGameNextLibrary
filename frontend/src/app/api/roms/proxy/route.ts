@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * Proxy route for Cloudinary ROM files.
+ * Proxy route for Cloudinary and R2 ROM files.
  * Emulator fetches: /api/roms/proxy?url=https://res.cloudinary.com/...
- * Server fetches Cloudinary (no CORS), streams back to browser.
- * This avoids 401/CORS issues when Cloudinary has access restrictions.
+ *              or: /api/roms/proxy?url=https://pub-xxx.r2.dev/...
+ * Server fetches upstream (no CORS), streams back to browser.
+ * This avoids 401/CORS issues with external storage providers.
  */
+
+function isAllowedUrl(url: string): boolean {
+  return url.startsWith('https://res.cloudinary.com/') || /^https:\/\/pub-[a-z0-9]+\.r2\.dev\//.test(url);
+}
 export async function GET(request: NextRequest) {
     const url = request.nextUrl.searchParams.get('url');
 
@@ -13,9 +18,9 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Missing url param' }, { status: 400 });
     }
 
-    // Only allow Cloudinary URLs
-    if (!url.startsWith('https://res.cloudinary.com/')) {
-        return NextResponse.json({ error: 'Only Cloudinary URLs are allowed' }, { status: 403 });
+    // Only allow Cloudinary and R2 URLs
+    if (!isAllowedUrl(url)) {
+        return NextResponse.json({ error: 'Only Cloudinary and R2 URLs are allowed' }, { status: 403 });
     }
 
     try {
@@ -57,7 +62,7 @@ export async function GET(request: NextRequest) {
 
 export async function HEAD(request: NextRequest) {
     const url = request.nextUrl.searchParams.get('url');
-    if (!url || !url.startsWith('https://res.cloudinary.com/')) {
+    if (!url || !isAllowedUrl(url)) {
         return new NextResponse(null, { status: 400 });
     }
 

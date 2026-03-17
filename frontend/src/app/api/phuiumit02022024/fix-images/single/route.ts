@@ -3,7 +3,7 @@ import { findLibretroImages, findWikipediaImage, findGoogleImage } from '../help
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
-// ─── GET /api/admin/fix-images/single?gameId=123 ─────────────────────────────
+// ─── GET /api/phuiumit02022024/fix-images/single?gameId=123 ─────────────────────────────
 export async function GET(request: NextRequest) {
     const gameId = request.nextUrl.searchParams.get('gameId');
     if (!gameId) return NextResponse.json({ error: 'Missing gameId' }, { status: 400 });

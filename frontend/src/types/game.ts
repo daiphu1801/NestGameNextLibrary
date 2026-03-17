@@ -14,6 +14,7 @@ export interface Game {
   year?: number;
   region?: string;
   system?: string;
+  inputDevice?: 'zapper' | 'standard';
   isFeatured?: boolean;
   fileName?: string;
   isGameOfMonth?: boolean;

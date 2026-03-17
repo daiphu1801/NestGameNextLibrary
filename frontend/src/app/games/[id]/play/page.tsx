@@ -276,7 +276,10 @@ export default function PlayPage() {
     setError(null);
 
     try {
-      await emulatorService.loadGame(game.path, game.system || 'nes', containerRef.current);
+      await emulatorService.loadGame(game.path, game.system || 'nes', containerRef.current, {
+        gameName: game.name,
+        inputDevice: game.inputDevice,
+      });
       storageService.addRecentGame(game.id);
 
       // Record play history if user is logged in
@@ -412,6 +415,8 @@ export default function PlayPage() {
     );
   }
 
+  const isZapper = game?.inputDevice === 'zapper' || (game?.system === 'nes' && !!game?.name && emulatorService.isZapperGame(game.name));
+
   return (
     <div
       ref={pageRef}
@@ -529,6 +534,7 @@ export default function PlayPage() {
           <div className="hidden lg:block">
             <ControlsPanel
               system={game?.system}
+              isZapper={isZapper}
               isCollapsed={isControlsCollapsed}
               onToggleCollapse={() => setIsControlsCollapsed(!isControlsCollapsed)}
             />
@@ -680,6 +686,7 @@ export default function PlayPage() {
                     <div className="flex-1 overflow-auto max-h-[calc(75vh-5rem)]">
                       <PlayTutorialPanel
                         system={game?.system}
+                        isZapper={isZapper}
                         hotGames={hotGames}
                         onGameClick={(gameId) => {
                           handleSwitchGame(gameId.toString());

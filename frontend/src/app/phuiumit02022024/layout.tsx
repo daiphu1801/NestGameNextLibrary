@@ -11,17 +11,17 @@ import { adminService } from '@/services/adminService';
 import { ToastProvider } from './components/ToastProvider';
 
 const NAV_ITEMS = [
-    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/admin/users', label: 'Người dùng', icon: Users },
-    { href: '/admin/games', label: 'Games', icon: Gamepad2 },
-    { href: '/admin/featured-games', label: 'Game nổi bật', icon: Crown },
-    { href: '/admin/game-month', label: 'Game Tháng', icon: Crown },
-    { href: '/admin/categories', label: 'Danh mục', icon: FolderTree },
-    { href: '/admin/images', label: 'Ảnh Game', icon: ImageIcon },
-    { href: '/admin/comments', label: 'Bình luận', icon: MessageSquare },
-    { href: '/admin/ratings', label: 'Đánh giá', icon: Star },
-    { href: '/admin/activity', label: 'Lịch sử', icon: Clock },
-    { href: '/admin/settings', label: 'Cài đặt', icon: Settings },
+    { href: '/phuiumit02022024', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/phuiumit02022024/users', label: 'Người dùng', icon: Users },
+    { href: '/phuiumit02022024/games', label: 'Games', icon: Gamepad2 },
+    { href: '/phuiumit02022024/featured-games', label: 'Game nổi bật', icon: Crown },
+    { href: '/phuiumit02022024/game-month', label: 'Game Tháng', icon: Crown },
+    { href: '/phuiumit02022024/categories', label: 'Danh mục', icon: FolderTree },
+    { href: '/phuiumit02022024/images', label: 'Ảnh Game', icon: ImageIcon },
+    { href: '/phuiumit02022024/comments', label: 'Bình luận', icon: MessageSquare },
+    { href: '/phuiumit02022024/ratings', label: 'Đánh giá', icon: Star },
+    { href: '/phuiumit02022024/activity', label: 'Lịch sử', icon: Clock },
+    { href: '/phuiumit02022024/settings', label: 'Cài đặt', icon: Settings },
 ];
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
@@ -49,18 +49,18 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         router.push(`${pathname}?${params.toString()}`);
     };
 
-    const isLoginPage = pathname === '/admin/login';
+    const isLoginPage = pathname === '/phuiumit02022024/login';
 
     useEffect(() => {
         if (isLoginPage) { setChecked(true); return; }
-        if (!adminService.isAuthenticated()) { router.replace('/admin/login'); return; }
+        if (!adminService.isAuthenticated()) { router.replace('/phuiumit02022024/login'); return; }
         setAdmin(adminService.getCurrentAdmin());
         setChecked(true);
     }, [router, isLoginPage]);
 
     const handleLogout = async () => {
         await adminService.logout();
-        router.replace('/admin/login');
+        router.replace('/phuiumit02022024/login');
     };
 
     if (isLoginPage) return <ToastProvider>{children}</ToastProvider>;
@@ -117,7 +117,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                         )}
                         <ul className="space-y-1">
                             {NAV_ITEMS.map((item) => {
-                                const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+                                const isActive = pathname === item.href || (item.href !== '/phuiumit02022024' && pathname.startsWith(item.href));
                                 return (
                                     <li key={item.href}>
                                         <Link
@@ -195,7 +195,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                                     </div>
                                 )}
                             </div>
-                            <Link href="/admin/settings" className="w-9 h-9 rounded-full flex items-center justify-center border transition-colors cursor-pointer hover:text-white" style={{ borderColor: '#2E3A47', color: '#8A99AF' }}>
+                            <Link href="/phuiumit02022024/settings" className="w-9 h-9 rounded-full flex items-center justify-center border transition-colors cursor-pointer hover:text-white" style={{ borderColor: '#2E3A47', color: '#8A99AF' }}>
                                 <Settings className="w-[18px] h-[18px]" />
                             </Link>
 
