@@ -58,11 +58,27 @@ export function FlashPlayer({ gameUrl }: FlashPlayerProps) {
         autoplay: 'on',
         unmuteOverlay: 'hidden',
         backgroundColor: '#000000',
-        logLevel: 'info'
+        letterbox: 'on',
+        quality: 'high',
+        logLevel: 'warn',
+        maxExecutionDuration: { secs: 30, nanos: 0 },
+        playerRuntime: 'flashPlayer',
+        splashScreen: false,
+        preferredRenderer: 'wgpu',
       });
       
-      // Auto focus canvas
-      setTimeout(() => player.focus(), 500);
+      // Aggressive auto-focus: try multiple times to ensure the game canvas captures input
+      const focusPlayer = () => {
+        try {
+          player.focus();
+          // Also try to focus the inner canvas/shadow element
+          const canvas = player.shadowRoot?.querySelector('canvas');
+          if (canvas) canvas.focus();
+        } catch {}
+      };
+      setTimeout(focusPlayer, 300);
+      setTimeout(focusPlayer, 1000);
+      setTimeout(focusPlayer, 2500);
 
     } catch (err: any) {
       console.error('Ruffle init error:', err);
@@ -82,6 +98,17 @@ export function FlashPlayer({ gameUrl }: FlashPlayerProps) {
     <div 
       className="w-full h-full bg-[#0a0a0a] flex flex-col items-center justify-center relative rounded-xl border border-white/5 overflow-hidden shadow-2xl group"
       tabIndex={0}
+      onClick={() => {
+        // Click-to-focus: ensure the Ruffle player grabs keyboard input
+        const rufflePlayer = containerRef.current?.querySelector('ruffle-player, ruffle-embed') as any;
+        if (rufflePlayer) {
+          rufflePlayer.focus();
+          try {
+            const canvas = rufflePlayer.shadowRoot?.querySelector('canvas');
+            if (canvas) canvas.focus();
+          } catch {}
+        }
+      }}
     >
       <Script 
          src="https://unpkg.com/@ruffle-rs/ruffle" 

@@ -9,6 +9,7 @@ import { gameService } from '@/services/gameService';
 import { validateEnv } from '@/config/env';
 import { Zap, Flame, MonitorPlay } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import { motion } from 'framer-motion';
 
 export default function FlashPortalPage() {
   const { allGames, isLoading: isGamesLoading, setGames } = useGameStore();
@@ -96,20 +97,48 @@ export default function FlashPortalPage() {
       <div className="container mx-auto px-4 lg:px-8 py-8 lg:py-12 relative z-10">
         
         {/* Flash Hero Banner */}
-        <div className="relative rounded-3xl overflow-hidden mb-12 border border-orange-500/20 bg-black/40 backdrop-blur-md shadow-2xl shadow-orange-900/20">
+        <motion.div 
+          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative rounded-3xl overflow-hidden mb-12 border border-orange-500/20 bg-black/40 backdrop-blur-md shadow-2xl shadow-orange-900/20"
+        >
           <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-rose-600/20" />
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500" />
           
           <div className="relative p-8 lg:p-12 flex flex-col items-center justify-center text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-500 to-rose-600 mb-6 shadow-lg shadow-orange-500/40 transform -rotate-6">
-              <Zap className="w-10 h-10 text-white fill-white animate-pulse" />
+            
+            {/* 3D Floating Icon Container */}
+            <div className="mb-8" style={{ perspective: "1000px" }}>
+              <motion.div 
+                animate={{ 
+                  y: [0, -15, 0],
+                  rotateZ: [-5, 5, -5],
+                  rotateY: [-20, 20, -20],
+                  rotateX: [10, -10, 10]
+                }}
+                transition={{ 
+                  duration: 5, 
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-gradient-to-br from-orange-500 to-rose-600 shadow-2xl shadow-orange-500/60 border border-orange-400/40 relative transform-style-3d cursor-pointer group"
+              >
+                <div className="absolute inset-0 rounded-3xl bg-white/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <Zap className="w-12 h-12 text-white fill-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
+              </motion.div>
             </div>
             
-            <h1 className="text-4xl lg:text-6xl font-black text-white tracking-tight mb-4">
+            <motion.h1 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
+              className="text-4xl lg:text-6xl font-black text-white tracking-tight mb-4"
+            >
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
                 FLASH
               </span> CLASSICS GATEWAY
-            </h1>
+            </motion.h1>
             
             <p className="text-lg text-orange-200/80 max-w-2xl mx-auto mb-8 leading-relaxed">
               Trở về tuổi thơ với hàng ngàn tựa game Flash huyền thoại (Y8, 24h, GameVui). 
@@ -126,10 +155,15 @@ export default function FlashPortalPage() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Flash Games Grid */}
-        <div className="space-y-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          className="space-y-6"
+        >
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold flex items-center gap-3 text-white">
               <div className="w-1 h-6 rounded-full bg-gradient-to-b from-orange-500 to-rose-500" />
@@ -157,7 +191,7 @@ export default function FlashPortalPage() {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </main>
