@@ -161,26 +161,106 @@ export function useFlashUpload() {
         setResults(null);
 
         try {
+            // STEP 1: Get presigned URLs
+            const fileMeta = files.map(f => ({ path: f.relativePath, size: f.size }));
+            const presignRes = await fetch('/api/roms/flash-presign', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ gameName: gameName.trim(), files: fileMeta })
+            });
+            const presignData = await presignRes.json();
+            if (!presignRes.ok) throw new Error(presignData.error || 'Không thể tạo phiên upload');
+
             const allResults: UploadResult[] = [];
             let mainSwfUrl = '';
+            let completed = 0;
 
-            for (let i = 0; i < files.length; i += BATCH_SIZE) {
-                const batch = files.slice(i, i + BATCH_SIZE);
-                const formData = new FormData();
-                formData.append('gameName', gameName.trim());
-                formData.append('entryFile', entryFile);
-                batch.forEach((entry, idx) => {
-                    formData.append(`file_${i + idx}`, entry.file);
-                    formData.append(`path_${i + idx}`, entry.relativePath);
-                });
+            const mode = presignData.mode;
 
-                const res = await fetch('/api/roms/flash-upload', { method: 'POST', body: formData });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Upload thất bại');
+            // Helper to update progress continuously
+            const reportProgress = () => {
+                completed++;
+                setProgress(Math.min(100, Math.round((completed / files.length) * 100)));
+            };
 
-                allResults.push(...(data.results || []));
-                if (data.mainSwfUrl) mainSwfUrl = data.mainSwfUrl;
-                setProgress(Math.min(100, Math.round(((i + batch.length) / files.length) * 100)));
+            // STEP 2: Concurrency Queue
+            const MAX_CONCURRENT = 5; // 5 parallel uploads max
+            
+            if (mode === 'r2') {
+                const urlMap = new Map<string, any>(presignData.files.map((p: any) => [p.path, p]));
+                
+                const uploadFileR2 = async (entry: FileEntry) => {
+                    const info = urlMap.get(entry.relativePath);
+                    if (!info) throw new Error('Missing presigned URL');
+                    
+                    const res = await fetch(info.presignedUrl, {
+                        method: 'PUT',
+                        body: entry.file,
+                        headers: { 'Content-Type': info.contentType || 'application/octet-stream' }
+                    });
+                    
+                    if (!res.ok) throw new Error('Upload HTTP ' + res.status);
+                    
+                    const ext = entry.relativePath.toLowerCase();
+                    if (entry.relativePath === entryFile || (ext.endsWith('.swf') && !mainSwfUrl)) {
+                        mainSwfUrl = info.publicUrl;
+                    }
+                    return { path: entry.relativePath, size: entry.size, status: 'ok' as const };
+                };
+
+                // Simple concurrency runner
+                let idx = 0;
+                const runWorkers = async () => {
+                    while (idx < files.length) {
+                        const current = files[idx++];
+                        try {
+                            const res = await uploadFileR2(current);
+                            allResults.push(res);
+                        } catch (err: any) {
+                            allResults.push({ path: current.relativePath, size: 0, status: 'error', error: err.message });
+                        } finally {
+                            reportProgress();
+                        }
+                    }
+                };
+                
+                const workers = Array.from({ length: Math.min(MAX_CONCURRENT, files.length) }, () => runWorkers());
+                await Promise.all(workers);
+                
+            } else {
+                // Local mode: still use normal FormData but file by file or small batches
+                const uploadFileLocal = async (entry: FileEntry) => {
+                    const fd = new FormData();
+                    fd.append('gameName', gameName.trim());
+                    fd.append('entryFile', entryFile);
+                    fd.append('file_0', entry.file);
+                    fd.append('path_0', entry.relativePath);
+                    
+                    const res = await fetch('/api/roms/flash-upload', { method: 'POST', body: fd });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || 'Upload error');
+                    
+                    if (data.mainSwfUrl) mainSwfUrl = data.mainSwfUrl;
+                    return data.results[0] as UploadResult;
+                };
+
+                let idx = 0;
+                const runWorkers = async () => {
+                    while (idx < files.length) {
+                        const current = files[idx++];
+                        try {
+                            const res = await uploadFileLocal(current);
+                            allResults.push(res);
+                        } catch (err: any) {
+                            allResults.push({ path: current.relativePath, size: 0, status: 'error', error: err.message });
+                        } finally {
+                            reportProgress();
+                        }
+                    }
+                };
+                
+                const workers = Array.from({ length: Math.min(MAX_CONCURRENT, files.length) }, () => runWorkers());
+                await Promise.all(workers);
             }
 
             setResults({
@@ -190,6 +270,7 @@ export function useFlashUpload() {
                 errorCount: allResults.filter(r => r.status === 'error').length,
                 results: allResults,
             });
+
         } catch (err: any) {
             setError(err.message || 'Upload thất bại');
         } finally {

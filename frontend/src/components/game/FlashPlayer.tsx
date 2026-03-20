@@ -61,10 +61,9 @@ export function FlashPlayer({ gameUrl }: FlashPlayerProps) {
         letterbox: 'on',
         quality: 'high',
         logLevel: 'warn',
-        maxExecutionDuration: { secs: 30, nanos: 0 },
+        maxExecutionDuration: 30,
         playerRuntime: 'flashPlayer',
         splashScreen: false,
-        preferredRenderer: 'wgpu',
       });
       
       // Aggressive auto-focus: try multiple times to ensure the game canvas captures input

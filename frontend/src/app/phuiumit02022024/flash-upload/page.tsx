@@ -210,12 +210,20 @@ export default function FlashUploadPage() {
 
                     {/* Help Card */}
                     <div className="rounded-xl p-5" style={{ background: '#1C2434' }}>
-                        <h3 className="text-sm font-bold text-[#DEE4EE] mb-3">📖 Hướng dẫn</h3>
+                        <h3 className="text-sm font-bold text-[#DEE4EE] mb-3">📖 Hướng dẫn chi tiết tạo game</h3>
                         <ol className="space-y-2 text-xs text-[#8A99AF] list-decimal list-inside">
-                            <li>Chọn thư mục game Flash (chứa file .swf + assets)</li>
-                            <li>Nhập tên game và chọn file .swf chính</li>
-                            <li>Nhấn Upload — hệ thống sẽ giữ nguyên cấu trúc thư mục</li>
-                            <li>Copy URL .swf chính → dùng khi tạo game Flash ở trang Games</li>
+                            <li>Chọn thư mục chứa game (phải bao gồm file .swf và các file liên quan)</li>
+                            <li>Nhập ID/Tên ngắn (VD: <code className="text-orange-400">bvn33</code>) và chọn file .swf chính để chạy</li>
+                            <li>Nhấn Upload — toàn bộ cấu trúc thư mục sẽ được giữ nguyên</li>
+                            <li>Khi upload xong, copy <strong className="text-orange-300">URL file .swf chính</strong></li>
+                            <li>Vào trang <strong>Admin → Games → Thêm Game mới</strong>:
+                                <ul className="list-disc list-inside ml-4 mt-1 space-y-1 text-[#636D80]">
+                                    <li>System: Chọn <strong>Flash Web</strong></li>
+                                    <li>ROM Path: <strong className="text-white">Dán URL file .swf vừa copy vào đây</strong></li>
+                                    <li>Điền các thông tin khác (Tên, Ảnh...) và Lưu</li>
+                                </ul>
+                            </li>
+                            <li>Ra ngoài trang chủ, giờ bạn có thể click vào card game để chơi ngay! 🎮</li>
                         </ol>
                     </div>
                 </div>
