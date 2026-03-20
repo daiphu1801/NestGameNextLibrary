@@ -1,5 +1,5 @@
 import type { ComboDefinition, ComboConfig, ComboSlots } from '@/types/combo';
-import type { NESButton } from '@/services/emulatorService';
+import type { NESButton } from '@/types/emulator';
 import { emulatorService } from '@/services/emulatorService';
 import { PRESET_COMBOS, DEFAULT_COMBO_SLOTS } from '@/data/comboPresets';
 

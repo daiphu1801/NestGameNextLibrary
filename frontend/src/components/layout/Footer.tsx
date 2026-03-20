@@ -31,8 +31,8 @@ export function Footer() {
                                 />
                             </div>
                             <div>
-                                <h3 className="font-black text-lg font-mono-tech">
-                                    <span className="text-gradient-cyan">NEST</span>
+                                <h3 className="font-black text-lg font-tech">
+                                    <span className="bg-gradient-cyan bg-clip-text text-transparent">NEST</span>
                                     <span className="text-foreground">GAME</span>
                                 </h3>
                                 <p className="text-[9px] text-muted-foreground uppercase tracking-[0.2em] font-medium">Classic NES Emulator</p>
@@ -134,7 +134,7 @@ export function Footer() {
                 <div className="py-6 border-t border-white/5 flex flex-col items-center gap-4">
                     <div className="flex flex-col md:flex-row items-center justify-between w-full gap-4">
                         {/* Copyright */}
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono-tech">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground font-tech">
                             <span>© {currentYear} NestGame.</span>
                         </div>
 

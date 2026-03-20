@@ -7,9 +7,9 @@ import { Game } from '@/types';
 import { cn } from '@/lib/utils';
 import { imageService } from '@/services/imageService';
 import { useLanguage } from '@/components/providers/LanguageProvider';
-import { useAuth } from '@/components/providers/AuthProvider';
 import { useToast } from '@/components/providers/ToastProvider';
-import { useFavorites } from '@/components/providers/FavoritesProvider';
+import { useFavoriteAction } from '@/features/favorites/hooks/useFavoriteAction';
+import { PlayButton, HotBadge, RegionBadge } from '@/components/ui';
 
 interface GameCardProps {
   game: Game;
@@ -22,9 +22,14 @@ interface GameCardProps {
 
 export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, priority = false, onClick }: GameCardProps) {
   const { t } = useLanguage();
-  const { user } = useAuth();
-  const { showToast } = useToast();
-  const { isFavorite: checkIsFavorite, toggleFavorite } = useFavorites();
+  
+  const { 
+    user, 
+    isFavorite, 
+    isAnimating, 
+    showLoginTooltip, 
+    handleFavoriteClick 
+  } = useFavoriteAction(game.id, onLoginRequired);
 
   const [imageUrl, setImageUrl] = useState(game.imageUrl || game.image || game.thumbnail || '/placeholder.png');
   const [fallbackUrls] = useState(() =>
@@ -32,36 +37,6 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
   );
   const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
   const [hasError, setHasError] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [showLoginTooltip, setShowLoginTooltip] = useState(false);
-
-  // Get favorite status from context (no local state needed)
-  const isFavorite = checkIsFavorite(game.id);
-
-  const handleFavoriteClick = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    // If not logged in, show login prompt
-    if (!user) {
-      setShowLoginTooltip(true);
-      setTimeout(() => setShowLoginTooltip(false), 2500);
-      if (onLoginRequired) {
-        onLoginRequired();
-      }
-      return;
-    }
-
-    // Trigger animation
-    setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 600);
-
-    try {
-      await toggleFavorite(game.id);
-    } catch (err) {
-      console.error('Failed to toggle favorite:', err);
-      showToast('Không thể kết nối server. Thử lại sau.', 'offline');
-    }
-  };
 
 
   const handleImageError = () => {
@@ -99,23 +74,23 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary to-muted">
             <div className="text-center p-4">
               <div className="text-5xl mb-3 opacity-40">🎮</div>
-              <p className="text-xs text-muted-foreground font-medium line-clamp-2 px-2 font-mono-tech uppercase">
+              <p className="text-xs text-muted-foreground font-medium line-clamp-2 px-2 font-tech uppercase">
                 {game.name}
               </p>
             </div>
           </div>
         )}
 
-        {/* Hover Overlay with Play + Details Buttons — desktop only */}
         <div className="hidden lg:flex absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex-col items-center justify-center gap-3">
           {onPlayClick && (
-            <button
-              onClick={(e) => { e.stopPropagation(); onPlayClick(); }}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-white font-bold text-sm transform scale-90 group-hover:scale-100 transition-all duration-300 shadow-lg shadow-primary/50 hover:bg-primary/90"
-            >
-              <Play className="h-4 w-4 fill-current" />
-              {t('game.playNow')}
-            </button>
+            <PlayButton 
+              variant="primary" 
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                onPlayClick(); 
+              }} 
+              className="transform scale-90 group-hover:scale-100" 
+            />
           )}
           {onDetailsClick && (
             <button
@@ -179,28 +154,19 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
         {game.rating && (
           <div className="absolute top-2 left-2 px-2 py-1 rounded bg-black/60 backdrop-blur-sm flex items-center gap-1 border border-white/10">
             <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-            <span className="text-xs font-semibold text-white font-mono-tech">{game.rating}</span>
+            <span className="text-xs font-semibold text-white font-tech">{game.rating}</span>
           </div>
         )}
 
         {/* Hot Badge */}
         {(game.isFeatured || (game.rating && game.rating >= 4.5)) && (
-          <div className="absolute bottom-2 left-2 px-2 py-1 rounded bg-gradient-to-r from-rose-500 to-orange-500 animate-pulse shadow-lg shadow-rose-500/30">
-            <span className="text-[10px] font-bold text-white uppercase tracking-wider font-mono-tech">🔥 HOT</span>
+          <div className="absolute bottom-2 left-2">
+            <HotBadge />
           </div>
         )}
 
         {/* Region Badge */}
-        {game.region && (
-          <div className="absolute bottom-2 right-2 px-2 py-1 rounded bg-black/70 backdrop-blur-sm border border-white/20">
-            <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider font-mono-tech">
-              {game.region === 'Japan' || game.region === 'J' ? '🇯🇵 JP' :
-                game.region === 'USA' || game.region === 'U' ? '🇺🇸 US' :
-                  game.region === 'Europe' || game.region === 'E' ? '🇪🇺 EU' :
-                    game.region}
-            </span>
-          </div>
-        )}
+          <RegionBadge region={game.region} className="absolute bottom-2 right-2" />
       </div>
 
       {/* Content */}
@@ -209,7 +175,7 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
           {game.name}
         </h3>
         <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span className="font-mono-tech">{game.year || 'Classic'}</span>
+          <span className="font-tech">{game.year || 'Classic'}</span>
           <div className="flex items-center gap-2">
             {user && isFavorite && (
               <span className="text-rose-500 animate-in fade-in duration-300">
@@ -227,7 +193,7 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
               else { sysStyles = "bg-red-500/10 text-red-400 border-red-500/20"; }
 
               return (
-                <span className={cn("px-2 py-0.5 rounded text-[10px] font-bold uppercase font-mono-tech border", sysStyles)}>
+                <span className={cn("px-2 py-0.5 rounded text-[10px] font-bold uppercase font-tech border", sysStyles)}>
                   {label}
                 </span>
               );
@@ -239,13 +205,14 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
         {(onPlayClick || onDetailsClick) && (
           <div className="lg:hidden flex items-center gap-2 pt-1">
             {onPlayClick && (
-              <button
-                onClick={(e) => { e.stopPropagation(); onPlayClick(); }}
-                className="flex-1 flex items-center justify-center gap-1 h-9 rounded-lg bg-primary text-white text-[11px] whitespace-nowrap active:scale-95 transition-transform hover:bg-primary/90"
-              >
-                <Play className="h-3 w-3 fill-current flex-shrink-0" />
-                {t('game.playNow')}
-              </button>
+              <PlayButton 
+                variant="compact" 
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  onPlayClick(); 
+                }} 
+                className="flex-1" 
+              />
             )}
             {onDetailsClick && (
               <button

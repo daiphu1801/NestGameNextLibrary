@@ -10,33 +10,22 @@ import { GameGrid } from '@/components/game/GameGrid';
 import { validateEnv } from '@/config/env';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { X, Search, RotateCcw } from 'lucide-react';
+import { useLibraryGames } from '@/features/games/hooks/useLibraryGames';
 
 // Search Indicator Component - Shows when filters are active
-function SearchIndicator() {
+function SearchIndicator({
+    searchQuery,
+    category,
+    region,
+    resetAllFilters,
+    setSearchQuery,
+    setCategory,
+    setRegion
+}: any) {
     const { t } = useLanguage();
-    const {
-        searchQuery,
-        currentCategory,
-        currentRegion,
-        allGames,
-        setSearchQuery,
-        setCategory,
-        setRegion,
-        setSort,
-        setFilteredGames
-    } = useGameStore();
-
-    const hasActiveFilters = searchQuery || currentCategory !== 'all' || currentRegion !== 'all';
+    const hasActiveFilters = searchQuery || category !== 'all' || region !== 'all';
 
     if (!hasActiveFilters) return null;
-
-    const resetAllFilters = () => {
-        setSearchQuery('');
-        setCategory('all');
-        setRegion('all');
-        setSort('name-asc');
-        setFilteredGames(gameService.sortGames(allGames, 'name-asc'));
-    };
 
     return (
         <div className="flex items-center gap-2 flex-wrap">
@@ -46,14 +35,7 @@ function SearchIndicator() {
                     <Search className="w-3 h-3 text-primary" />
                     <span className="text-sm font-medium text-primary">"{searchQuery}"</span>
                     <button
-                        onClick={() => {
-                            setSearchQuery('');
-                            // Re-apply other filters without search
-                            let filtered = allGames;
-                            filtered = gameService.filterByCategory(filtered, currentCategory);
-                            filtered = gameService.filterByRegion(filtered, currentRegion);
-                            setFilteredGames(filtered);
-                        }}
+                        onClick={() => setSearchQuery('')}
                         className="w-4 h-4 rounded-full bg-primary/30 hover:bg-primary/50 flex items-center justify-center transition-colors"
                     >
                         <X className="w-2.5 h-2.5 text-primary" />
@@ -62,17 +44,11 @@ function SearchIndicator() {
             )}
 
             {/* Category Badge */}
-            {currentCategory !== 'all' && (
+            {category !== 'all' && (
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-500/30">
-                    <span className="text-sm font-medium text-cyan-400">{currentCategory}</span>
+                    <span className="text-sm font-medium text-cyan-400">{category}</span>
                     <button
-                        onClick={() => {
-                            setCategory('all');
-                            let filtered = allGames;
-                            filtered = gameService.searchGames(filtered, searchQuery);
-                            filtered = gameService.filterByRegion(filtered, currentRegion);
-                            setFilteredGames(filtered);
-                        }}
+                        onClick={() => setCategory('all')}
                         className="w-4 h-4 rounded-full bg-cyan-500/30 hover:bg-cyan-500/50 flex items-center justify-center transition-colors"
                     >
                         <X className="w-2.5 h-2.5 text-cyan-400" />
@@ -81,17 +57,11 @@ function SearchIndicator() {
             )}
 
             {/* Region Badge */}
-            {currentRegion !== 'all' && (
+            {region !== 'all' && (
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/20 border border-orange-500/30">
-                    <span className="text-sm font-medium text-orange-400">{currentRegion}</span>
+                    <span className="text-sm font-medium text-orange-400">{region}</span>
                     <button
-                        onClick={() => {
-                            setRegion('all');
-                            let filtered = allGames;
-                            filtered = gameService.searchGames(filtered, searchQuery);
-                            filtered = gameService.filterByCategory(filtered, currentCategory);
-                            setFilteredGames(filtered);
-                        }}
+                        onClick={() => setRegion('all')}
                         className="w-4 h-4 rounded-full bg-orange-500/30 hover:bg-orange-500/50 flex items-center justify-center transition-colors"
                     >
                         <X className="w-2.5 h-2.5 text-orange-400" />
@@ -112,18 +82,8 @@ function SearchIndicator() {
 }
 
 export default function LibraryPage() {
-    const { setGames, isLoading, filteredGames, allGames, setSearchQuery, setCategory, setRegion, setSort, setSystem, setFilteredGames } = useGameStore();
+    const { setGames } = useGameStore();
     const { t } = useLanguage();
-
-    useEffect(() => {
-        return () => {
-            setSearchQuery('');
-            setCategory('all');
-            setRegion('all');
-            setSort('name-asc');
-            setSystem('all');
-        };
-    }, [setSearchQuery, setCategory, setRegion, setSort, setSystem]);
 
     useEffect(() => {
         validateEnv();
@@ -134,13 +94,31 @@ export default function LibraryPage() {
         loadGames();
     }, [setGames]);
 
+    const {
+        isLoading,
+        filteredGames,
+        paginatedGames,
+        searchQuery,
+        category,
+        region,
+        sort,
+        page,
+        totalPages,
+        setSearchQuery,
+        setCategory,
+        setRegion,
+        setSort,
+        setPage,
+        resetAllFilters
+    } = useLibraryGames();
+
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background">
                 <div className="text-center space-y-6 relative">
                     <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full" />
                     <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto relative z-10" />
-                    <p className="text-base font-medium text-muted-foreground animate-pulse relative z-10 font-mono-tech uppercase tracking-wider">
+                    <p className="text-base font-medium text-muted-foreground animate-pulse relative z-10 font-tech uppercase tracking-wider">
                         {t('game.loading')}...
                     </p>
                 </div>
@@ -188,7 +166,7 @@ export default function LibraryPage() {
             <div className="container mx-auto px-4 lg:px-8 py-4 sm:py-8">
                 {/* Page Header */}
                 <div className="mb-4 sm:mb-8">
-                    <h1 className="text-2xl sm:text-4xl font-black font-mono-tech uppercase tracking-wider mb-1 sm:mb-2">
+                    <h1 className="text-2xl sm:text-4xl font-black font-tech uppercase tracking-wider mb-1 sm:mb-2">
                         {t('game.library') || 'Game Library'}
                     </h1>
                     <p className="text-sm sm:text-base text-muted-foreground">
@@ -196,29 +174,47 @@ export default function LibraryPage() {
                     </p>
                     <div className="mt-2 sm:mt-4 flex items-center gap-3 sm:gap-4 flex-wrap">
                         <div className="flex items-center gap-2">
-                            <span className="text-primary font-mono-tech text-xl sm:text-2xl font-bold">{filteredGames.length}</span>
-                            <span className="text-muted-foreground font-mono-tech uppercase text-xs sm:text-base">{t('header.games') || 'Games'}</span>
+                            <span className="text-primary font-tech text-xl sm:text-2xl font-bold">{filteredGames.length}</span>
+                            <span className="text-muted-foreground font-tech uppercase text-xs sm:text-base">{t('header.games') || 'Games'}</span>
                         </div>
 
                         {/* Search Active Indicator with Reset */}
-                        <SearchIndicator />
+                        <SearchIndicator 
+                            searchQuery={searchQuery}
+                            category={category}
+                            region={region}
+                            resetAllFilters={resetAllFilters}
+                            setSearchQuery={setSearchQuery}
+                            setCategory={setCategory}
+                            setRegion={setRegion}
+                        />
                     </div>
                 </div>
 
                 {/* Category Filter */}
                 <div className="mb-3 sm:mb-6">
-                    <CategoryFilter />
+                    <CategoryFilter currentCategory={category} onChange={setCategory} />
                 </div>
 
                 {/* Sort & Region Filters */}
                 <div className="mb-4 sm:mb-8">
-                    <FilterToolbar />
+                    <FilterToolbar 
+                        currentSort={sort} 
+                        currentRegion={region} 
+                        onSortChange={setSort} 
+                        onRegionChange={setRegion} 
+                    />
                 </div>
 
                 {/* Game Grid */}
-                <GameGrid />
+                <GameGrid 
+                    games={paginatedGames}
+                    totalGames={filteredGames.length}
+                    currentPage={page}
+                    totalPages={totalPages}
+                    onPageChange={setPage}
+                />
             </div>
         </main>
     );
 }
-

@@ -12,9 +12,10 @@ import { validateEnv } from '@/config/env';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { useTheme } from 'next-themes';
 import { Gamepad2 } from 'lucide-react';
+import { useSystemGames } from '@/features/games/hooks/useSystemGames';
 
 export default function SystemsPage() {
-    const { setGames, isLoading, filteredGames, currentSystem, setSystem } = useGameStore();
+    const { setGames, currentSystem, setSystem } = useGameStore();
     const { t } = useLanguage();
     const { theme } = useTheme();
     const [mounted, setMounted] = useState(false);
@@ -22,6 +23,21 @@ export default function SystemsPage() {
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    const {
+        isLoading,
+        filteredGames,
+        paginatedGames,
+        category,
+        region,
+        sort,
+        page,
+        totalPages,
+        setCategory,
+        setRegion,
+        setSort,
+        setPage
+    } = useSystemGames();
 
     useEffect(() => {
         validateEnv();
@@ -48,7 +64,7 @@ export default function SystemsPage() {
                 <div className="text-center space-y-6 relative">
                     <div className="absolute inset-0 bg-purple-500/30 blur-3xl rounded-full" />
                     <div className="w-16 h-16 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mx-auto relative z-10" />
-                    <p className="text-base font-medium text-muted-foreground animate-pulse relative z-10 font-mono-tech uppercase tracking-wider">
+                    <p className="text-base font-medium text-muted-foreground animate-pulse relative z-10 font-tech uppercase tracking-wider">
                         Đang lấy danh sách game...
                     </p>
                 </div>
@@ -128,11 +144,11 @@ export default function SystemsPage() {
                 {/* Simple Header */}
                 <div className="mb-6 lg:mb-8 space-y-2">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-2xl sm:text-4xl font-black font-mono-tech uppercase tracking-wider mb-1 sm:mb-2">
+                        <h1 className="text-2xl sm:text-4xl font-black font-tech uppercase tracking-wider mb-1 sm:mb-2">
                             {t('systems.title') || 'Các Hệ Máy Game'}
                         </h1>
                         <div className="flex items-center gap-2 bg-secondary/50 rounded-lg px-3 py-1.5 shrink-0">
-                            <span className="text-xl font-bold font-mono-tech text-primary">
+                            <span className="text-xl font-bold font-tech text-primary">
                                 {filteredGames.length}
                             </span>
                             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden sm:inline-block">
@@ -151,12 +167,23 @@ export default function SystemsPage() {
 
                 {/* Optional Category and Advanced Filters */}
                 <div className="mb-6 flex flex-col gap-4">
-                    <CategoryFilter />
-                    <FilterToolbar />
+                    <CategoryFilter currentCategory={category} onChange={setCategory} />
+                    <FilterToolbar 
+                        currentSort={sort}
+                        currentRegion={region}
+                        onSortChange={setSort}
+                        onRegionChange={setRegion}
+                    />
                 </div>
 
                 {/* Game Grid */}
-                <GameGrid />
+                <GameGrid 
+                    games={paginatedGames}
+                    totalGames={filteredGames.length}
+                    currentPage={page}
+                    totalPages={totalPages}
+                    onPageChange={setPage}
+                />
             </div>
         </main>
     );

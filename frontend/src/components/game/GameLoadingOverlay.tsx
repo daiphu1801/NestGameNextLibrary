@@ -109,7 +109,7 @@ export function GameLoadingOverlay({ game, progress: manualProgress, tip: manual
 
         {/* Game Title & System */}
         <div className="text-center mb-10 space-y-3">
-          <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter drop-shadow-lg font-mono-tech uppercase">
+          <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter drop-shadow-lg font-tech uppercase">
             {game.name}
           </h2>
           <div className="flex items-center justify-center gap-3">

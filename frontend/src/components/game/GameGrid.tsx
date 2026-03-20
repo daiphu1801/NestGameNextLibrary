@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useGameStore } from '@/features/games/store/gameStore';
 import { GameCard } from './GameCard';
 import { Game } from '@/types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -10,19 +9,17 @@ import { PERFORMANCE_CONFIG } from '@/config/categories';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 
-export function GameGrid() {
+interface GameGridProps {
+  games: Game[];
+  totalGames: number;
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+export function GameGrid({ games, totalGames, currentPage, totalPages, onPageChange }: GameGridProps) {
   const { t } = useLanguage();
   const router = useRouter();
-  const {
-    getCurrentPageGames,
-    getTotalPages,
-    currentPage,
-    setPage,
-    filteredGames
-  } = useGameStore();
-
-  const games = getCurrentPageGames();
-  const totalPages = getTotalPages();
 
   const handlePlayClick = (game: Game) => {
     router.push(`/games/${game.id}/play`);
@@ -34,19 +31,19 @@ export function GameGrid() {
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      setPage(currentPage - 1);
+      onPageChange(currentPage - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      setPage(currentPage + 1);
+      onPageChange(currentPage + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  if (filteredGames.length === 0) {
+  if (totalGames === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 px-4 text-center space-y-6 animate-in fade-in slide-in-from-bottom-4">
         <div className="w-24 h-24 rounded-full bg-muted/50 flex items-center justify-center animate-bounce">
@@ -60,7 +57,7 @@ export function GameGrid() {
         </div>
         <Button
           className="rounded-full"
-          onClick={() => setPage(1)}
+          onClick={() => onPageChange(1)}
         >
           {t('search.clearSearch')}
         </Button>
@@ -74,7 +71,7 @@ export function GameGrid() {
       <div className="flex items-center justify-between px-2">
         <p className="text-sm font-medium text-muted-foreground gap-1 flex">
           {t('pagination.showing')} <span className="text-foreground">{games.length}</span> {t('pagination.of')}{' '}
-          <span className="text-foreground">{filteredGames.length}</span> {t('pagination.games')}
+          <span className="text-foreground">{totalGames}</span> {t('pagination.games')}
         </p>
 
         {totalPages > 1 && (
@@ -104,7 +101,7 @@ export function GameGrid() {
         <div className="flex flex-col items-center gap-4 pt-8 pb-4">
           {/* Page info */}
           <p className="text-sm text-muted-foreground">
-            {t('pagination.showing')} <span className="text-primary font-semibold">{(currentPage - 1) * 25 + 1}-{Math.min(currentPage * 25, filteredGames.length)}</span> {t('pagination.of')} <span className="text-foreground font-semibold">{filteredGames.length}</span> {t('pagination.games')}
+            {t('pagination.showing')} <span className="text-primary font-semibold">{(currentPage - 1) * 25 + 1}-{Math.min(currentPage * 25, totalGames)}</span> {t('pagination.of')} <span className="text-foreground font-semibold">{totalGames}</span> {t('pagination.games')}
           </p>
 
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-center">
@@ -113,7 +110,7 @@ export function GameGrid() {
               variant="ghost"
               size="icon"
               onClick={() => {
-                setPage(1);
+                onPageChange(1);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               disabled={currentPage === 1}
@@ -159,7 +156,7 @@ export function GameGrid() {
                       <button
                         key={pageNum}
                         onClick={() => {
-                          setPage(pageNum);
+                          onPageChange(pageNum);
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
                         className={cn(
@@ -181,7 +178,7 @@ export function GameGrid() {
                         </span>
                         <button
                           onClick={() => {
-                            setPage(totalPages);
+                            onPageChange(totalPages);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }}
                           className={cn(
@@ -216,7 +213,7 @@ export function GameGrid() {
               variant="ghost"
               size="icon"
               onClick={() => {
-                setPage(totalPages);
+                onPageChange(totalPages);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               disabled={currentPage === totalPages}

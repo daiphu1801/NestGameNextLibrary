@@ -26,10 +26,11 @@ export default function HistoryPage() {
         const loadHistory = async () => {
             setIsLoading(true);
             try {
+                let gamesToSet: Game[] = [];
                 if (user) {
                     // Use API for authenticated users (max 15 games)
                     const history = await userService.getPlayHistory();
-                    setRecentGames(history);
+                    gamesToSet = history;
                 } else {
                     // Use localStorage for non-authenticated users
                     let games = allGames;
@@ -43,8 +44,18 @@ export default function HistoryPage() {
                         .map(id => games.find(g => g.id === id))
                         .filter((g): g is Game => !!g);
 
-                    setRecentGames(historyGames);
+                    gamesToSet = historyGames;
                 }
+
+                // Deduplicate games by ID to prevent React key warnings
+                const uniqueGamesMap = new Map();
+                gamesToSet.forEach(game => {
+                    if (!uniqueGamesMap.has(game.id)) {
+                        uniqueGamesMap.set(game.id, game);
+                    }
+                });
+                
+                setRecentGames(Array.from(uniqueGamesMap.values()));
             } catch (error) {
                 console.error('Failed to load history:', error);
             } finally {
@@ -91,7 +102,7 @@ export default function HistoryPage() {
                             <History className="w-8 h-8 text-emerald-500" />
                         </div>
                         <div>
-                            <h1 className="text-3xl sm:text-4xl font-black font-mono-tech uppercase tracking-tight flex items-center gap-3">
+                            <h1 className="text-3xl sm:text-4xl font-black font-tech uppercase tracking-tight flex items-center gap-3">
                                 {t('user.history') || 'Play History'}
                             </h1>
                             <p className="text-muted-foreground mt-1">

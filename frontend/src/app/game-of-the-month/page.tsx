@@ -55,7 +55,7 @@ export default function GameOfTheMonthPage() {
                 <div className="w-24 h-24 rounded-full bg-background border-4 border-white/10 flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.05)] mb-4">
                   <Gamepad2 className="w-12 h-12 text-muted-foreground" />
                 </div>
-                <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight drop-shadow-lg font-mono-tech">
+                <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight drop-shadow-lg font-tech">
                   GAME CỦA THÁNG ĐANG CẬP NHẬT
                 </h1>
                 <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
@@ -117,7 +117,7 @@ export default function GameOfTheMonthPage() {
 
                         {/* Title and Meta */}
                         <div className="space-y-4">
-                           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight drop-shadow-2xl leading-[1.1] font-mono-tech">
+                           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight drop-shadow-2xl leading-[1.1] font-tech">
                               {game.name}
                            </h1>
                            
@@ -211,7 +211,7 @@ export default function GameOfTheMonthPage() {
                                ) : (
                                    <div className="w-full h-full flex flex-col items-center justify-center bg-secondary gap-4">
                                        <Gamepad2 className="w-24 h-24 text-white/20" />
-                                       <span className="text-white/40 font-mono-tech font-bold">NO COVER ART</span>
+                                       <span className="text-white/40 font-tech font-bold">NO COVER ART</span>
                                    </div>
                                )}
                                
@@ -229,7 +229,7 @@ export default function GameOfTheMonthPage() {
              {(game.imageSnap || game.imageTitle) && (
               <div className="container mx-auto px-4 lg:px-8 py-20 border-t border-white/5 relative z-10">
                  <div className="mb-12">
-                   <h2 className="text-3xl font-black font-mono-tech text-white mb-4">MỘT SỐ HÌNH ẢNH</h2>
+                   <h2 className="text-3xl font-black font-tech text-white mb-4">MỘT SỐ HÌNH ẢNH</h2>
                    <div className="w-20 h-1 bg-gradient-to-r from-primary to-accent rounded-full"></div>
                  </div>
                  

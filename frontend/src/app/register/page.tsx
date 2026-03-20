@@ -1,15 +1,11 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, UserPlus, User, Loader2, Check, X as XIcon, ArrowLeft, Gamepad2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { validatePassword, getStrengthColor, getStrengthLabel } from '@/lib/passwordValidation';
-import { useLanguage } from '@/components/providers/LanguageProvider';
-import { useAuth } from '@/components/providers/AuthProvider';
+import { getStrengthColor, getStrengthLabel } from '@/lib/passwordValidation';
 import Link from 'next/link';
+import { useRegisterPage } from '@/features/auth/hooks/useRegisterPage';
 
-// OAuth icons - Fixed with explicit dimensions to prevent sizing issues
 function GoogleIcon({ className }: { className?: string }) {
     return (
         <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -30,42 +26,19 @@ function GitHubIcon({ className }: { className?: string }) {
 }
 
 export default function RegisterPage() {
-    const router = useRouter();
-    const { t } = useLanguage();
-    const { register, user } = useAuth();
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
-
-    const passwordValidation = useMemo(() => validatePassword(password), [password]);
-
-    useEffect(() => { if (user) router.push('/'); }, [user, router]);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-        if (!passwordValidation.isValid) { setError(t('authPage.error.weakPassword') || 'Mật khẩu chưa đủ mạnh.'); return; }
-        if (password !== confirmPassword) { setError(t('authPage.error.passwordMismatch') || 'Mật khẩu xác nhận không khớp'); return; }
-        setIsLoading(true);
-        try {
-            await register({ username, email, password });
-            router.push('/');
-        } catch (err: any) {
-            setError(err.message || t('authPage.error.registerFailed') || 'Đăng ký thất bại.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const {
+        username, setUsername, email, setEmail,
+        password, setPassword, confirmPassword, setConfirmPassword,
+        showPassword, setShowPassword,
+        isLoading, error, user, t,
+        passwordValidation, passwordsMatch,
+        handleSubmit,
+    } = useRegisterPage();
 
     if (user) return null;
 
     return (
         <main className="min-h-screen text-foreground selection:bg-primary/30 relative flex items-center justify-center p-4 py-8">
-            {/* Background */}
             <div className="fixed inset-0 bg-[#060b18] -z-20" />
             <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
                 <div className="absolute -top-[200px] left-1/2 -translate-x-1/2 w-[900px] h-[600px]"
@@ -74,17 +47,14 @@ export default function RegisterPage() {
                     style={{ background: 'radial-gradient(circle, rgba(0, 200, 180, 0.06) 0%, transparent 60%)', filter: 'blur(80px)', animationDuration: '8s' }} />
             </div>
 
-            {/* Back */}
             <Link href="/" className="fixed top-6 left-6 flex items-center gap-2 text-white/40 hover:text-white/80 transition-colors group z-10">
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                 <span className="text-sm font-medium">{t('authPage.backHome') || 'Trang chủ'}</span>
             </Link>
 
-            {/* Card */}
             <div className="w-full max-w-[440px] animate-in fade-in slide-in-from-bottom-4 duration-400">
                 <div className="auth-card p-7 md:p-8">
                     <div className="relative z-10">
-                        {/* Header - compact inline */}
                         <div className="flex items-center gap-4 mb-5">
                             <div className="w-11 h-11 rounded-full border border-white/10 bg-white/5 flex items-center justify-center flex-shrink-0">
                                 <Gamepad2 className="w-5 h-5 text-violet-400" />
@@ -95,16 +65,11 @@ export default function RegisterPage() {
                             </div>
                         </div>
 
-                        {/* Error */}
                         {error && (
-                            <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs animate-in fade-in duration-200">
-                                {error}
-                            </div>
+                            <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs animate-in fade-in duration-200">{error}</div>
                         )}
 
-                        {/* Form */}
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            {/* Username */}
                             <div className="relative">
                                 <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
                                 <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}
@@ -112,7 +77,6 @@ export default function RegisterPage() {
                                     className="auth-input !py-3 !pl-10 !text-sm" />
                             </div>
 
-                            {/* Email */}
                             <div className="relative">
                                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
                                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
@@ -120,7 +84,6 @@ export default function RegisterPage() {
                                     className="auth-input !py-3 !pl-10 !text-sm" />
                             </div>
 
-                            {/* Password */}
                             <div className="relative">
                                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
                                 <input type={showPassword ? 'text' : 'password'} value={password}
@@ -132,7 +95,6 @@ export default function RegisterPage() {
                                 </button>
                             </div>
 
-                            {/* Strength bar inline */}
                             {password.length > 0 && (
                                 <div className="space-y-1.5">
                                     <div className="flex items-center gap-2">
@@ -145,11 +107,8 @@ export default function RegisterPage() {
                                             passwordValidation.strength === 'strong' && 'text-blue-400',
                                             passwordValidation.strength === 'medium' && 'text-yellow-400',
                                             passwordValidation.strength === 'weak' && 'text-red-400'
-                                        )}>
-                                            {getStrengthLabel(passwordValidation.strength)}
-                                        </span>
+                                        )}>{getStrengthLabel(passwordValidation.strength)}</span>
                                     </div>
-                                    {/* Checklist — compact 3-column grid */}
                                     <div className="grid grid-cols-3 gap-x-2 gap-y-0.5 text-[10px]">
                                         {[
                                             { key: 'minLength', label: t('authPage.pwd.minLength') || '6+ chars' },
@@ -167,63 +126,49 @@ export default function RegisterPage() {
                                 </div>
                             )}
 
-                            {/* Confirm Password */}
                             <div className="relative">
                                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
                                 <input type={showPassword ? 'text' : 'password'} value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)} placeholder={t('auth.confirmPassword') || 'Xác nhận mật khẩu'} required
                                     className={cn("auth-input !py-3 !pl-10 !pr-10 !text-sm",
-                                        confirmPassword && password !== confirmPassword && "!border-red-500/40",
-                                        confirmPassword && password === confirmPassword && "!border-green-500/40"
+                                        confirmPassword && !passwordsMatch && "!border-red-500/40",
+                                        confirmPassword && passwordsMatch && "!border-green-500/40"
                                     )} />
                                 {confirmPassword && (
                                     <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
-                                        {password === confirmPassword ? <Check className="w-4 h-4 text-green-400" /> : <XIcon className="w-4 h-4 text-red-400" />}
+                                        {passwordsMatch ? <Check className="w-4 h-4 text-green-400" /> : <XIcon className="w-4 h-4 text-red-400" />}
                                     </div>
                                 )}
                             </div>
 
-                            {/* Submit */}
                             <button type="submit" disabled={isLoading}
                                 className="auth-submit-btn !py-3 !text-xs !mt-4 cursor-pointer"
                                 style={{ background: 'linear-gradient(135deg, hsl(270, 80%, 55%) 0%, hsl(200, 100%, 50%) 100%)' }}>
-                                {isLoading ? (
-                                    <><Loader2 className="w-4 h-4 animate-spin" />{t('auth.registering') || 'Đang đăng ký...'}</>
-                                ) : (
-                                    <><UserPlus className="w-4 h-4" />{t('auth.createAccount') || 'Tạo tài khoản'}</>
-                                )}
+                                {isLoading ? <><Loader2 className="w-4 h-4 animate-spin" />{t('auth.registering') || 'Đang đăng ký...'}</>
+                                    : <><UserPlus className="w-4 h-4" />{t('auth.createAccount') || 'Tạo tài khoản'}</>}
                             </button>
                         </form>
 
-                        {/* Divider */}
                         <div className="flex items-center gap-3 my-4">
                             <div className="flex-1 h-px bg-white/8" />
                             <span className="text-[10px] text-white/25 uppercase tracking-wider font-medium">{t('authPage.orContinueWith') || 'OR'}</span>
                             <div className="flex-1 h-px bg-white/8" />
                         </div>
 
-                        {/* OAuth — 2 col, icon only */}
                         <div className="grid grid-cols-2 gap-3">
                             <button disabled className="auth-social-btn !justify-center !py-2.5 group relative" title={`${t('authPage.continueWith') || 'Continue with'} Google`}>
                                 <GoogleIcon className="w-5 h-5" />
-                                <span className="absolute -top-1 -right-1 text-[7px] uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-violet-400/10 text-violet-400/60 font-bold">
-                                    {t('authPage.comingSoon') || 'Soon'}
-                                </span>
+                                <span className="absolute -top-1 -right-1 text-[7px] uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-violet-400/10 text-violet-400/60 font-bold">{t('authPage.comingSoon') || 'Soon'}</span>
                             </button>
                             <button disabled className="auth-social-btn !justify-center !py-2.5 group relative" title={`${t('authPage.continueWith') || 'Continue with'} GitHub`}>
                                 <GitHubIcon className="w-5 h-5" />
-                                <span className="absolute -top-1 -right-1 text-[7px] uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-violet-400/10 text-violet-400/60 font-bold">
-                                    {t('authPage.comingSoon') || 'Soon'}
-                                </span>
+                                <span className="absolute -top-1 -right-1 text-[7px] uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-violet-400/10 text-violet-400/60 font-bold">{t('authPage.comingSoon') || 'Soon'}</span>
                             </button>
                         </div>
 
-                        {/* Switch to Login */}
                         <p className="text-center text-xs text-white/35 mt-5">
                             {t('auth.hasAccount') || 'Đã có tài khoản?'}{' '}
-                            <Link href="/login" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors">
-                                {t('authPage.loginNow') || 'Đăng nhập'}
-                            </Link>
+                            <Link href="/login" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors">{t('authPage.loginNow') || 'Đăng nhập'}</Link>
                         </p>
                     </div>
                 </div>

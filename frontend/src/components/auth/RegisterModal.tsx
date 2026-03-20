@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useRegisterForm } from '@/features/auth/hooks/useRegisterForm';
 import { Eye, EyeOff, UserPlus, Lock, Mail, User, Loader2, Check, X as XIcon, Gamepad2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { validatePassword, getStrengthColor, getStrengthLabel } from '@/lib/passwordValidation';
@@ -14,35 +14,13 @@ interface RegisterModalProps {
 }
 
 export function RegisterModal({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps) {
-    const { t } = useLanguage();
-    const { register } = useAuth();
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
-
-    const passwordValidation = useMemo(() => validatePassword(password), [password]);
+    const {
+        username, setUsername, email, setEmail, password, setPassword,
+        confirmPassword, setConfirmPassword, showPassword, setShowPassword,
+        isLoading, error, passwordValidation, handleSubmit, t
+    } = useRegisterForm(onClose);
 
     if (!isOpen) return null;
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-        if (!passwordValidation.isValid) { setError(t('authPage.error.weakPassword') || 'Mật khẩu chưa đủ mạnh.'); return; }
-        if (password !== confirmPassword) { setError(t('authPage.error.passwordMismatch') || 'Mật khẩu không khớp'); return; }
-        setIsLoading(true);
-        try {
-            await register({ username, email, password });
-            onClose();
-        } catch (err: any) {
-            setError(err.message || t('authPage.error.registerFailed') || 'Đăng ký thất bại.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">

@@ -1,35 +1,15 @@
+import { EmulatorOptions, KeybindingConfig, PlayerKeys, GamepadConfig, GamepadButtonMap, NESButton } from '@/types/emulator';
+// Re-export types for backward compatibility
+export type { EmulatorOptions, KeybindingConfig, PlayerKeys, GamepadConfig, GamepadButtonMap, NESButton };
 import { env } from '@/config/env';
 
-interface EmulatorOptions {
-  rom: string;
-  core?: string;
-  size?: {
-    width: number;
-    height: number;
-  };
-}
+
 
 import { userService } from './userService';
 
-interface PlayerKeys {
-  up: string;
-  down: string;
-  left: string;
-  right: string;
-  a: string;
-  b: string;
-  x: string;
-  y: string;
-  l: string;
-  r: string;
-  start: string;
-  select: string;
-}
 
-export interface KeybindingConfig {
-  p1: PlayerKeys;
-  p2: PlayerKeys;
-}
+
+
 
 export const DEFAULT_KEYBINDINGS: KeybindingConfig = {
   p1: {
@@ -65,26 +45,9 @@ export const DEFAULT_KEYBINDINGS: KeybindingConfig = {
 // ============================================================
 // GAMEPAD CONFIG
 // ============================================================
-export interface GamepadButtonMap {
-  up: number;      // D-Pad or axis
-  down: number;
-  left: number;
-  right: number;
-  a: number;       // NES A button
-  b: number;       // NES B button
-  x: number;       // SNES X button
-  y: number;       // SNES Y button
-  l: number;       // L Trigger
-  r: number;       // R Trigger
-  start: number;
-  select: number;
-  useAxis: boolean; // true = use axes for D-Pad instead of buttons
-}
 
-export interface GamepadConfig {
-  p1: GamepadButtonMap;
-  p2: GamepadButtonMap;
-}
+
+
 
 // Standard Xbox/PlayStation mapping (W3C Gamepad API standard)
 // Xbox: A=0, B=1, X=2, Y=3, LB=4, RB=5, LT=6, RT=7, Back/Select=8, Start=9
@@ -123,7 +86,7 @@ export const DEFAULT_GAMEPAD_MAPPING: GamepadConfig = {
   },
 };
 
-export type NESButton = 'up' | 'down' | 'left' | 'right' | 'a' | 'b' | 'x' | 'y' | 'l' | 'r' | 'start' | 'select';
+
 
 class EmulatorService {
   private currentEmulator: any = null;
@@ -260,7 +223,7 @@ class EmulatorService {
    * Get the ROM URL
    * Priority: Cloudinary URL (proxied) → local API → R2 fallback
    */
-  private async getRomUrl(gamePath: string): Promise<string> {
+  async getRomUrl(gamePath: string): Promise<string> {
     // For Vercel Production, passing large ROMs through /api/roms/proxy often hits
     // the 4.5MB payload limit or 10s Serverless Function timeout, resulting in a broken zip.
     // Since Cloudflare R2 now has CORS configured, we will load Cloudinary/R2 URLs DIRECTLY

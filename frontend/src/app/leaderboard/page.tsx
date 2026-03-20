@@ -1,52 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
-import { apiClient } from '@/lib/api';
 import { Game } from '@/types/game';
-import Link from 'next/link';
-import { Trophy, Star, TrendingUp, Medal, Gamepad2 } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
+import { useLeaderboard } from '@/features/leaderboard/hooks/useLeaderboard';
+import { LeaderboardList } from '@/components/game/LeaderboardList';
 
 export default function LeaderboardPage() {
     const router = useRouter();
     const { t } = useLanguage();
     const { isLowPerformanceMode } = usePerformance();
-    const [topGames, setTopGames] = useState<Game[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchLeaderboard = async () => {
-            try {
-                const response = await apiClient.get('/leaderboard/top-rated');
-                setTopGames(response.data);
-            } catch (error) {
-                console.error('Failed to fetch leaderboard:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchLeaderboard();
-    }, []);
+    const { topGames, isLoading } = useLeaderboard();
 
     const handleGameClick = (game: Game) => {
         router.push(`/games/${game.id}/play`);
-    };
-
-    const getRankIcon = (index: number) => {
-        switch (index) {
-            case 0:
-                return <Medal className="w-8 h-8 text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]" />;
-            case 1:
-                return <Medal className="w-7 h-7 text-gray-300 drop-shadow-[0_0_8px_rgba(209,213,219,0.5)]" />;
-            case 2:
-                return <Medal className="w-6 h-6 text-amber-600 drop-shadow-[0_0_6px_rgba(217,119,6,0.5)]" />;
-            default:
-                return <span className="text-xl font-bold text-muted-foreground">#{index + 1}</span>;
-        }
     };
 
     return (
@@ -115,7 +85,7 @@ export default function LeaderboardPage() {
                     <div className="p-4 rounded-full bg-primary/10 mb-4 ring-1 ring-primary/20">
                         <Trophy className="w-12 h-12 text-primary" />
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black font-mono-tech uppercase bg-clip-text text-transparent bg-gradient-to-r from-primary via-accent to-primary animate-gradient mb-4">
+                    <h1 className="text-4xl md:text-5xl font-black font-tech uppercase bg-clip-text text-transparent bg-gradient-to-r from-primary via-accent to-primary animate-gradient mb-4">
                         {t('leaderboard.title') || 'Leaderboard'}
                     </h1>
                     <p className="text-muted-foreground text-lg max-w-2xl">
@@ -123,72 +93,11 @@ export default function LeaderboardPage() {
                     </p>
                 </div>
 
-                {isLoading ? (
-                    <div className="w-full max-w-4xl mx-auto space-y-4">
-                        {[...Array(5)].map((_, i) => (
-                            <div key={i} className="h-24 rounded-2xl bg-white/5 animate-pulse" />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="w-full max-w-4xl mx-auto grid gap-4">
-                        {topGames.map((game, index) => (
-                            <div
-                                key={game.id}
-                                onClick={() => handleGameClick(game)}
-                                className="group relative flex items-center gap-6 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 overflow-hidden cursor-pointer"
-                            >
-                                {/* Rank */}
-                                <div className="flex-shrink-0 w-12 flex justify-center">
-                                    {getRankIcon(index)}
-                                </div>
-
-                                {/* Game Image */}
-                                <div className="relative w-24 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-black/50">
-                                    <img
-                                        src={game.imageUrl || game.image || `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.imageSnap || ''}.jpg`}
-                                        alt={game.name}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).src = '/placeholder-game.png';
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Game Info */}
-                                <div className="flex-1 min-w-0">
-                                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors truncate">
-                                        {game.name}
-                                    </h3>
-                                    <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                                        <span className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/5 border border-white/5">
-                                            <Gamepad2 className="w-3.5 h-3.5" />
-                                            {game.categoryName}
-                                        </span>
-                                        <span>•</span>
-                                        <span>{game.year}</span>
-                                        <span>•</span>
-                                        <span className="flex items-center gap-1">
-                                            <TrendingUp className="w-3.5 h-3.5 text-green-400" />
-                                            {game.playCount || 0} plays
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Rating */}
-                                <div className="flex-shrink-0 flex flex-col items-end gap-1">
-                                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400">
-                                        <Star className="w-4 h-4 fill-yellow-400" />
-                                        <span className="font-bold text-lg">{game.rating ? game.rating.toFixed(1) : 'N/A'}</span>
-                                    </div>
-                                    <span className="text-xs text-muted-foreground mr-1">Rating</span>
-                                </div>
-
-                                {/* Shine Effect */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none" />
-                            </div>
-                        ))}
-                    </div>
-                )}
+                <LeaderboardList
+                    games={topGames}
+                    isLoading={isLoading}
+                    onGameClick={handleGameClick}
+                />
             </div>
         </main>
     );

@@ -1,0 +1,217 @@
+﻿/* Typography */
+@layer utilities {
+  .font-mono-tech {
+    font-family: 'Space Mono', 'Courier New', monospace;
+  }
+
+  /* Text Gradient - Cyan */
+  .text-gradient-cyan {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #00d4ff 0%, #00f5d4 100%);
+  }
+
+  /* Text Gradient - Magenta to Cyan */
+  .text-gradient-magic {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #ff00ff 0%, #00d4ff 100%);
+  }
+}
+
+/* Glassmorphism Cards */
+@layer utilities {
+  .glass-card {
+    background: rgba(15, 20, 30, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 212, 255, 0.15);
+  }
+
+  .glass-card-strong {
+    background: rgba(10, 15, 25, 0.95);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+  }
+
+  [data-theme="light"] .glass-card-strong {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+  }
+
+  [data-theme="light"] .glass-card {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Buttons */
+@layer utilities {
+  .btn-primary {
+    @apply px-6 py-3 rounded-lg font-semibold text-sm uppercase tracking-wider transition-all duration-300;
+    @apply bg-primary text-primary-foreground;
+    @apply hover:brightness-110 hover:shadow-lg hover:shadow-primary/30;
+    @apply active:scale-95;
+  }
+
+  .btn-outline {
+    @apply px-6 py-3 rounded-lg font-semibold text-sm uppercase tracking-wider transition-all duration-300;
+    @apply bg-transparent border-2 border-primary text-primary;
+    @apply hover:bg-primary/10 hover:shadow-lg hover:shadow-primary/20;
+    @apply active:scale-95;
+  }
+
+  .btn-gradient {
+    @apply px-6 py-3 rounded-lg font-semibold text-sm uppercase tracking-wider transition-all duration-300;
+    @apply text-white;
+    background: linear-gradient(135deg, #ff00ff 0%, #00d4ff 100%);
+    @apply hover:brightness-110 hover:shadow-lg;
+    @apply active:scale-95;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200;
+    @apply text-muted-foreground hover:text-foreground;
+  }
+
+  :root .btn-ghost:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  [data-theme="dark"] .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Badge */
+@layer utilities {
+  .badge-live {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest;
+    @apply bg-primary/20 text-primary border border-primary/40;
+  }
+}
+
+/* Stats Card */
+@layer utilities {
+  .stats-card {
+    @apply px-6 py-4 rounded-xl text-center;
+    @apply bg-white/5 border border-white/10;
+  }
+
+  [data-theme="light"] .stats-card {
+    @apply bg-black/5 border-black/10;
+  }
+
+  .stats-value {
+    @apply text-2xl font-bold font-mono-tech text-gradient-cyan;
+  }
+
+  .stats-label {
+    @apply text-xs uppercase tracking-widest text-muted-foreground mt-1;
+  }
+}
+
+/* Glow Effects */
+@layer utilities {
+  .glow-cyan {
+    box-shadow: 0 0 40px -10px hsl(186 100% 50%);
+  }
+
+  .glow-magenta {
+    box-shadow: 0 0 40px -10px hsl(320 100% 60%);
+  }
+}
+
+/* Background Grid Pattern */
+@layer utilities {
+  .bg-grid-pattern {
+    background-size: 80px 80px;
+    background-image:
+      linear-gradient(to right, rgba(0, 212, 255, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 212, 255, 0.08) 1px, transparent 1px);
+  }
+}
+
+/* Scrollbar */
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Background Grid Pattern */
+@layer utilities {
+  .bg-grid-pattern {
+    background-size: 60px 60px;
+    background-image:
+      linear-gradient(to right, rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+  }
+}
+
+/* Component Styles */
+@layer components {
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+
+  .hover-lift:hover {
+    @apply -translate-y-1;
+  }
+
+  /* Game Card Overlay */
+  .game-card-overlay {
+    @apply absolute inset-0 flex flex-col items-center justify-center;
+    @apply bg-gradient-to-t from-black/90 via-black/40 to-transparent;
+    @apply opacity-0 transition-all duration-300;
+  }
+}
+
+/* ===== Mobile Game Controls ===== */
+
+/* Fullscreen game container â€” safe for notch / Dynamic Island / home bar */
+.game-container {
+  height: 100dvh;
+  width: 100vw;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  -ms-touch-action: none;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+
+/* Prevent zoom on all descendants â€” iOS Safari fix */
+.game-container * {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+
+/* Hide mobile-only elements when device has a fine pointer (mouse) */
+@media (pointer: fine) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+/* Portrait orientation overlay â€” force landscape */
+.portrait-overlay {
+  display: none;
+}
+
+@media (orientation: portrait) and (pointer: coarse) {
+  .portrait-overlay {
+    display: flex;
+  }
+}
+

@@ -1,4 +1,4 @@
-import type { NESButton } from '@/services/emulatorService';
+import type { NESButton } from '@/types/emulator';
 
 // ============================================================
 // COMBO SYSTEM — Type Definitions

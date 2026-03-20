@@ -1,21 +1,22 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useGameStore } from '@/features/games/store/gameStore';
-import { gameService } from '@/services/gameService';
+import { useHomeGames } from '@/features/games/hooks/useHomeGames';
 import { Header } from '@/components/layout/Header';
 import { FeaturedGames } from '@/components/game/FeaturedGames';
-import { validateEnv } from '@/config/env';
+import { FeatureItem } from '@/components/ui/FeatureItem';
+import { AboutCard } from '@/components/ui/AboutCard';
+import { StepCard } from '@/components/ui/StepCard';
 import { Sparkles, Zap, Save, Play, Gamepad2, ArrowRight, Shield, Globe, Users, Star, Github } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { Game } from '@/types';
 import Link from 'next/link';
+import { NexusGridBackground } from '@/components/backgrounds';
 
 export default function LandingPage() {
   const router = useRouter();
-  const { setGames, isLoading, filteredGames, allGames } = useGameStore();
+  const { isLoading, allGames } = useHomeGames();
   const { isLowPerformanceMode } = usePerformance();
   const { t } = useLanguage();
 
@@ -23,22 +24,13 @@ export default function LandingPage() {
     router.push(`/games/${game.id}/play`);
   };
 
-  useEffect(() => {
-    validateEnv();
-    const loadGames = async () => {
-      const games = await gameService.loadGames();
-      setGames(games);
-    };
-    loadGames();
-  }, [setGames]);
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-6 relative">
           <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full" />
           <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto relative z-10" />
-          <p className="text-base font-medium text-muted-foreground animate-pulse relative z-10 font-mono-tech uppercase tracking-wider">
+          <p className="text-base font-medium text-muted-foreground animate-pulse relative z-10 font-tech uppercase tracking-wider">
             {t('game.loading')}...
           </p>
         </div>
@@ -54,58 +46,7 @@ export default function LandingPage() {
       <Header />
 
       {/* Background Effects - NEXUS Style */}
-      {!isLowPerformanceMode && (
-        <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-          <div
-            className="absolute -top-[400px] left-1/2 -translate-x-1/2 w-[1200px] h-[800px] animate-pulse"
-            style={{
-              background: 'radial-gradient(ellipse at center, rgba(0, 212, 255, 0.25) 0%, rgba(0, 212, 255, 0.1) 30%, transparent 70%)',
-              filter: 'blur(40px)',
-              animationDuration: '4s',
-            }}
-          />
-          <div
-            className="absolute top-[20%] -left-[200px] w-[500px] h-[500px] animate-float"
-            style={{
-              background: 'radial-gradient(circle, rgba(0, 245, 212, 0.15) 0%, transparent 60%)',
-              filter: 'blur(60px)',
-            }}
-          />
-          <div
-            className="absolute top-[40%] -right-[300px] w-[700px] h-[700px] animate-pulse"
-            style={{
-              background: 'radial-gradient(circle, rgba(255, 0, 255, 0.18) 0%, rgba(139, 92, 246, 0.08) 40%, transparent 70%)',
-              filter: 'blur(80px)',
-              animationDuration: '5s',
-              animationDelay: '1s',
-            }}
-          />
-          <div
-            className="absolute -bottom-[200px] left-1/3 w-[800px] h-[400px] animate-pulse"
-            style={{
-              background: 'radial-gradient(ellipse at center, rgba(0, 212, 255, 0.12) 0%, transparent 60%)',
-              filter: 'blur(100px)',
-              animationDuration: '6s',
-            }}
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundSize: '60px 60px',
-              backgroundImage: `
-              linear-gradient(to right, rgba(0, 212, 255, 0.06) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(0, 212, 255, 0.06) 1px, transparent 1px)
-            `,
-            }}
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'radial-gradient(ellipse at center, transparent 0%, rgba(5, 10, 20, 0.4) 100%)',
-            }}
-          />
-        </div>
-      )}
+      <NexusGridBackground />
 
       <div className="container mx-auto px-4 lg:px-8">
         {/* Hero Section */}
@@ -128,7 +69,7 @@ export default function LandingPage() {
               {/* Main Heading */}
               <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-none">
                 <span className="text-foreground block">{t('welcome.titlePart1') || 'PLAY YOUR'}</span>
-                <span className="text-gradient-cyan block italic">{t('welcome.titlePart2') || 'CLASSICS'}</span>
+                <span className="bg-gradient-cyan bg-clip-text text-transparent block italic">{t('welcome.titlePart2') || 'CLASSICS'}</span>
               </h1>
 
               {/* Description */}
@@ -178,7 +119,7 @@ export default function LandingPage() {
 
             {/* Right Column - Feature Card */}
             <div className="glass-card-strong rounded-2xl p-6 lg:p-8 space-y-6">
-              <div className="flex items-center gap-2 text-sm font-mono-tech uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-sm font-tech uppercase tracking-widest">
                 <Gamepad2 className="w-4 h-4 text-primary" />
                 <span className="text-foreground">Game</span>
                 <span className="text-muted-foreground">Features</span>
@@ -214,7 +155,7 @@ export default function LandingPage() {
           <div className="text-center max-w-4xl mx-auto mb-8 sm:mb-16">
             <h2 className="text-3xl lg:text-4xl font-black mb-6">
               <span className="text-foreground">{t('landing.aboutTitle') || 'Về'} </span>
-              <span className="text-gradient-cyan">{t('landing.aboutTitleHighlight') || 'NestGame'}</span>
+              <span className="bg-gradient-cyan bg-clip-text text-transparent">{t('landing.aboutTitleHighlight') || 'NestGame'}</span>
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
               {t('landing.aboutDesc') || 'NestGame là nền tảng giả lập NES trực tuyến, cho phép bạn chơi hơn 1700+ game kinh điển ngay trên trình duyệt. Được xây dựng với công nghệ hiện đại, NestGame mang đến trải nghiệm mượt mà, không cần cài đặt, hoàn toàn miễn phí.'}
@@ -251,7 +192,7 @@ export default function LandingPage() {
           <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-16">
             <h2 className="text-3xl lg:text-4xl font-black mb-6">
               <span className="text-foreground">{t('landing.howItWorksTitle') || 'Cách'} </span>
-              <span className="text-gradient-cyan">{t('landing.howItWorksHighlight') || 'Sử Dụng'}</span>
+              <span className="bg-gradient-cyan bg-clip-text text-transparent">{t('landing.howItWorksHighlight') || 'Sử Dụng'}</span>
             </h2>
           </div>
 
@@ -280,7 +221,7 @@ export default function LandingPage() {
             <div>
               <h2 className="text-3xl font-black mb-2">
                 <span className="text-foreground">{t('featured.title') || 'Games Hot'} </span>
-                <span className="text-gradient-cyan">🔥</span>
+                <span className="bg-gradient-cyan bg-clip-text text-transparent">🔥</span>
               </h2>
               <p className="text-muted-foreground">{t('featured.subtitle') || 'Những game được yêu thích nhất'}</p>
             </div>
@@ -310,7 +251,7 @@ export default function LandingPage() {
             <div className="relative z-10">
               <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-6">
                 <span className="text-foreground">{t('landing.ctaTitle') || 'Sẵn Sàng'} </span>
-                <span className="text-gradient-cyan">{t('landing.ctaHighlight') || 'Khám Phá?'}</span>
+                <span className="bg-gradient-cyan bg-clip-text text-transparent">{t('landing.ctaHighlight') || 'Khám Phá?'}</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
                 {t('landing.ctaDesc') || 'Hơn 1700+ game NES kinh điển đang chờ bạn. Bắt đầu ngay hôm nay - hoàn toàn miễn phí!'}
@@ -328,40 +269,4 @@ export default function LandingPage() {
   );
 }
 
-function FeatureItem({ icon: Icon, title, description }: { icon: any; title: string; description: string }) {
-  return (
-    <div className="flex items-start gap-4 p-4 rounded-xl bg-secondary/50 border border-border/50 hover:border-primary/30 transition-colors">
-      <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
-        <Icon className="w-5 h-5" />
-      </div>
-      <div>
-        <h3 className="font-semibold text-foreground">{title}</h3>
-        <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
-      </div>
-    </div>
-  );
-}
 
-function AboutCard({ icon: Icon, title, description }: { icon: any; title: string; description: string }) {
-  return (
-    <div className="glass-card rounded-xl p-6 text-center hover:border-primary/30 transition-colors group">
-      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-        <Icon className="w-7 h-7 text-primary" />
-      </div>
-      <h3 className="font-bold text-lg mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground">{description}</p>
-    </div>
-  );
-}
-
-function StepCard({ step, title, description }: { step: string; title: string; description: string }) {
-  return (
-    <div className="text-center">
-      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 border-2 border-primary/30">
-        <span className="text-2xl font-black text-primary">{step}</span>
-      </div>
-      <h3 className="font-bold text-xl mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </div>
-  );
-}

@@ -11,11 +11,10 @@ import { useFavorites } from '@/components/providers/FavoritesProvider';
 interface FavoriteGameCardProps {
     game: Game;
     onClick: () => void;
-    onRemove: (gameId: string | number) => void;
+    onRemove: (gameId: string | number) => Promise<void> | void;
 }
 
 export function FavoriteGameCard({ game, onClick, onRemove }: FavoriteGameCardProps) {
-    const { toggleFavorite } = useFavorites();
     const [imageUrl, setImageUrl] = useState(game.imageUrl || game.image || game.thumbnail || '/placeholder.png');
     const [fallbackUrls] = useState(() =>
         imageService.generateFallbackUrls(game.name, game.image)
@@ -29,8 +28,7 @@ export function FavoriteGameCard({ game, onClick, onRemove }: FavoriteGameCardPr
         setIsRemoving(true);
 
         try {
-            await toggleFavorite(game.id);
-            onRemove(game.id);
+            await onRemove(game.id);
         } catch (err) {
             console.error('Failed to remove favorite:', err);
             setIsRemoving(false);
@@ -74,7 +72,7 @@ export function FavoriteGameCard({ game, onClick, onRemove }: FavoriteGameCardPr
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary to-muted">
                         <div className="text-center p-4">
                             <div className="text-5xl mb-3 opacity-40">🎮</div>
-                            <p className="text-xs text-muted-foreground font-medium line-clamp-2 px-2 font-mono-tech uppercase">
+                            <p className="text-xs text-muted-foreground font-medium line-clamp-2 px-2 font-tech uppercase">
                                 {game.name}
                             </p>
                         </div>
@@ -107,14 +105,14 @@ export function FavoriteGameCard({ game, onClick, onRemove }: FavoriteGameCardPr
                 {game.rating && (
                     <div className="absolute top-2 left-2 px-2 py-1 rounded bg-black/60 backdrop-blur-sm flex items-center gap-1 border border-white/10">
                         <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                        <span className="text-xs font-semibold text-white font-mono-tech">{game.rating}</span>
+                        <span className="text-xs font-semibold text-white font-tech">{game.rating}</span>
                     </div>
                 )}
 
                 {/* Region Badge */}
                 {game.region && (
                     <div className="absolute bottom-2 left-2 px-2 py-1 rounded bg-black/70 backdrop-blur-sm border border-white/20">
-                        <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider font-mono-tech">
+                        <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider font-tech">
                             {game.region === 'Japan' || game.region === 'J' ? '🇯🇵 JP' :
                                 game.region === 'USA' || game.region === 'U' ? '🇺🇸 US' :
                                     game.region === 'Europe' || game.region === 'E' ? '🇪🇺 EU' :
@@ -130,8 +128,8 @@ export function FavoriteGameCard({ game, onClick, onRemove }: FavoriteGameCardPr
                     {game.name}
                 </h3>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span className="font-mono-tech">{game.year || 'Classic'}</span>
-                    <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase font-mono-tech border border-primary/20">
+                    <span className="font-tech">{game.year || 'Classic'}</span>
+                    <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase font-tech border border-primary/20">
                         NES
                     </span>
                 </div>

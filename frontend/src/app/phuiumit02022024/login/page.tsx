@@ -49,7 +49,7 @@ export default function AdminLoginPage() {
                         <ShieldCheck className="w-10 h-10 text-white" />
                     </div>
                     <h1 className="text-3xl font-bold text-white mb-2">
-                        <span className="text-gradient-cyan">NestGame</span> Admin
+                        <span className="bg-gradient-cyan bg-clip-text text-transparent">NestGame</span> Admin
                     </h1>
                     <p className="text-[hsl(220,10%,55%)] text-sm">
                         Đăng nhập vào bảng điều khiển quản trị

@@ -1,27 +1,19 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ThemeProvider } from '@/components/providers/ThemeProvider';
-import { QueryProvider } from '@/components/providers/QueryProvider';
-import { LanguageProvider } from '@/components/providers/LanguageProvider';
-import { PerformanceProvider } from '@/components/providers/PerformanceProvider';
-import { AuthProvider } from '@/components/providers/AuthProvider';
-import { ToastProvider } from '@/components/providers/ToastProvider';
-import { FavoritesProvider } from '@/components/providers/FavoritesProvider';
+import './auth.css';
 import { metadata as siteMetadata } from '@/config/site';
-import { PWARegister } from '@/components/providers/PWARegister';
 import { PWAInstallPrompt } from '@/components/pwa/PWAInstallPrompt';
+import { Footer } from '@/components/layout/Footer';
+import { MobileWarning } from '@/components/layout/MobileWarning';
+import { LoadingScreen } from '@/components/LoadingScreen';
+import { AppProvider } from '@/components/providers/AppProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   ...siteMetadata,
 };
-
-import { Footer } from '@/components/layout/Footer';
-import { MobileWarning } from '@/components/layout/MobileWarning';
-import { LoadingProvider } from '@/components/providers/LoadingProvider';
-import { LoadingScreen } from '@/components/LoadingScreen';
 
 export default function RootLayout({
   children,
@@ -40,37 +32,17 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
       </head>
       <body className={inter.className}>
-        <PWARegister />
-        <LoadingProvider>
-          <ThemeProvider
-            attribute="data-theme"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <LanguageProvider>
-              <PerformanceProvider>
-                <AuthProvider>
-                  <FavoritesProvider>
-                    <QueryProvider>
-                      <LoadingScreen />
-                      <ToastProvider>
-                        <div className="flex min-h-screen flex-col relative">
-                          <MobileWarning />
-                          <div className="flex-1">
-                            {children}
-                          </div>
-                          <Footer />
-                          <PWAInstallPrompt />
-                        </div>
-                      </ToastProvider>
-                    </QueryProvider>
-                  </FavoritesProvider>
-                </AuthProvider>
-              </PerformanceProvider>
-            </LanguageProvider>
-          </ThemeProvider>
-        </LoadingProvider>
+        <AppProvider>
+          <LoadingScreen />
+          <div className="flex min-h-screen flex-col relative">
+            <MobileWarning />
+            <div className="flex-1">
+              {children}
+            </div>
+            <Footer />
+            <PWAInstallPrompt />
+          </div>
+        </AppProvider>
       </body>
     </html>
   );

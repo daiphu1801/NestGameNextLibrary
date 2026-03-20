@@ -4,11 +4,8 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { X, Play, Calendar, Globe, Tag, Star, Loader2 } from 'lucide-react';
 import { Game } from '@/types';
-import { StarRating } from './StarRating';
-import { GameComments } from './GameComments';
-import { userService } from '@/services/userService';
-import { useAuth } from '@/components/providers/AuthProvider';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import { GameReviewSection } from './GameReviewSection';
 
 interface GameDetailsModalProps {
     game: Game;
@@ -18,59 +15,16 @@ interface GameDetailsModalProps {
 }
 
 export function GameDetailsModal({ game, isOpen, onClose, onPlayNow }: GameDetailsModalProps) {
-    const { user } = useAuth();
     const { t } = useLanguage();
-    // Initialize state only when needed, but hooks must run unconditionally.
-    // We'll update state via useEffect when prop changes.
     const [imageUrl, setImageUrl] = useState('/placeholder.png');
     const [hasError, setHasError] = useState(false);
-
-    // Rating state
-    const [averageRating, setAverageRating] = useState(0);
-    const [totalRatings, setTotalRatings] = useState(0);
-    const [myRating, setMyRating] = useState(0);
-    const [isRating, setIsRating] = useState(false);
 
     useEffect(() => {
         if (isOpen && game) {
             setImageUrl(game.imageUrl || game.image || game.thumbnail || '/placeholder.png');
             setHasError(false);
-            loadRatings();
         }
-        if (!user) {
-            setMyRating(0);
-        }
-    }, [isOpen, game, user]);
-
-    const loadRatings = async () => {
-        if (!game?.id) return;
-        try {
-            const [ratingData, myRatingData] = await Promise.all([
-                userService.getGameRating(Number(game.id)),
-                user ? userService.getMyRating(Number(game.id)) : Promise.resolve(0)
-            ]);
-            setAverageRating(ratingData.averageRating);
-            setTotalRatings(ratingData.totalRatings);
-            setMyRating(myRatingData);
-        } catch (error) {
-            console.error('Failed to load ratings:', error);
-        }
-    };
-
-    const handleRate = async (rating: number) => {
-        if (!user || !game?.id) return;
-        setIsRating(true);
-        try {
-            const result = await userService.rateGame(Number(game.id), rating);
-            setMyRating(rating);
-            setAverageRating(result.averageRating);
-            setTotalRatings(prev => myRating === 0 ? prev + 1 : prev);
-        } catch (error) {
-            console.error('Failed to rate game:', error);
-        } finally {
-            setIsRating(false);
-        }
-    };
+    }, [isOpen, game]);
 
     if (!isOpen) return null;
 
@@ -141,7 +95,7 @@ export function GameDetailsModal({ game, isOpen, onClose, onPlayNow }: GameDetai
 
                 {/* Content */}
                 <div className="p-6 space-y-6">
-                    {/* Play Button + Rating Row */}
+                    {/* Play Button Row */}
                     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                         <button
                             onClick={onPlayNow}
@@ -150,34 +104,6 @@ export function GameDetailsModal({ game, isOpen, onClose, onPlayNow }: GameDetai
                             <Play className="w-6 h-6 fill-current" />
                             {t('game.playNow')}
                         </button>
-
-                        <div className="flex flex-col items-end gap-2 bg-white/5 rounded-2xl p-4 border border-white/10">
-                            <div className="flex items-center gap-2">
-                                <StarRating
-                                    rating={averageRating}
-                                    size="lg"
-                                    readonly
-                                    showValue
-                                    totalRatings={totalRatings}
-                                />
-                            </div>
-                            {user && (
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <span>{t('gameDetails.yourRating')}:</span>
-                                    <StarRating
-                                        rating={myRating}
-                                        size="md"
-                                        onRate={handleRate}
-                                    />
-                                    {isRating && <Loader2 className="w-4 h-4 animate-spin" />}
-                                </div>
-                            )}
-                            {!user && (
-                                <p className="text-xs text-muted-foreground">
-                                    {t('gameDetails.loginToRate')}
-                                </p>
-                            )}
-                        </div>
                     </div>
 
                     {/* Description */}
@@ -208,10 +134,10 @@ export function GameDetailsModal({ game, isOpen, onClose, onPlayNow }: GameDetai
                         </div>
                     </div>
 
-                    {/* Comments Section */}
-                    <div className="bg-white/5 rounded-2xl p-5 border border-white/10">
-                        <GameComments gameId={Number(game.id)} />
-                    </div>
+                    {/* Review Section */}
+                    {game.id && (
+                        <GameReviewSection gameId={Number(game.id)} />
+                    )}
                 </div>
             </div>
         </div>

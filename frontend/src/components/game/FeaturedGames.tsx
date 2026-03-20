@@ -46,7 +46,7 @@ export function FeaturedGames({ games, onGameClick }: FeaturedGamesProps) {
                         <Flame className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold font-mono-tech uppercase tracking-wider flex items-center gap-2">
+                        <h2 className="text-xl font-bold font-tech uppercase tracking-wider flex items-center gap-2">
                             {t('featured.title') || 'Hot Games'}
                             <Sparkles className="w-4 h-4 text-yellow-400" />
                         </h2>
@@ -176,7 +176,7 @@ function FeaturedGameCard({ game, onClick, index }: FeaturedGameCardProps) {
                 <div className="flex items-center justify-between pt-2">
                     {/* Region */}
                     {game.region && (
-                        <span className="text-[10px] font-mono-tech text-cyan-400 uppercase">
+                        <span className="text-[10px] font-tech text-cyan-400 uppercase">
                             {game.region === 'Japan' || game.region === 'J' ? '🇯🇵 JP' :
                                 game.region === 'USA' || game.region === 'U' ? '🇺🇸 US' :
                                     game.region === 'Europe' || game.region === 'E' ? '🇪🇺 EU' :
@@ -184,7 +184,7 @@ function FeaturedGameCard({ game, onClick, index }: FeaturedGameCardProps) {
                         </span>
                     )}
 
-                    <span className="text-[10px] font-mono-tech text-muted-foreground">
+                    <span className="text-[10px] font-tech text-muted-foreground">
                         {game.year || 'Classic'}
                     </span>
                 </div>

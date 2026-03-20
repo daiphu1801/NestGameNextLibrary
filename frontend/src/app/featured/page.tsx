@@ -10,9 +10,10 @@ import { useLanguage } from '@/components/providers/LanguageProvider';
 import { Crown, Sparkles, TrendingUp } from 'lucide-react';
 import { CategoryFilter } from '@/components/search/CategoryFilter';
 import { useTheme } from 'next-themes';
+import { useFeaturedGames } from '@/features/games/hooks/useFeaturedGames';
 
 export default function FeaturedGamesPage() {
-    const { setGames, isLoading, filteredGames } = useGameStore();
+    const { setGames } = useGameStore();
     const { t } = useLanguage();
     const { theme } = useTheme();
     const [mounted, setMounted] = useState(false);
@@ -20,6 +21,17 @@ export default function FeaturedGamesPage() {
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    const {
+        isLoading,
+        filteredGames,
+        paginatedGames,
+        category,
+        page,
+        totalPages,
+        setCategory,
+        setPage
+    } = useFeaturedGames();
 
     useEffect(() => {
         validateEnv();
@@ -39,7 +51,7 @@ export default function FeaturedGamesPage() {
                 <div className="text-center space-y-6 relative">
                     <div className="absolute inset-0 bg-amber-500/30 blur-3xl rounded-full" />
                     <div className="w-16 h-16 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin mx-auto relative z-10" />
-                    <p className="text-base font-medium text-muted-foreground animate-pulse relative z-10 font-mono-tech uppercase tracking-wider">
+                    <p className="text-base font-medium text-muted-foreground animate-pulse relative z-10 font-tech uppercase tracking-wider">
                         {t('featured.loadingText') || 'Đang lấy game nổi bật...'}
                     </p>
                 </div>
@@ -313,7 +325,7 @@ export default function FeaturedGamesPage() {
                         <div className="flex-1 max-w-2xl space-y-6">
                             {/* Badge */}
                             <div
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium font-mono-tech tracking-wider"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium font-tech tracking-wider"
                                 style={{
                                     color: isLight ? '#b45309' : '#fbbf24',
                                     background: isLight
@@ -360,7 +372,7 @@ export default function FeaturedGamesPage() {
                             <div className="flex items-center gap-6 pt-4">
                                 <div className="flex flex-col">
                                     <span
-                                        className="text-3xl font-black font-mono-tech"
+                                        className="text-3xl font-black font-tech"
                                         style={{
                                             color: isLight ? '#1c1917' : '#ffffff',
                                             textShadow: isLight ? 'none' : '0 0 20px rgba(255, 255, 255, 0.15)',
@@ -388,7 +400,7 @@ export default function FeaturedGamesPage() {
                                 />
                                 <div className="flex flex-col">
                                     <span
-                                        className="text-3xl font-black font-mono-tech flex items-center gap-2"
+                                        className="text-3xl font-black font-tech flex items-center gap-2"
                                         style={{
                                             color: isLight ? '#1c1917' : '#ffffff',
                                             textShadow: isLight ? 'none' : '0 0 20px rgba(255, 255, 255, 0.15)',
@@ -510,12 +522,18 @@ export default function FeaturedGamesPage() {
 
                 {/* Filters */}
                 <div className="mb-8">
-                    <CategoryFilter />
+                    <CategoryFilter currentCategory={category} onChange={setCategory} />
                 </div>
 
                 {/* Game Grid */}
                 <div className="relative z-20">
-                    <GameGrid />
+                    <GameGrid 
+                        games={paginatedGames}
+                        totalGames={filteredGames.length}
+                        currentPage={page}
+                        totalPages={totalPages}
+                        onPageChange={setPage}
+                    />
                 </div>
             </div>
         </main>

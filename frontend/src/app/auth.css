@@ -1,0 +1,320 @@
+/* ==========================================
+   AUTH PAGE â€” Glassmorphism Dark Card System
+   ========================================== */
+
+/* Light flare sweep across the top of auth cards */
+@keyframes auth-flare {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%) skewX(-15deg);
+  }
+
+  20% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+/* Floating particle animation for background */
+@keyframes auth-particle-float {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.3;
+  }
+
+  25% {
+    transform: translateY(-30px) translateX(15px) scale(1.1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateY(-50px) translateX(-10px) scale(0.9);
+    opacity: 0.4;
+  }
+
+  75% {
+    transform: translateY(-20px) translateX(20px) scale(1.05);
+    opacity: 0.5;
+  }
+}
+
+/* Subtle glow pulse for card border */
+@keyframes auth-border-glow {
+
+  0%,
+  100% {
+    border-color: rgba(0, 180, 230, 0.15);
+    box-shadow: 0 0 40px -15px rgba(0, 180, 230, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  }
+
+  50% {
+    border-color: rgba(0, 200, 255, 0.25);
+    box-shadow: 0 0 60px -15px rgba(0, 200, 255, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Auth card â€” premium glassmorphism */
+  .auth-card {
+    position: relative;
+    background: rgba(8, 14, 28, 0.92);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(0, 180, 230, 0.18);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    animation: auth-border-glow 4s ease-in-out infinite;
+  }
+
+  /* Top-edge light flare */
+  .auth-card::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(180deg,
+        rgba(0, 200, 255, 0.12) 0%,
+        rgba(0, 200, 255, 0.04) 30%,
+        transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Animated sweep flare */
+  .auth-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -50%;
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.6) 40%,
+        rgba(0, 212, 255, 0.8) 50%,
+        rgba(255, 255, 255, 0.6) 60%,
+        transparent 100%);
+    border-radius: 999px;
+    filter: blur(1px);
+    animation: auth-flare 6s ease-in-out infinite;
+    animation-delay: 1s;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Auth input â€” dark glass input field */
+  .auth-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 0.875rem;
+    background: rgba(15, 22, 40, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.95);
+    outline: none;
+    transition: all 0.25s ease;
+    font-size: 0.9375rem;
+  }
+
+  .auth-input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .auth-input:focus {
+    border-color: rgba(0, 200, 255, 0.4);
+    box-shadow: 0 0 0 3px rgba(0, 200, 255, 0.08), 0 0 20px -5px rgba(0, 200, 255, 0.1);
+    background: rgba(15, 22, 40, 0.85);
+  }
+
+  /* Auth social button */
+  .auth-social-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    border-radius: 0.875rem;
+    background: rgba(15, 22, 40, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+
+  .auth-social-btn:hover:not(:disabled) {
+    background: rgba(20, 30, 55, 0.8);
+    border-color: rgba(0, 200, 255, 0.2);
+  }
+
+  .auth-social-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  /* Auth submit button â€” gradient glow */
+  .auth-submit-btn {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.875rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: white;
+    background: linear-gradient(135deg, hsl(186, 100%, 45%) 0%, hsl(200, 100%, 50%) 100%);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .auth-submit-btn:hover:not(:disabled) {
+    filter: brightness(1.15);
+    box-shadow: 0 8px 30px -5px rgba(0, 200, 255, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .auth-submit-btn:active:not(:disabled) {
+    transform: scale(0.98) translateY(0);
+  }
+
+  .auth-submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+/* Light mode overrides for auth card */
+[data-theme="light"] .auth-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.12) !important;
+  animation: none !important;
+}
+
+[data-theme="light"] .auth-card::before {
+  background: linear-gradient(180deg,
+      rgba(0, 180, 230, 0.06) 0%,
+      transparent 100%) !important;
+}
+
+[data-theme="light"] .auth-card::after {
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(0, 180, 230, 0.3) 40%,
+      rgba(0, 180, 230, 0.5) 50%,
+      rgba(0, 180, 230, 0.3) 60%,
+      transparent 100%) !important;
+}
+
+[data-theme="light"] .auth-input {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+[data-theme="light"] .auth-input::placeholder {
+  color: rgba(0, 0, 0, 0.45) !important;
+}
+
+[data-theme="light"] .auth-input:focus {
+  border-color: hsl(186, 100%, 42%) !important;
+  box-shadow: 0 0 0 3px hsla(186, 100%, 42%, 0.1) !important;
+  background: rgba(0, 0, 0, 0.02) !important;
+}
+
+[data-theme="light"] .auth-social-btn {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="light"] .auth-social-btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Light mode text overrides for hardcoded white text */
+[data-theme="light"] .auth-card .text-white {
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/80 {
+  color: rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/60 {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/40 {
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/35 {
+  color: rgba(0, 0, 0, 0.45) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/25 {
+  color: rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/20 {
+  color: rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="light"] .auth-card .text-white\/15,
+[data-theme="light"] .auth-card .text-white\/10,
+[data-theme="light"] .auth-card .text-white\/5 {
+  color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Light mode border/bg overrides for specific utilities used in auth */
+[data-theme="light"] .auth-card .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] .auth-card .bg-white\/8 {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .auth-card .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-theme="light"] .auth-card .border-white\/15 {
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Dark mode explicit */
+[data-theme="dark"] .auth-card {
+  background: rgba(8, 14, 28, 0.92) !important;
+  border: 1px solid rgba(0, 180, 230, 0.18) !important;
+  animation: auth-border-glow 4s ease-in-out infinite !important;
+}
+
+/* Low performance mode */
+.low-performance-mode .auth-card {
+  animation: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.low-performance-mode .auth-card::after {
+  animation: none !important;
+  display: none !important;
+}
+

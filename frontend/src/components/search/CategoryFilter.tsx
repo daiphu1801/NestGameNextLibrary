@@ -1,8 +1,6 @@
 'use client';
 
 import { GAME_CATEGORIES, CATEGORY_ORDER } from '@/config/categories';
-import { useGameStore } from '@/features/games/store/gameStore';
-import { gameService } from '@/services/gameService';
 import { cn } from '@/lib/utils';
 import * as LucideIcons from 'lucide-react';
 import { type LucideIcon } from 'lucide-react';
@@ -10,24 +8,13 @@ import { useRef } from 'react';
 
 import { useLanguage } from '@/components/providers/LanguageProvider';
 
-export function CategoryFilter() {
+interface CategoryFilterProps {
+  currentCategory: string;
+  onChange: (category: any) => void;
+}
+
+export function CategoryFilter({ currentCategory, onChange }: CategoryFilterProps) {
   const { t } = useLanguage();
-  const {
-    allGames,
-    currentCategory,
-    searchQuery,
-    setCategory,
-    setFilteredGames
-  } = useGameStore();
-
-  const handleCategoryClick = (categoryKey: string) => {
-    setCategory(categoryKey as any);
-
-    let filtered = gameService.filterByCategory(allGames, categoryKey as any);
-    filtered = gameService.searchGames(filtered, searchQuery);
-
-    setFilteredGames(filtered);
-  };
 
   return (
     <div className="w-full relative">
@@ -44,7 +31,7 @@ export function CategoryFilter() {
             return (
               <button
                 key={categoryKey}
-                onClick={() => handleCategoryClick(categoryKey)}
+                onClick={() => onChange(categoryKey)}
                 className={cn(
                   'relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-300',
                   'border font-medium text-xs sm:text-sm',

@@ -1,0 +1,65 @@
+﻿
+> nest-game-next@3.0.0 build
+> next build
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+- Experiments (use with caution):
+  ┬╖ serverActions
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 6.8s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/35) ...
+  Generating static pages using 15 workers (8/35) 
+  Generating static pages using 15 workers (17/35) 
+  Generating static pages using 15 workers (26/35) 
+Γ£ô Generating static pages using 15 workers (35/35) in 646.1ms
+  Finalizing page optimization ...
+
+Route (app)
+Γöî Γùï /
+Γö£ Γùï /_not-found
+Γö£ ╞Æ /api/phuiumit02022024/fix-images
+Γö£ ╞Æ /api/phuiumit02022024/fix-images/single
+Γö£ ╞Æ /api/roms/[...path]
+Γö£ ╞Æ /api/roms/presign
+Γö£ ╞Æ /api/roms/proxy
+Γö£ ╞Æ /api/roms/upload
+Γö£ Γùï /docs
+Γö£ Γùï /emulator
+Γö£ Γùï /favorites
+Γö£ Γùï /featured
+Γö£ Γùï /game-of-the-month
+Γö£ ╞Æ /games/[id]
+Γö£ ╞Æ /games/[id]/play
+Γö£ Γùï /history
+Γö£ Γùï /icon.png
+Γö£ Γùï /leaderboard
+Γö£ Γùï /library
+Γö£ Γùï /login
+Γö£ Γùï /phuiumit02022024
+Γö£ Γùï /phuiumit02022024/activity
+Γö£ Γùï /phuiumit02022024/categories
+Γö£ Γùï /phuiumit02022024/comments
+Γö£ Γùï /phuiumit02022024/featured-games
+Γö£ Γùï /phuiumit02022024/game-month
+Γö£ Γùï /phuiumit02022024/games
+Γö£ Γùï /phuiumit02022024/images
+Γö£ Γùï /phuiumit02022024/login
+Γö£ Γùï /phuiumit02022024/ratings
+Γö£ Γùï /phuiumit02022024/settings
+Γö£ Γùï /phuiumit02022024/users
+Γö£ Γùï /random
+Γö£ Γùï /register
+Γö£ Γùï /reset-password
+Γö£ Γùï /settings
+Γöö Γùï /systems
+
+
+╞Æ Proxy (Middleware)
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+

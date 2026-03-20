@@ -52,7 +52,7 @@ export default function DocsPage() {
                         <Book className="w-8 h-8 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-4xl font-black font-mono-tech uppercase tracking-tight">
+                        <h1 className="text-4xl font-black font-tech uppercase tracking-tight">
                             {t('docs.title')}
                         </h1>
                         <p className="text-muted-foreground mt-1">

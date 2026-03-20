@@ -51,8 +51,14 @@ export default function FavoritesPage() {
         router.push(`/games/${game.id}/play`);
     };
 
-    const handleRemoveFavorite = (gameId: string | number) => {
-        setFavoriteGames(prev => prev.filter(g => g.id !== gameId));
+    const handleRemoveFavorite = async (gameId: string | number) => {
+        try {
+            await toggleFavorite(gameId);
+            setFavoriteGames(prev => prev.filter(g => g.id !== gameId));
+        } catch (e) {
+            console.error('Failed to remove', e);
+            throw e; // Rethrow to let the child component reset loading state
+        }
     };
 
     const handleClearAll = async () => {
@@ -108,7 +114,7 @@ export default function FavoritesPage() {
                             <Heart className="w-8 h-8 text-white fill-white" />
                         </div>
                         <div>
-                            <h1 className="text-3xl sm:text-4xl font-black font-mono-tech uppercase tracking-tight flex items-center gap-3">
+                            <h1 className="text-3xl sm:text-4xl font-black font-tech uppercase tracking-tight flex items-center gap-3">
                                 {t('nav.favorites') || 'My Favorites'}
                             </h1>
                             <p className="text-muted-foreground mt-1">

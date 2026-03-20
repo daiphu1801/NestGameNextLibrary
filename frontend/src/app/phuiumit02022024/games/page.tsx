@@ -1,19 +1,21 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
+import { useEffect, useState, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     Plus, Pencil, Trash2, X, Star, ChevronLeft, ChevronRight,
-    Loader2, Download, Upload, FolderOpen, Image as ImageIcon,
-    Wand2, CheckCircle2, AlertCircle, FileUp, Search, ChevronDown
+    Loader2, Download, Upload, FolderOpen, Search, ChevronDown, Wand2
 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
 import { debounce } from '@/lib/utils';
 import { useToast } from '../components/ToastProvider';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ActionButton } from '../components/ActionButton';
+import { GameGeneralInfoForm } from '@/components/admin/GameGeneralInfoForm';
+import { GameMediaForm } from '@/components/admin/GameMediaForm';
+import { useGameForm } from '@/features/admin/hooks/useGameForm';
 
-// �"?�"?�"? Constants �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
+// --- Constants ---
 const REGIONS = ['', 'JP', 'US', 'EU', 'World', 'KR', 'AU', 'FR', 'DE', 'IT', 'SP'];
 const SYSTEMS = [
     { id: 'nes', name: 'NES' },
@@ -25,360 +27,6 @@ const SYSTEMS = [
     { id: 'arcade', name: 'Arcade' },
     { id: 'neogeo', name: 'Neo Geo' }
 ];
-const ROM_FOLDERS = [
-    'Nes ROMs Complete 1 Of 4',
-    'Nes ROMs Complete 2 Of 4',
-    'Nes ROMs Complete 3 Of 4',
-    'Nes ROMs Complete 4 Of 4',
-];
-
-// �"?�"?�"? Helpers �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
-function toSlug(name: string) {
-    return name.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-\(\)\[\]!]/g, '');
-}
-
-/** Given a base URL, auto-derive imageUrl / imageSnap / imageTitle by swapping extension */
-function deriveImageUrls(base: string): { imageUrl: string; imageSnap: string; imageTitle: string } {
-    if (!base) return { imageUrl: '', imageSnap: '', imageTitle: '' };
-    const noExt = base.replace(/\.[a-zA-Z0-9]+$/, '');
-    return {
-        imageUrl: `${noExt}.jpg`,
-        imageSnap: `${noExt}s.jpg`,
-        imageTitle: `${noExt}t.jpg`,
-    };
-}
-
-const LIBRETRO_BASE = 'https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%20Entertainment%20System';
-
-/** Build 3 Libretro thumbnail URLs from a game name (without extension) */
-function buildLibretroUrls(gameName: string): { boxart: string; snap: string; title: string } {
-    const encoded = encodeURIComponent(gameName);
-    return {
-        boxart: `${LIBRETRO_BASE}/Named_Boxarts/${encoded}.png`,
-        snap: `${LIBRETRO_BASE}/Named_Snaps/${encoded}.png`,
-        title: `${LIBRETRO_BASE}/Named_Titles/${encoded}.png`,
-    };
-}
-
-/** Strip ROM file extension from a fileName */
-function stripRomExt(fileName: string): string {
-    return fileName.replace(/\.(nes|zip|NES|ZIP)$/, '').trim();
-}
-
-/** Format bytes */
-function fmtSize(bytes: number) {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-}
-
-// �"?�"?�"? Image Preview Component �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
-function ImagePreview({ url, label }: { url: string; label: string }) {
-    const [ok, setOk] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        if (!url) { setOk(false); return; }
-        setLoading(true);
-        const img = new window.Image();
-        img.onload = () => { setOk(true); setLoading(false); };
-        img.onerror = () => { setOk(false); setLoading(false); };
-        img.src = url;
-    }, [url]);
-
-    if (!url) return (
-        <div className="aspect-video rounded-md flex flex-col items-center justify-center gap-1" style={{ background: '#1C2434', border: '1px dashed #2E3A47' }}>
-            <ImageIcon className="w-5 h-5 text-[#637381]" />
-            <span className="text-[#637381] text-[10px]">{label}</span>
-        </div>
-    );
-
-    return (
-        <div className="aspect-video rounded-md overflow-hidden relative" style={{ border: '1px solid #2E3A47' }}>
-            {loading && <div className="absolute inset-0 flex items-center justify-center" style={{ background: '#1C2434' }}><Loader2 className="w-4 h-4 animate-spin text-[#3C50E0]" /></div>}
-            {ok ? (
-                <img src={url} alt={label} className="w-full h-full object-cover" />
-            ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1" style={{ background: '#1C2434' }}>
-                    <AlertCircle className="w-4 h-4 text-[#FB5454]" />
-                    <span className="text-[#FB5454] text-[10px]">Không tải được</span>
-                </div>
-            )}
-        </div>
-    );
-}
-
-// �"?�"?�"? ROM Upload Drop Zone �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
-interface RomDropZoneProps {
-    onUploaded: (fileName: string, path: string) => void;
-}
-
-function RomDropZone({ onUploaded }: RomDropZoneProps) {
-    const [dragging, setDragging] = useState(false);
-    const [uploading, setUploading] = useState(false);
-    const [uploaded, setUploaded] = useState<{ fileName: string; path: string; sizeBytes: number; mode?: string } | null>(null);
-    const [error, setError] = useState('');
-    const [selectedFolder, setSelectedFolder] = useState(ROM_FOLDERS[0]);
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    const handleFile = async (file: File) => {
-        const ext = file.name.split('.').pop()?.toLowerCase();
-        if (!['nes', 'sfc', 'smc', 'gba', 'md', 'gen', 'bin', 'zip'].includes(ext || '')) {
-            setError('Chỉ hỗ trợ file .nes, .sfc, .gba, .md, .zip');
-            return;
-        }
-        setError('');
-        setUploading(true);
-        try {
-            const result = await adminService.uploadRom(file, selectedFolder);
-            setUploaded(result as any);
-            onUploaded(result.fileName, result.path);
-        } catch (err: any) {
-            setError(err.message || 'Upload thất bại');
-        } finally {
-            setUploading(false);
-        }
-    };
-
-    const onDrop = (e: React.DragEvent) => {
-        e.preventDefault();
-        setDragging(false);
-        const file = e.dataTransfer.files[0];
-        if (file) handleFile(file);
-    };
-
-    const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) handleFile(file);
-    };
-
-    const isCloudinaryMode = uploaded?.mode === 'cloudinary';
-
-    return (
-        <div className="space-y-3">
-            {/* Folder selector �?" only show for local mode */}
-            {!isCloudinaryMode && !uploaded && (
-                <div>
-                    <label className="block text-xs font-medium text-[#A5B4CB] mb-1.5 uppercase tracking-wider">Thư mục đích (Local)</label>
-                    <select
-                        value={selectedFolder}
-                        onChange={e => setSelectedFolder(e.target.value)}
-                        className="w-full px-3 py-2 rounded-md text-white text-sm border focus:outline-none focus:ring-1 focus:ring-[#3C50E0]/50"
-                        style={{ background: '#1C2434', borderColor: '#2E3A47' }}
-                    >
-                        {ROM_FOLDERS.map(f => <option key={f} value={f}>{f}</option>)}
-                    </select>
-                </div>
-            )}
-
-            {/* Drop zone */}
-            <div
-                onClick={() => !uploading && inputRef.current?.click()}
-                onDragOver={e => { e.preventDefault(); setDragging(true); }}
-                onDragLeave={() => setDragging(false)}
-                onDrop={onDrop}
-                className="relative rounded-md p-6 text-center cursor-pointer transition-all"
-                style={{
-                    background: dragging ? 'rgba(60,80,224,0.08)' : '#1C2434',
-                    border: `2px dashed ${dragging ? '#3C50E0' : uploaded ? '#10B981' : '#2E3A47'}`,
-                }}
-            >
-                <input ref={inputRef} type="file" accept=".nes,.zip,.sfc,.smc,.gba,.md,.gen,.bin" className="hidden" onChange={onInputChange} />
-
-                {uploading ? (
-                    <div className="flex flex-col items-center gap-2">
-                        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#3C50E0' }} />
-                        <span className="text-[#A5B4CB] text-sm">Đang upload...</span>
-                    </div>
-                ) : uploaded ? (
-                    <div className="flex flex-col items-center gap-2">
-                        <CheckCircle2 className="w-8 h-8" style={{ color: '#10B981' }} />
-                        <div className="flex items-center gap-2">
-                            <p className="text-white text-sm font-medium">{uploaded.fileName}</p>
-                            <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold" style={uploaded.mode === 'cloudinary'
-                                ? { background: 'rgba(16,185,129,0.15)', color: '#10B981' }
-                                : { background: 'rgba(60,80,224,0.15)', color: '#6577F3' }}>
-                                {uploaded.mode === 'cloudinary' ? '☁️ Cloudinary' : '💾 Local'}
-                            </span>
-                        </div>
-                        <p className="text-[#637381] text-xs max-w-xs truncate">{fmtSize(uploaded.sizeBytes)} · {uploaded.path}</p>
-                        <button
-                            type="button"
-                            onClick={e => { e.stopPropagation(); setUploaded(null); onUploaded('', ''); }}
-                            className="text-xs text-[#A5B4CB] hover:text-white underline mt-1"
-                        >
-                            Đổi file khác
-                        </button>
-                    </div>
-                ) : (
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(60,80,224,0.1)' }}>
-                            <FileUp className="w-6 h-6" style={{ color: '#3C50E0' }} />
-                        </div>
-                        <p className="text-white text-sm font-medium">Kéo thả hoặc click để chọn ROM</p>
-                        <p className="text-[#637381] text-xs">Hỗ trợ .nes · .sfc · .gba · .md · .zip</p>
-                    </div>
-                )}
-            </div>
-
-            {error && (
-                <p className="text-[#FB5454] text-xs flex items-center gap-1">
-                    <AlertCircle className="w-3.5 h-3.5" />{error}
-                </p>
-            )}
-        </div>
-    );
-}
-
-// --------------------------------------------------------------------------------------------------------------------- RAWG Image Finder ---------------------------------------------------------------------------------------------------------------------
-interface RAWGFinderProps {
-    defaultName?: string;
-    onApply: (imageUrl: string, imageSnap: string, imageTitle: string) => void;
-}
-
-function RAWGImageFinder({ defaultName = '', onApply }: RAWGFinderProps) {
-    const [query, setQuery] = useState(defaultName);
-    const [searching, setSearching] = useState(false);
-    const [results, setResults] = useState<any[]>([]);
-    const [error, setError] = useState('');
-    const [selectedIdx, setSelectedIdx] = useState<number>(0);
-
-    useEffect(() => {
-        if (defaultName && defaultName !== query) setQuery(defaultName);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [defaultName]);
-
-    const handleSearch = async () => {
-        if (!query.trim()) return;
-        setSearching(true);
-        setError('');
-        setResults([]);
-
-        try {
-            const apiKey = process.env.NEXT_PUBLIC_RAWG_API_KEY;
-            if (!apiKey) {
-                throw new Error('Vui lòng thêm NEXT_PUBLIC_RAWG_API_KEY vào file .env');
-            }
-
-            // Clean query to improve search
-            const cleanQuery = stripRomExt(query).replace(/\(.*\)/g, '').trim();
-
-            // platforms: 49 (NES), 79 (SNES), 167 (Genesis), 24 (GBA), 43 (GBC), 26 (Game Boy)
-            const classicPlatforms = "49,79,167,24,43,26";
-            const res = await fetch(`https://api.rawg.io/api/games?search=${encodeURIComponent(cleanQuery)}&key=${apiKey}&page_size=5&platforms=${classicPlatforms}`);
-            if (!res.ok) throw new Error('Lỗi gọi API RAWG');
-
-            const data = await res.json();
-            if (data.results && data.results.length > 0) {
-                setResults(data.results);
-                setSelectedIdx(0);
-            } else {
-                setError('Không tìm thấy game nào');
-            }
-        } catch (err: any) {
-            setError(err.message || 'Lỗi tìm kiếm');
-        } finally {
-            setSearching(false);
-        }
-    };
-
-    const handleApply = () => {
-        if (results.length === 0) return;
-        const game = results[selectedIdx];
-
-        // Use background_image as boxart/cover
-        const boxart = game.background_image || '';
-
-        // Get screenshots (avoid background_image itself if possible)
-        const screenshots = game.short_screenshots?.filter((s: any) => s.image !== boxart) || [];
-
-        // Use first screenshot as snap, second as title (or fallback to background)
-        const snap = screenshots.length > 0 ? screenshots[0].image : boxart;
-        const title = screenshots.length > 1 ? screenshots[1].image : snap;
-
-        onApply(boxart, snap, title);
-    };
-
-    return (
-        <div className="space-y-3">
-            {/* Search bar */}
-            <div className="flex gap-2">
-                <div className="relative flex-1">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#637381]" />
-                    <input
-                        value={query}
-                        onChange={e => setQuery(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                        placeholder="Ví dụ: Super Mario Bros"
-                        className="w-full pl-8 pr-3 py-2 rounded-md text-white text-sm border focus:outline-none focus:ring-1 focus:ring-[#10B981]/50 transition-colors"
-                        style={{ background: '#1C2434', borderColor: '#2E3A47' }}
-                    />
-                </div>
-                <button
-                    type="button"
-                    onClick={handleSearch}
-                    disabled={!query.trim() || searching}
-                    className="flex items-center gap-1.5 px-4 rounded-md text-white text-sm font-semibold disabled:opacity-50 transition-all hover:brightness-105 flex-shrink-0 cursor-pointer"
-                    style={{ background: '#10B981' }}
-                >
-                    {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                    Tìm RAWG
-                </button>
-            </div>
-
-            {error && <p className="text-[#FB5454] text-xs flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{error}</p>}
-
-            {/* Preview Results */}
-            {results.length > 0 && (
-                <div className="space-y-3">
-                    <p className="text-xs text-[#A5B4CB]">Chọn kết quả chuẩn nhất ({results.length} games):</p>
-                    <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar">
-                        {results.map((game, idx) => (
-                            <div
-                                key={game.id}
-                                onClick={() => setSelectedIdx(idx)}
-                                className="flex-shrink-0 w-40 cursor-pointer rounded-lg overflow-hidden transition-all group relative"
-                                style={{
-                                    border: `2px solid ${idx === selectedIdx ? '#10B981' : '#2E3A47'}`,
-                                    background: '#1C2434',
-                                    opacity: idx === selectedIdx ? 1 : 0.7
-                                }}
-                            >
-                                <div className="aspect-video w-full relative">
-                                    {game.background_image ? (
-                                        <img src={game.background_image} alt={game.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-5 h-5 text-[#637381]" /></div>
-                                    )}
-                                    {idx === selectedIdx && (
-                                        <div className="absolute top-1 right-1 bg-[#10B981] rounded-full p-0.5 shadow-md">
-                                            <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="p-2">
-                                    <p className="text-white text-xs font-semibold truncate" title={game.name}>{game.name}</p>
-                                    <p className="text-[#A5B4CB] text-[10px] truncate">{game.released?.split('-')[0] || ''} • RATING: {game.rating || 0}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Apply button */}
-                    <button
-                        type="button"
-                        onClick={handleApply}
-                        className="w-full py-2 rounded-md text-white text-sm font-semibold transition-all hover:brightness-105 cursor-pointer flex items-center justify-center gap-2"
-                        style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid #10B981', color: '#10B981' }}
-                    >
-                        <CheckCircle2 className="w-4 h-4" />
-                        Áp dụng BoxArt & Screenshots từ RAWG
-                    </button>
-                </div>
-            )}
-        </div>
-    );
-}
 
 // --------------------------------------------------------------------------------------------------------------------- Main Component ---------------------------------------------------------------------------------------------------------------------
 function AdminGamesContent() {
@@ -406,14 +54,7 @@ function AdminGamesContent() {
     const { showToast } = useToast();
     const SIZE = 15;
 
-    const emptyForm = {
-        name: '', fileName: '', path: '', categoryId: '' as any,
-        description: '', rating: '', year: '', region: '',
-        isFeatured: false, system: 'nes',
-        imageBaseUrl: '', // NEW: used to auto-derive the 3 image fields
-        imageUrl: '', imageSnap: '', imageTitle: '',
-    };
-    const [form, setForm] = useState(emptyForm);
+    const { form, setForm, autoFillFromName, applyImageBaseUrl, onRomUploaded, applyRAWGImages, resetForm } = useGameForm();
 
     // --------------------------------------------------------------------------------------------------------------------- Data loading ---------------------------------------------------------------------------------------------------------------------
     const loadGames = useCallback(async () => {
@@ -439,34 +80,16 @@ function AdminGamesContent() {
 
     useEffect(() => { adminService.getCategories().then(setCategories).catch(console.error); }, []);
 
-    // --------------------------------------------------------------------------------------------------------------------- Auto-fill helpers ---------------------------------------------------------------------------------------------------------------------
-    const autoFillFromName = (name: string) => {
-        if (!form.fileName && !editingGame) {
-            setForm(f => ({ ...f, name, fileName: name }));
-        } else {
-            setForm(f => ({ ...f, name }));
-        }
-    };
-
-    const applyImageBaseUrl = (base: string) => {
-        const derived = deriveImageUrls(base);
-        setForm(f => ({ ...f, imageBaseUrl: base, ...derived }));
-    };
-
-    const onRomUploaded = (fileName: string, path: string) => {
-        setForm(f => ({ ...f, fileName, path }));
-    };
-
     // --------------------------------------------------------------------------------------------------------------------- Modal helpers ---------------------------------------------------------------------------------------------------------------------
     const openCreate = () => {
         setEditingGame(null);
-        setForm(emptyForm);
+        resetForm();
         setModalOpen(true);
     };
 
     const openEdit = (game: any) => {
         setEditingGame(game);
-        setForm({
+        resetForm({
             name: game.name || '',
             fileName: game.fileName || '',
             path: game.path || '',
@@ -817,225 +440,21 @@ function AdminGamesContent() {
 
                         <form onSubmit={handleSave} className="p-6 space-y-6">
 
-                            {/* --------------------------------------------------------------------------------------------------------------------- Section 1: ROM File Upload --------------------------------------------------------------------------------------------------------------------- */}
-                            {!editingGame && (
-                                <div className="rounded-[10px] p-4 space-y-3" style={{ background: '#24303F', border: '1px solid #2E3A47' }}>
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <Upload className="w-4 h-4" style={{ color: '#3C50E0' }} />
-                                        <h4 className="text-white text-sm font-semibold">Upload ROM File</h4>
-                                        <span className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: 'rgba(60,80,224,0.15)', color: '#6577F3' }}>Tự động điền</span>
-                                    </div>
-                                    <RomDropZone onUploaded={onRomUploaded} />
-                                </div>
-                            )}
+                            <GameGeneralInfoForm
+                                form={form}
+                                setForm={setForm}
+                                autoFillFromName={autoFillFromName}
+                                onRomUploaded={onRomUploaded}
+                                categories={categories}
+                                isEditing={!!editingGame}
+                            />
 
-                            {/* --------------------------------------------------------------------------------------------------------------------- Section 2: Thông tin cơ bản --------------------------------------------------------------------------------------------------------------------- */}
-                            <div className="rounded-[10px] p-4 space-y-4" style={{ background: '#24303F', border: '1px solid #2E3A47' }}>
-                                <h4 className="text-white text-sm font-semibold flex items-center gap-2">
-                                    <FolderOpen className="w-4 h-4" style={{ color: '#F59E0B' }} />
-                                    Thông tin cơ bản
-                                </h4>
-
-                                {/* Tên game */}
-                                <div>
-                                    <label className={labelCls}>Tên game *</label>
-                                    <input
-                                        value={form.name}
-                                        onChange={e => autoFillFromName(e.target.value)}
-                                        required
-                                        placeholder="Ví dụ: Super Mario Bros"
-                                        className={inputCls} style={inputStyle}
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {/* File Name */}
-                                    <div>
-                                        <label className={labelCls}>
-                                            File Name *
-                                            {form.fileName && <span className="ml-2 text-[#10B981] normal-case font-normal">✓ Đã điền</span>}
-                                        </label>
-                                        <input
-                                            value={form.fileName}
-                                            onChange={e => setForm(f => ({ ...f, fileName: e.target.value }))}
-                                            required
-                                            placeholder="Ví dụ: Super Mario Bros (JU).nes"
-                                            className={inputCls} style={inputStyle}
-                                        />
-                                    </div>
-
-                                    {/* Path */}
-                                    <div>
-                                        <label className={labelCls}>
-                                            Path *
-                                            {form.path && <span className="ml-2 text-[#10B981] normal-case font-normal">✓ Đã điền</span>}
-                                        </label>
-                                        <input
-                                            value={form.path}
-                                            onChange={e => setForm(f => ({ ...f, path: e.target.value }))}
-                                            required
-                                            placeholder="Nes ROMs Complete 1 Of 4/..."
-                                            className={inputCls} style={inputStyle}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                                    {/* Danh mục */}
-                                    <div>
-                                        <label className={labelCls}>Danh mục</label>
-                                        <select value={form.categoryId} onChange={e => setForm(f => ({ ...f, categoryId: e.target.value }))}
-                                            className={inputCls} style={inputStyle}>
-                                            <option value="">— Chọn —</option>
-                                            {categories.map(c => <option key={c.id} value={c.id}>{c.displayName}</option>)}
-                                        </select>
-                                    </div>
-
-                                    {/* System dropdown */}
-                                    <div>
-                                        <label className={labelCls}>Hệ máy (System)</label>
-                                        <select value={form.system} onChange={e => setForm(f => ({ ...f, system: e.target.value }))}
-                                            className={inputCls} style={inputStyle}>
-                                            {SYSTEMS.map(sys => <option key={sys.id} value={sys.id}>{sys.name}</option>)}
-                                        </select>
-                                    </div>
-
-                                    {/* Region dropdown */}
-                                    <div>
-                                        <label className={labelCls}>Region</label>
-                                        <select value={form.region} onChange={e => setForm(f => ({ ...f, region: e.target.value }))}
-                                            className={inputCls} style={inputStyle}>
-                                            {REGIONS.map(r => <option key={r} value={r}>{r || '— Chọn —'}</option>)}
-                                        </select>
-                                    </div>
-
-                                    {/* Năm */}
-                                    <div>
-                                        <label className={labelCls}>Năm</label>
-                                        <input type="number" min="1980" max="2030" value={form.year}
-                                            onChange={e => setForm(f => ({ ...f, year: e.target.value }))}
-                                            placeholder="1985"
-                                            className={inputCls} style={inputStyle} />
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {/* Rating */}
-                                    <div>
-                                        <label className={labelCls}>Rating (0—5)</label>
-                                        <input type="number" step="0.1" min="0" max="5" value={form.rating}
-                                            onChange={e => setForm(f => ({ ...f, rating: e.target.value }))}
-                                            placeholder="4.5"
-                                            className={inputCls} style={inputStyle} />
-                                    </div>
-
-                                    {/* Featured */}
-                                    <div className="flex items-end pb-1">
-                                        <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                                            <div
-                                                onClick={() => setForm(f => ({ ...f, isFeatured: !f.isFeatured }))}
-                                                className="relative w-10 h-5.5 rounded-full transition-colors cursor-pointer flex-shrink-0"
-                                                style={{ background: form.isFeatured ? '#3C50E0' : '#2E3A47', width: 40, height: 22 }}
-                                            >
-                                                <div className="absolute top-[3px] left-[3px] w-4 h-4 bg-white rounded-full shadow transition-transform"
-                                                    style={{ transform: form.isFeatured ? 'translateX(18px)' : 'translateX(0)' }}
-                                                />
-                                            </div>
-                                            <span className="text-white text-sm">Nổi bật (Featured)</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                {/* Mô tả */}
-                                <div>
-                                    <label className={labelCls}>Mô tả</label>
-                                    <textarea value={form.description}
-                                        onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                                        rows={3} placeholder="Viết mô tả ngắn về game..."
-                                        className={`${inputCls} resize-none`} style={inputStyle} />
-                                </div>
-                            </div>
-
-                            {/* --------------------------------------------------------------------------------------------------------------------- Section 3: Hình ảnh --------------------------------------------------------------------------------------------------------------------- */}
-                            <div className="rounded-[10px] p-4 space-y-4" style={{ background: '#24303F', border: '1px solid #2E3A47' }}>
-                                <h4 className="text-white text-sm font-semibold flex items-center gap-2">
-                                    <ImageIcon className="w-4 h-4" style={{ color: '#10B981' }} />
-                                    Hình ảnh
-                                </h4>
-
-                                {/* --------------------------------------------------------------------------------------------------------------------- RAWG Finder --------------------------------------------------------------------------------------------------------------------- */}
-                                <div className="rounded-md p-3 space-y-2" style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)' }}>
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                        <Search className="w-3.5 h-3.5" style={{ color: '#10B981' }} />
-                                        <span className="text-xs font-semibold" style={{ color: '#10B981' }}>Tìm ảnh tự động từ RAWG Database</span>
-                                        <span className="text-[10px] text-[#637381]">(Chất lượng cao - Miễn phí)</span>
-                                    </div>
-                                    <RAWGImageFinder
-                                        defaultName={stripRomExt(form.fileName || form.name)}
-                                        onApply={(imgUrl, imgSnap, imgTitle) => setForm(f => ({
-                                            ...f,
-                                            imageBaseUrl: '',
-                                            imageUrl: imgUrl || f.imageUrl,
-                                            imageSnap: imgSnap || f.imageSnap,
-                                            imageTitle: imgTitle || f.imageTitle,
-                                        }))}
-                                    />
-                                </div>
-
-                                <div className="flex items-center gap-3 py-1">
-                                    <div className="flex-1 h-px" style={{ background: '#2E3A47' }} />
-                                    <span className="text-[11px] text-[#637381]">hoặc nhập tay</span>
-                                    <div className="flex-1 h-px" style={{ background: '#2E3A47' }} />
-                                </div>
-
-                                {/* Base URL auto-derive */}
-                                <div>
-                                    <label className={labelCls}>
-                                        <span className="flex items-center gap-1.5">
-                                            <Wand2 className="w-3.5 h-3.5" style={{ color: '#F59E0B' }} />
-                                            URL gốc (tự động tạo 3 URL ảnh)
-                                        </span>
-                                    </label>
-                                    <div className="flex gap-2">
-                                        <input
-                                            value={form.imageBaseUrl}
-                                            onChange={e => applyImageBaseUrl(e.target.value)}
-                                            placeholder="https://example.com/images/game-name.jpg"
-                                            className={`${inputCls} flex-1`} style={inputStyle}
-                                        />
-                                        {form.imageBaseUrl && (
-                                            <button type="button" onClick={() => applyImageBaseUrl(form.imageBaseUrl)}
-                                                className="px-3 rounded-md text-white text-xs font-medium transition-colors flex-shrink-0"
-                                                style={{ background: '#3C50E0' }}>
-                                                Tạo lại
-                                            </button>
-                                        )}
-                                    </div>
-                                    <p className="text-[#637381] text-[11px] mt-1">
-                                        Nhập URL bất kỳ để tự tạo: <code className="text-[#A5B4CB]">.jpg</code> · <code className="text-[#A5B4CB]">s.jpg</code> · <code className="text-[#A5B4CB]">t.jpg</code>
-                                    </p>
-                                </div>
-
-                                {/* 3 URL fields + preview */}
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    {[
-                                        { key: 'imageUrl', label: 'Image URL (Box Art)' },
-                                        { key: 'imageSnap', label: 'Image Snap (Screenshot)' },
-                                        { key: 'imageTitle', label: 'Image Title (Title Screen)' },
-                                    ].map(({ key, label }) => (
-                                        <div key={key} className="space-y-2">
-                                            <label className={labelCls}>{label}</label>
-                                            <input
-                                                value={(form as any)[key]}
-                                                onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                                                placeholder="https://..."
-                                                className={inputCls} style={inputStyle}
-                                            />
-                                            <ImagePreview url={(form as any)[key]} label={label} />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+                            <GameMediaForm
+                                form={form}
+                                setForm={setForm}
+                                applyImageBaseUrl={applyImageBaseUrl}
+                                applyRAWGImages={applyRAWGImages}
+                            />
 
                             {/* --------------------------------------------------------------------------------------------------------------------- Actions --------------------------------------------------------------------------------------------------------------------- */}
                             <div className="flex justify-end gap-3 pt-1">

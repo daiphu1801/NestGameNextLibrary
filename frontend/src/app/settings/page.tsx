@@ -122,7 +122,7 @@ export default function SettingsPage() {
 
                 {/* Page title — compact on mobile */}
                 <div className="mb-5">
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black font-mono-tech uppercase tracking-tight text-gradient-cyan">
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black font-tech uppercase tracking-tight bg-gradient-cyan bg-clip-text text-transparent">
                         {t('settings.title') || 'Account Settings'}
                     </h1>
                     <p className="text-muted-foreground text-sm mt-1 hidden sm:block">
