@@ -12,6 +12,7 @@ import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { Game } from '@/types';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { NexusGridBackground } from '@/components/backgrounds';
 
 export default function LandingPage() {
@@ -50,10 +51,16 @@ export default function LandingPage() {
 
       <div className="container mx-auto px-4 lg:px-8">
         {/* Hero Section */}
-        <section className="relative py-10 sm:py-16 lg:py-32">
+        <section className="relative py-10 sm:py-16 lg:py-32 overflow-hidden">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left Column - Hero Content */}
-            <div className="space-y-8">
+            <motion.div 
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="space-y-8"
+            >
               {/* Badges/Tags */}
               <div className="flex flex-wrap items-center gap-3">
                 {/* Live Badge */}
@@ -115,10 +122,16 @@ export default function LandingPage() {
                   <div className="stats-label">{t('stats.free') || 'Free'}</div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Right Column - Feature Card */}
-            <div className="glass-card-strong rounded-2xl p-6 lg:p-8 space-y-6">
+            <motion.div 
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+              className="glass-card-strong rounded-2xl p-6 lg:p-8 space-y-6"
+            >
               <div className="flex items-center gap-2 text-sm font-tech uppercase tracking-widest">
                 <Gamepad2 className="w-4 h-4 text-primary" />
                 <span className="text-foreground">Game</span>
@@ -143,16 +156,22 @@ export default function LandingPage() {
                 />
               </div>
 
-              <Link href="/library" className="w-full btn-gradient py-4 mt-4 block text-center">
+              <Link href="/library" className="w-full btn-gradient py-4 mt-4 block text-center transition-transform hover:scale-[1.02] active:scale-[0.98]">
                 {t('header.play') || 'Start Playing Now'}
               </Link>
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* About Section - Introduction */}
-        <section className="py-10 sm:py-16 lg:py-24">
-          <div className="text-center max-w-4xl mx-auto mb-8 sm:mb-16">
+        <section className="py-10 sm:py-16 lg:py-24 overflow-hidden">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7 }}
+            className="text-center max-w-4xl mx-auto mb-8 sm:mb-16"
+          >
             <h2 className="text-3xl lg:text-4xl font-black mb-6">
               <span className="text-foreground">{t('landing.aboutTitle') || 'Về'} </span>
               <span className="bg-gradient-cyan bg-clip-text text-transparent">{t('landing.aboutTitleHighlight') || 'NestGame'}</span>
@@ -160,10 +179,16 @@ export default function LandingPage() {
             <p className="text-lg text-muted-foreground leading-relaxed">
               {t('landing.aboutDesc') || 'NestGame là nền tảng giả lập NES trực tuyến, cho phép bạn chơi hơn 1700+ game kinh điển ngay trên trình duyệt. Được xây dựng với công nghệ hiện đại, NestGame mang đến trải nghiệm mượt mà, không cần cài đặt, hoàn toàn miễn phí.'}
             </p>
-          </div>
+          </motion.div>
 
           {/* Feature Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
             <AboutCard
               icon={Globe}
               title={t('landing.feature1Title') || 'Chơi Mọi Nơi'}
@@ -184,19 +209,31 @@ export default function LandingPage() {
               title={t('landing.feature4Title') || 'Chất Lượng Cao'}
               description={t('landing.feature4Desc') || 'ROM được chọn lọc kỹ càng, đảm bảo trải nghiệm tốt nhất'}
             />
-          </div>
+          </motion.div>
         </section>
 
         {/* How It Works Section */}
-        <section className="py-10 sm:py-16 lg:py-24 border-t border-white/5">
-          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-16">
+        <section className="py-10 sm:py-16 lg:py-24 border-t border-white/5 overflow-hidden">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-3xl mx-auto mb-8 sm:mb-16"
+          >
             <h2 className="text-3xl lg:text-4xl font-black mb-6">
               <span className="text-foreground">{t('landing.howItWorksTitle') || 'Cách'} </span>
               <span className="bg-gradient-cyan bg-clip-text text-transparent">{t('landing.howItWorksHighlight') || 'Sử Dụng'}</span>
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto"
+          >
             <StepCard
               step="01"
               title={t('landing.step1Title') || 'Chọn Game'}
@@ -212,12 +249,18 @@ export default function LandingPage() {
               title={t('landing.step3Title') || 'Tận Hưởng'}
               description={t('landing.step3Desc') || 'Sử dụng bàn phím hoặc tay cầm để điều khiển, lưu game bất cứ lúc nào'}
             />
-          </div>
+          </motion.div>
         </section>
 
         {/* Featured Games Preview */}
-        <section className="py-10 sm:py-16 lg:py-24 border-t border-white/5">
-          <div className="flex items-center justify-between mb-8">
+        <section className="py-10 sm:py-16 lg:py-24 border-t border-white/5 overflow-hidden">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-between mb-8"
+          >
             <div>
               <h2 className="text-3xl font-black mb-2">
                 <span className="text-foreground">{t('featured.title') || 'Games Hot'} </span>
@@ -229,9 +272,16 @@ export default function LandingPage() {
               {t('landing.viewAll') || 'Xem Tất Cả'}
               <ArrowRight className="w-4 h-4" />
             </Link>
-          </div>
+          </motion.div>
 
-          <FeaturedGames games={allGames} onGameClick={handleGameClick} />
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <FeaturedGames games={allGames} onGameClick={handleGameClick} />
+          </motion.div>
 
           <div className="text-center mt-8 sm:hidden">
             <Link href="/library" className="btn-outline inline-flex items-center gap-2">
@@ -242,8 +292,14 @@ export default function LandingPage() {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-10 sm:py-16 lg:py-24">
-          <div className="glass-card-strong rounded-3xl p-6 sm:p-8 lg:p-16 text-center relative overflow-hidden">
+        <section className="py-10 sm:py-16 lg:py-24 overflow-hidden">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 50 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="glass-card-strong rounded-3xl p-6 sm:p-8 lg:p-16 text-center relative overflow-hidden"
+          >
             {/* Decorative elements */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
@@ -262,7 +318,7 @@ export default function LandingPage() {
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
-          </div>
+          </motion.div>
         </section>
       </div>
     </main>

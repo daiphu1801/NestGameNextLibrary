@@ -49,12 +49,16 @@ export function FlashPlayer({ gameUrl }: FlashPlayerProps) {
       
       containerRef.current.appendChild(player);
 
+      const baseUrl = gameUrl.substring(0, gameUrl.lastIndexOf('/') + 1);
+      
       player.load({
         url: gameUrl,
-        allowScriptAccess: false,
+        base: baseUrl,
+        allowScriptAccess: true,
         autoplay: 'on',
         unmuteOverlay: 'hidden',
         backgroundColor: '#000000',
+        logLevel: 'info'
       });
       
       // Auto focus canvas

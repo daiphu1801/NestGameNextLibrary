@@ -153,7 +153,7 @@ export default function FlashPortalPage() {
               <div className="text-center py-20">
                 <Zap className="w-16 h-16 text-orange-500/20 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-white mb-2">Chưa có game Flash nào</h3>
-                <p className="text-slate-400">Hãy đăng nhập Admin và tải lên các file .swf nhé!</p>
+                <p className="text-slate-400">Các tựa game huyền thoại đang được ban quản trị cập nhật. Vui lòng quay trở lại sau nhé!</p>
               </div>
             )}
           </div>
