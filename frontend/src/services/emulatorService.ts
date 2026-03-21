@@ -379,9 +379,8 @@ class EmulatorService {
         element: canvas,
         retroarchCoreConfig: {
           ...(isZapper && core === 'fceumm' ? {
-            fceumm_zapper_mode: 'mouse',
-            fceumm_show_crosshair: 'enabled',
-            input_libretro_device_p2: '260'
+            fceumm_zapper_mode: 'lightgun',
+            fceumm_show_crosshair: 'enabled'
           } : {})
         },
         retroarchConfig: {
