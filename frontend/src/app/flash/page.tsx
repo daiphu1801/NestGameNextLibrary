@@ -94,7 +94,7 @@ export default function FlashPortalPage() {
 
       <Header />
 
-      <div className="container mx-auto px-4 lg:px-8 py-8 lg:py-12 relative z-10">
+      <div className="container mx-auto px-4 lg:px-8 pt-8 pb-24 lg:py-12 relative z-10">
         
         {/* Flash Hero Banner */}
         <motion.div 

@@ -218,10 +218,10 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
             {onDetailsClick && (
               <button
                 onClick={(e) => { e.stopPropagation(); onDetailsClick(); }}
-                className="flex-1 flex items-center justify-center gap-1 h-9 rounded-lg bg-secondary border border-white/10 text-foreground text-[11px] whitespace-nowrap active:scale-95 transition-transform hover:bg-white/10"
+                className="flex-[0.8] flex items-center justify-center gap-1 h-9 px-1 rounded-lg bg-secondary border border-white/10 text-foreground text-[10px] whitespace-nowrap active:scale-95 transition-transform hover:bg-white/10"
               >
-                <Info className="h-3 w-3 flex-shrink-0" />
-                {t('game.details')}
+                <Info className="h-3 w-3 flex-shrink-0 hidden xs:block" />
+                <span className="truncate">{t('game.details') || 'Chi tiết'}</span>
               </button>
             )}
           </div>

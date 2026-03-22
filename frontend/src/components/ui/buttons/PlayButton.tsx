@@ -24,7 +24,7 @@ export function PlayButton({
         fullWidth ? "w-full" : "",
         variant === 'primary' && "gap-2 px-5 py-2.5 rounded-full bg-primary text-white font-bold text-sm shadow-lg shadow-primary/50 hover:bg-primary/90 hover:scale-105 active:scale-95",
         variant === 'secondary' && "gap-2 px-4 py-2 rounded-full bg-white/10 text-white font-semibold text-sm border border-white/20 hover:bg-white/20 hover:scale-105 active:scale-95 backdrop-blur-md",
-        variant === 'compact' && "gap-1 h-9 px-3 rounded-lg bg-primary text-white text-[11px] whitespace-nowrap hover:bg-primary/90 active:scale-95",
+        variant === 'compact' && "gap-1 h-9 px-1 rounded-lg bg-primary text-white text-[10px] sm:text-[11px] hover:bg-primary/90 active:scale-95",
         className
       )}
       {...props}
