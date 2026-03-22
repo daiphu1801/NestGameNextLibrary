@@ -155,7 +155,10 @@ export default function PlayPage() {
 
           {/* Emulator Container (RetroArch or Flash) */}
           {game?.system === 'flash' ? (
-            <div className="w-full h-full max-w-5xl max-h-[80vh] p-4 lg:p-8 mx-auto my-auto transition-all animate-in fade-in zoom-in-95 duration-500 flex flex-col justify-center">
+            <div className={cn(
+              "w-full h-full mx-auto my-auto transition-all animate-in fade-in zoom-in-95 duration-500 flex flex-col justify-center",
+              isMobile ? "max-w-none max-h-none p-0 sm:p-2" : "max-w-6xl max-h-[85vh] p-4 lg:p-8"
+            )}>
               <FlashPlayer gameUrl={flashGameUrl || undefined} />
             </div>
           ) : (
@@ -167,14 +170,16 @@ export default function PlayPage() {
             />
           )}
 
-          {/* Mobile Controls */}
-          {isMobile && game?.system !== 'flash' && (
+          {/* Mobile Controls & Overlays */}
+          {isMobile && (
             <>
-              <MobileControlsOverlay enabled={!isLoading && !error && !isTrialEnded} system={game?.system} />
+              {game?.system !== 'flash' && (
+                <MobileControlsOverlay enabled={!isLoading && !error && !isTrialEnded} system={game?.system} />
+              )}
               <ExitOverlay
                 onExit={() => { unlock(); router.back(); }}
-                onSave={user && !isLoading && !error ? () => saveState.openSaveModal('save') : undefined}
-                onLoad={user && !isLoading && !error ? () => saveState.openSaveModal('load') : undefined}
+                onSave={user && game?.system !== 'flash' && !isLoading && !error ? () => saveState.openSaveModal('save') : undefined}
+                onLoad={user && game?.system !== 'flash' && !isLoading && !error ? () => saveState.openSaveModal('load') : undefined}
                 gameName={game?.name}
               />
               <PortraitOverlay />

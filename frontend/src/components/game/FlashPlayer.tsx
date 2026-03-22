@@ -95,7 +95,7 @@ export function FlashPlayer({ gameUrl }: FlashPlayerProps) {
 
   return (
     <div 
-      className="w-full h-full bg-[#0a0a0a] flex flex-col items-center justify-center relative rounded-xl border border-white/5 overflow-hidden shadow-2xl group"
+      className="w-full h-full bg-[#0a0a0a] flex flex-col items-center justify-center relative sm:rounded-xl sm:border border-white/5 overflow-hidden shadow-2xl group"
       tabIndex={0}
       onClick={() => {
         // Click-to-focus: ensure the Ruffle player grabs keyboard input
