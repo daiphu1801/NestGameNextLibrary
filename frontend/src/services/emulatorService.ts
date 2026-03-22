@@ -379,7 +379,7 @@ class EmulatorService {
         element: canvas,
         retroarchCoreConfig: {
           ...(isZapper && core === 'fceumm' ? {
-            fceumm_zapper_mode: 'mouse', // Use standard mouse API 
+            fceumm_zapper_mode: 'touchscreen', // Touchscreen maps absolute mouse clicks perfectly bypassing CSS scale issues
             fceumm_show_crosshair: 'enabled'
           } : {})
         },
@@ -413,8 +413,8 @@ class EmulatorService {
           input_player2_select: keys.p2.select,
 
           // ── Device Configuration ──
-          // 2 = RETRO_DEVICE_MOUSE. Web RetroArch tracks standard mouse movements best with Device 2.
-          input_libretro_device_p2: isZapper ? 2 : 1,
+          // 258 = RETRO_DEVICE_ZAPPER (FCEUmm Port 2 Lightgun).
+          input_libretro_device_p2: isZapper ? 258 : 1,
 
           // ── Joypad Mapping ──
           input_player1_joypad_index: 0,
