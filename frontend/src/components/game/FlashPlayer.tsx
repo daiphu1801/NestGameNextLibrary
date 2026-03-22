@@ -63,7 +63,7 @@ export function FlashPlayer({ gameUrl }: FlashPlayerProps) {
         logLevel: 'warn',
         maxExecutionDuration: 30,
         playerRuntime: 'flashPlayer',
-        splashScreen: false,
+        splashScreen: true, // Show internal progress bar instead of black screen while downloading SWF
       });
       
       // Aggressive auto-focus: try multiple times to ensure the game canvas captures input
