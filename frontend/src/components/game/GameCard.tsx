@@ -190,7 +190,8 @@ export function GameCard({ game, onPlayClick, onDetailsClick, onLoginRequired, p
               if (sys === 'snes') { sysStyles = "bg-purple-500/10 text-purple-400 border-purple-500/20"; label = "SNES"; }
               else if (sys === 'gba') { sysStyles = "bg-blue-500/10 text-blue-400 border-blue-500/20"; label = "GBA"; }
               else if (sys === 'genesis') { sysStyles = "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"; label = "GENESIS"; }
-              else { sysStyles = "bg-red-500/10 text-red-400 border-red-500/20"; }
+              else if (sys === 'flash') { sysStyles = "bg-orange-500/10 text-orange-400 border-orange-500/20"; label = "FLASH"; }
+              else if (sys !== 'nes') { sysStyles = "bg-slate-500/10 text-slate-400 border-slate-500/20"; label = sys.toUpperCase(); }
 
               return (
                 <span className={cn("px-2 py-0.5 rounded text-[10px] font-bold uppercase font-tech border", sysStyles)}>

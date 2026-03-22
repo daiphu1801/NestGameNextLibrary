@@ -129,9 +129,23 @@ export function FavoriteGameCard({ game, onClick, onRemove }: FavoriteGameCardPr
                 </h3>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span className="font-tech">{game.year || 'Classic'}</span>
-                    <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase font-tech border border-primary/20">
-                        NES
-                    </span>
+                    {(() => {
+                        const sys = (game.system || 'nes').toLowerCase();
+                        let sysStyles = "bg-primary/10 text-primary border-primary/20";
+                        let label = "NES";
+                        
+                        if (sys === 'snes') { sysStyles = "bg-purple-500/10 text-purple-400 border-purple-500/20"; label = "SNES"; }
+                        else if (sys === 'gba') { sysStyles = "bg-blue-500/10 text-blue-400 border-blue-500/20"; label = "GBA"; }
+                        else if (sys === 'genesis') { sysStyles = "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"; label = "GENESIS"; }
+                        else if (sys === 'flash') { sysStyles = "bg-orange-500/10 text-orange-400 border-orange-500/20"; label = "FLASH"; }
+                        else if (sys !== 'nes') { sysStyles = "bg-slate-500/10 text-slate-400 border-slate-500/20"; label = sys.toUpperCase(); }
+
+                        return (
+                            <span className={cn("px-2 py-0.5 rounded text-[10px] font-bold uppercase font-tech border", sysStyles)}>
+                                {label}
+                            </span>
+                        );
+                    })()}
                 </div>
             </div>
         </div>

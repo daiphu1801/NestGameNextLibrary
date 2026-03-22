@@ -10,9 +10,10 @@ interface ExitOverlayProps {
   onLoad?: () => void;
   gameName?: string;
   autoHideDelay?: number;
+  isFlash?: boolean;
 }
 
-export function ExitOverlay({ onExit, onSave, onLoad, gameName, autoHideDelay = 3000 }: ExitOverlayProps) {
+export function ExitOverlay({ onExit, onSave, onLoad, gameName, autoHideDelay = 3000, isFlash }: ExitOverlayProps) {
   const { t } = useLanguage();
   const [visible, setVisible] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -24,6 +25,8 @@ export function ExitOverlay({ onExit, onSave, onLoad, gameName, autoHideDelay = 
   }, [autoHideDelay]);
 
   const handleTap = useCallback((e: TouchEvent) => {
+    if (isFlash) return; // Do not use tap-to-show zone for Flash games
+
     const x = e.changedTouches[0]?.clientX;
     const y = e.changedTouches[0]?.clientY;
     const w = window.innerWidth;
@@ -34,16 +37,39 @@ export function ExitOverlay({ onExit, onSave, onLoad, gameName, autoHideDelay = 
     if (x > w * 0.25 && x < w * 0.75 && y > h * 0.05 && y < h * 0.5) {
       show();
     }
-  }, [show]);
+  }, [show, isFlash]);
 
   useEffect(() => {
+    if (isFlash) return;
     document.addEventListener('touchstart', handleTap, { passive: true });
     return () => {
       document.removeEventListener('touchstart', handleTap);
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [handleTap]);
+  }, [handleTap, isFlash]);
 
+  // Flash Game Mode: Permanent ghost button in top-left
+  if (isFlash) {
+    return (
+      <div
+        className="absolute z-50 pointer-events-auto"
+        style={{
+          top: 'max(16px, env(safe-area-inset-top, 16px))',
+          left: 'max(16px, env(safe-area-inset-left, 16px))',
+        }}
+      >
+        <button
+          onClick={onExit}
+          className="flex items-center justify-center w-10 h-10 rounded-full bg-black/20 backdrop-blur-sm border border-white/10 text-white/50 hover:bg-black/50 hover:text-white active:scale-95 transition-all shadow-lg"
+          aria-label={t('common.back') || 'Back'}
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+      </div>
+    );
+  }
+
+  // Retro Game Mode: Popup menu in center
   if (!visible) return null;
 
   return (

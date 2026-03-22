@@ -181,6 +181,7 @@ export default function PlayPage() {
                 onSave={user && game?.system !== 'flash' && !isLoading && !error ? () => saveState.openSaveModal('save') : undefined}
                 onLoad={user && game?.system !== 'flash' && !isLoading && !error ? () => saveState.openSaveModal('load') : undefined}
                 gameName={game?.name}
+                isFlash={game?.system === 'flash'}
               />
               <PortraitOverlay />
             </>
