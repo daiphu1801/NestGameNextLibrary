@@ -379,7 +379,7 @@ class EmulatorService {
         element: canvas,
         retroarchCoreConfig: {
           ...(isZapper && core === 'fceumm' ? {
-            fceumm_zapper_mode: 'pointer', // Use pointer API (absolute coords) instead of lightgun for Web browsers
+            fceumm_zapper_mode: 'mouse', // Use standard mouse API 
             fceumm_show_crosshair: 'enabled'
           } : {})
         },
@@ -413,9 +413,8 @@ class EmulatorService {
           input_player2_select: keys.p2.select,
 
           // ── Device Configuration ──
-          // For Web RetroArch/Nostalgist: FCEUMM uses pointer API over device 2 (Mouse) or 4 (Lightgun) or 258 (Zapper)
-          // Actually, device "2" (Mouse) or "6" (Pointer) or "258" (Zapper / Lightgun)
-          input_libretro_device_p2: isZapper ? 258 : 1,
+          // 2 = RETRO_DEVICE_MOUSE. Web RetroArch tracks standard mouse movements best with Device 2.
+          input_libretro_device_p2: isZapper ? 2 : 1,
 
           // ── Joypad Mapping ──
           input_player1_joypad_index: 0,
@@ -452,9 +451,7 @@ class EmulatorService {
 
           // ── Zapper / Light Gun Mouse Mapping ──
           ...(isZapper ? {
-            input_player2_gun_trigger_mbtn: '1',          // Left click = shoot
-            input_player2_gun_offscreen_shot_mbtn: '2',   // Right click = offscreen shot
-            input_player2_mouse_index: '0',               // Use first mouse
+            input_player2_mouse_index: '0'
           } : {}),
         },
       });
