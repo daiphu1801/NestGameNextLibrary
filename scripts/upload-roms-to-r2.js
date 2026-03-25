@@ -86,26 +86,32 @@ function sha256Hex(data) {
   return crypto.createHash('sha256').update(data).digest('hex');
 }
 
-function signRequest({ method, host, path: urlPath, headers, body, accessKey, secretKey, region = 'auto', service = 's3' }) {
+function signRequest({ method, host, path: urlPath, headers, payloadHash, accessKey, secretKey, region = 'auto', service = 's3' }) {
   const now = new Date();
   const datestamp = now.toISOString().replace(/[^0-9]/g, '').slice(0, 8);
   const amzdate   = now.toISOString().replace(/[^0-9T]/g, '').slice(0, 15) + 'Z';
 
-  const payloadHash = sha256Hex(body || '');
+  // Use pre-computed payloadHash (avoids re-hashing large buffers)
+  const hash = payloadHash || sha256Hex('');
 
   const allHeaders = {
     host,
     'x-amz-date': amzdate,
-    'x-amz-content-sha256': payloadHash,
+    'x-amz-content-sha256': hash,
     ...headers,
   };
 
-  // Canonical headers (sorted)
-  const sortedKeys    = Object.keys(allHeaders).map(k => k.toLowerCase()).sort();
-  const canonicalHdrs = sortedKeys.map(k => `${k}:${allHeaders[Object.keys(allHeaders).find(h => h.toLowerCase() === k)]}\n`).join('');
+  // Normalize all header keys to lowercase for consistent signing
+  const normalizedHeaders = {};
+  for (const [k, v] of Object.entries(allHeaders)) {
+    normalizedHeaders[k.toLowerCase()] = String(v).trim();
+  }
+
+  const sortedKeys    = Object.keys(normalizedHeaders).sort();
+  const canonicalHdrs = sortedKeys.map(k => `${k}:${normalizedHeaders[k]}\n`).join('');
   const signedHdrs    = sortedKeys.join(';');
 
-  const canonicalReq = [method, urlPath, '', canonicalHdrs, signedHdrs, payloadHash].join('\n');
+  const canonicalReq = [method, urlPath, '', canonicalHdrs, signedHdrs, hash].join('\n');
   const credScope     = `${datestamp}/${region}/${service}/aws4_request`;
   const strToSign     = ['AWS4-HMAC-SHA256', amzdate, credScope, sha256Hex(canonicalReq)].join('\n');
 
@@ -114,7 +120,7 @@ function signRequest({ method, host, path: urlPath, headers, body, accessKey, se
 
   const authHeader = `AWS4-HMAC-SHA256 Credential=${accessKey}/${credScope}, SignedHeaders=${signedHdrs}, Signature=${signature}`;
 
-  return { ...allHeaders, authorization: authHeader, 'x-amz-date': amzdate, 'x-amz-content-sha256': payloadHash };
+  return { ...normalizedHeaders, authorization: authHeader, 'x-amz-date': amzdate, 'x-amz-content-sha256': hash };
 }
 
 // ─── R2 Helpers ───────────────────────────────────────────────────────────────
@@ -123,11 +129,16 @@ function r2Request({ method, key, body, extraHeaders = {} }) {
     const host       = `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
     const encodedKey = key.split('/').map(awsEncodeURIComponent).join('/');
     const urlPath    = `/${BUCKET}/${encodedKey}`;
+    const bodyBuf = body ? Buffer.from(body) : null;
+    const payloadHash = sha256Hex(bodyBuf || '');
+
+    const hdrs = { ...extraHeaders };
+    if (bodyBuf) hdrs['content-length'] = bodyBuf.length.toString();
 
     const headers = signRequest({
       method, host, path: urlPath,
-      headers: { ...extraHeaders, ...(body ? { 'content-length': Buffer.byteLength(body).toString() } : {}) },
-      body: body || '',
+      headers: hdrs,
+      payloadHash,
       accessKey: ACCESS_KEY, secretKey: SECRET_KEY,
     });
 
@@ -139,7 +150,7 @@ function r2Request({ method, key, body, extraHeaders = {} }) {
       res.on('end', () => resolve({ status: res.statusCode, body: data, headers: res.headers }));
     });
     req.on('error', reject);
-    if (body) req.write(body);
+    if (bodyBuf) req.write(bodyBuf);
     req.end();
   });
 }
@@ -166,14 +177,14 @@ async function uploadToR2(key, buffer, contentType) {
       'content-length': buffer.length.toString(),
       'cache-control': 'public, max-age=31536000, immutable',
     },
-    body: buffer,
+    payloadHash,
     accessKey: ACCESS_KEY, secretKey: SECRET_KEY,
   });
 
   return new Promise((resolve, reject) => {
     const options = {
       hostname: host, path: urlPath, method: 'PUT',
-      headers: { ...headers, 'content-length': buffer.length },
+      headers,
     };
     const req = https.request(options, (res) => {
       let data = '';
@@ -182,7 +193,7 @@ async function uploadToR2(key, buffer, contentType) {
         if (res.statusCode === 200 || res.statusCode === 201 || res.statusCode === 204) {
           resolve({ status: res.statusCode });
         } else {
-          reject(new Error(`R2 PUT failed: HTTP ${res.statusCode} — ${data}`));
+          reject(new Error(`R2 PUT failed: HTTP ${res.statusCode} — ${data.substring(0, 200)}`));
         }
       });
     });
