@@ -1,10 +1,13 @@
 'use client';
 
 import { Game } from '@/types';
+import { useState, useEffect, useCallback } from 'react';
 import {
-  ArrowLeft, Save, FolderOpen, Maximize2, Minimize2, Heart, Gamepad2
+  ArrowLeft, Save, FolderOpen, Maximize2, Minimize2, Heart, Gamepad2,
+  Volume2, Volume1, VolumeX
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { emulatorService } from '@/services/emulatorService';
 
 interface PlayHeaderProps {
   game: Game | null;
@@ -28,6 +31,30 @@ export function PlayHeader({
   showControls, isMobile, user, t,
   onBack, onFavoriteToggle, onToggleFullscreen, onOpenSave, onOpenLoad
 }: PlayHeaderProps) {
+  const [volume, setVolume] = useState(1.0);
+  const [showVolume, setShowVolume] = useState(false);
+  const [prevVolume, setPrevVolume] = useState(1.0);
+
+  useEffect(() => {
+    setVolume(emulatorService.getVolume());
+  }, []);
+
+  const handleVolumeChange = useCallback((val: number) => {
+    setVolume(val);
+    emulatorService.setVolume(val);
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    if (volume > 0) {
+      setPrevVolume(volume);
+      handleVolumeChange(0);
+    } else {
+      handleVolumeChange(prevVolume || 0.5);
+    }
+  }, [volume, prevVolume, handleVolumeChange]);
+
+  const VolumeIcon = volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
+
   return (
     <header
       className={cn(
@@ -90,6 +117,46 @@ export function PlayHeader({
                   </button>
                 </>
               ) : null}
+            </div>
+
+            {/* Volume Control */}
+            <div className="relative flex items-center">
+              <button
+                onClick={toggleMute}
+                onMouseEnter={() => setShowVolume(true)}
+                className={cn(
+                  "p-2 rounded-lg transition-all border",
+                  volume === 0
+                    ? "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20"
+                    : "bg-white/[0.03] text-slate-400 border-white/[0.06] hover:bg-white/[0.06] hover:text-white"
+                )}
+                title={volume === 0 ? 'Bật âm thanh' : 'Tắt âm thanh'}
+              >
+                <VolumeIcon className="w-4 h-4" />
+              </button>
+              {showVolume && (
+                <div
+                  className="absolute top-full right-0 mt-2 px-3 py-2.5 rounded-lg bg-[#1a1a2e]/95 backdrop-blur-xl border border-white/10 shadow-2xl flex items-center gap-2.5 z-[100]"
+                  onMouseLeave={() => setShowVolume(false)}
+                >
+                  <VolumeX className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={volume}
+                    onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+                    className="w-24 h-1.5 accent-purple-500 cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #a855f7 0%, #a855f7 ${volume * 100}%, #374151 ${volume * 100}%, #374151 100%)`,
+                      borderRadius: '9999px',
+                    }}
+                  />
+                  <Volume2 className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+                  <span className="text-[10px] text-slate-400 font-mono w-8 text-right">{Math.round(volume * 100)}%</span>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-2" data-tutorial="tips">

@@ -21,6 +21,7 @@ type SystemOption = {
   disabled?: boolean;
   comingSoon?: boolean;
   demo?: boolean;
+  complete?: boolean;
 };
 
 const SYSTEMS: SystemOption[] = [
@@ -47,7 +48,7 @@ const SYSTEMS: SystemOption[] = [
     activeColor: 'bg-purple-500/20 text-purple-300', activeBorder: 'border-purple-500/50',
     lightActiveColor: 'bg-purple-100 text-purple-700', lightActiveBorder: 'border-purple-400',
     shadow: 'shadow-[0_0_30px_rgba(168,85,247,0.4)]',
-    demo: true
+    complete: true
   },
   { 
     id: 'gba', nameKey: 'system.gba', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
@@ -216,6 +217,11 @@ export function SystemFilter() {
                   {system.demo && (
                     <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-black text-[6px] md:text-[8px] font-black uppercase px-1 py-0.5 rounded shadow whitespace-nowrap border border-amber-400/50 block animate-pulse rotate-3">
                       {t('system.demo')}
+                    </span>
+                  )}
+                  {system.complete && (
+                    <span className="bg-gradient-to-r from-emerald-500 to-green-500 text-white text-[6px] md:text-[8px] font-black uppercase px-1 py-0.5 rounded shadow whitespace-nowrap border border-emerald-400/50 block rotate-3">
+                      {t('system.complete')}
                     </span>
                   )}
                 </div>

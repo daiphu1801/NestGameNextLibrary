@@ -95,6 +95,9 @@ class EmulatorService {
   private _isOfflineMode = false;
   private readonly KEYBINDINGS_KEY = 'nestgame_keybindings';
   private readonly GAMEPAD_KEY = 'nestgame_gamepad';
+  private readonly VOLUME_KEY = 'nestgame_volume';
+  private _volume = 1.0; // 0.0 to 1.0
+  private _gainNode: GainNode | null = null;
 
   // Danh sách game NES sử dụng Zapper (Light Gun)
   private readonly ZAPPER_GAMES = [
@@ -457,6 +460,12 @@ class EmulatorService {
       });
 
       console.log('[emulatorService] emulator launched successfully', { loadId });
+
+      // Setup volume control after emulator launches
+      setTimeout(() => {
+        this.setupAudioGain();
+        this.setVolume(this.getVolume());
+      }, 500);
       this.isLoading = false;
     } catch (error: any) {
       this.isLoading = false;
@@ -545,6 +554,96 @@ class EmulatorService {
    */
   getEmulator(): any {
     return this.currentEmulator;
+  }
+
+  // ============================================================
+  // VOLUME CONTROL
+  // ============================================================
+
+  /**
+   * Get the current volume (0.0 to 1.0)
+   */
+  getVolume(): number {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(this.VOLUME_KEY);
+      if (stored !== null) {
+        this._volume = parseFloat(stored);
+      }
+    }
+    return this._volume;
+  }
+
+  /**
+   * Set the volume (0.0 to 1.0) and apply it immediately
+   */
+  setVolume(volume: number): void {
+    this._volume = Math.max(0, Math.min(1, volume));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(this.VOLUME_KEY, String(this._volume));
+    }
+    // Apply via GainNode if available
+    if (this._gainNode) {
+      this._gainNode.gain.value = this._volume;
+      return;
+    }
+    // Fallback: find all audio elements and set volume
+    this._applyVolumeToAudioElements();
+  }
+
+  /**
+   * Set up the audio gain node to intercept Web Audio output.
+   * Call after emulator launches.
+   */
+  setupAudioGain(): void {
+    try {
+      // RetroArch WASM uses a global AudioContext. Find it.
+      const ctx = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!ctx) return;
+
+      // Try to find the active AudioContext used by the emulator
+      // Nostalgist / RetroArch stores the audio context in Module
+      const moduleAudioCtx = (window as any).Module?.audioCtx || 
+                             (window as any).Module?.SDL2?.audioContext ||
+                             (window as any).AL?.currentCtx?.audioCtx;
+
+      if (moduleAudioCtx && moduleAudioCtx.destination) {
+        // Already has a gain node? Skip
+        if (this._gainNode) {
+          this._gainNode.gain.value = this._volume;
+          return;
+        }
+
+        const gain = moduleAudioCtx.createGain();
+        gain.gain.value = this.getVolume();
+        gain.connect(moduleAudioCtx.destination);
+
+        // Monkey-patch destination to redirect audio through our gain node
+        const origConnect = AudioNode.prototype.connect;
+        const dest = moduleAudioCtx.destination;
+        AudioNode.prototype.connect = function(target: any, ...args: any[]): any {
+          if (target === dest) {
+            return origConnect.call(this, gain, ...args);
+          }
+          return origConnect.call(this, target, ...args);
+        };
+
+        this._gainNode = gain;
+        return;
+      }
+
+      // Fallback: control HTML audio elements directly  
+      this._applyVolumeToAudioElements();
+    } catch (err) {
+      console.warn('[emulatorService] Failed to setup audio gain:', err);
+      this._applyVolumeToAudioElements();
+    }
+  }
+
+  private _applyVolumeToAudioElements(): void {
+    // Control any <audio> or <video> elements the emulator creates
+    document.querySelectorAll('audio, video').forEach((el) => {
+      (el as HTMLMediaElement).volume = this._volume;
+    });
   }
 
   /**

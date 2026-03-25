@@ -59,7 +59,8 @@
     "ps1": "PlayStation 1",
     "psp": "PlayStation Portable",
     "comingSoon": "Coming soon",
-    "demo": "Demo"
+    "demo": "Demo",
+    "complete": "Complete"
   },
   "systems": {
     "title": "Console Systems",

@@ -200,7 +200,7 @@ function AdminGamesContent() {
         const params = new URLSearchParams(searchParams.toString());
         if (value && value !== 'all') params.set(key, value);
         else params.delete(key);
-        params.delete('page'); // Always reset page on filter change
+        if (key !== 'page') params.delete('page'); // Reset page only on filter change, not on page navigation
         router.push(`?${params.toString()}`);
     };
 
