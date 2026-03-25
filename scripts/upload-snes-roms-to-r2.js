@@ -491,7 +491,7 @@ function mergeIntoGamesJson(allFiles) {
       id: maxId + index + 1,
       name: gameName,
       fileName: fileName,
-      path: fileName,
+      path: `snes/${fileName}`,
       category: category,
       description: generateDescription(category, region.display),
       rating: isFeatured ? 5 : rating,
