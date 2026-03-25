@@ -101,10 +101,16 @@ export async function POST(request: NextRequest) {
 
             const presignedUrl = await getSignedUrl(client, command, { expiresIn: 3600 }); // 1 hour
 
+            // Properly URL encode the path segments for the public URL
+            // This is required because folders/files might contain spaces (e.g. "Plants vs. Zombies")
+            // which Ruffle needs to fetch correctly
+            const encodedPath = relativePath.split('/').map(encodeURIComponent).join('/');
+            const encodedKey = `roms/flash/${safeGameName}/${encodedPath}`;
+
             results.push({
                 path: relativePath,
                 presignedUrl,
-                publicUrl: buildR2PublicUrl(key),
+                publicUrl: buildR2PublicUrl(encodedKey),
                 contentType,
                 key
             });
