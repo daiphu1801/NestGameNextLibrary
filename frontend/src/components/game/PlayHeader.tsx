@@ -97,7 +97,7 @@ export function PlayHeader({
             </button>
 
             <div className="flex items-center gap-2" data-tutorial="saveload">
-              {game?.system !== 'flash' && user && !isLoading && !error ? (
+              {user && !isLoading && !error ? (
                 <>
                   <button
                     onClick={onOpenSave}

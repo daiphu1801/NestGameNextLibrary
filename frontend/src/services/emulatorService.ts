@@ -532,13 +532,198 @@ class EmulatorService {
     if (this.currentEmulator) {
       return await this.currentEmulator.saveState();
     }
+    // Ruffle Flash Load
+    if (document.querySelector('ruffle-player, ruffle-embed')) {
+      const state = await this.exportFlashSaves();
+      if (state) {
+        let thumbnail: Blob | undefined = undefined;
+        try {
+          const ruffleNode = document.querySelector('ruffle-player, ruffle-embed') as any;
+          if (ruffleNode && ruffleNode.shadowRoot) {
+             const canvas = ruffleNode.shadowRoot.querySelector('canvas');
+             if (canvas) {
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                const res = await fetch(dataUrl);
+                thumbnail = await res.blob();
+             }
+          }
+        } catch(e) {
+          console.warn('Could not capture flash thumbnail', e);
+        }
+        return { state, thumbnail };
+      }
+    }
     return null;
   }
 
   async loadState(state: Blob): Promise<void> {
     if (this.currentEmulator) {
       await this.currentEmulator.loadState(state);
+      return;
     }
+    // Ruffle Flash Load
+    if (document.querySelector('ruffle-player, ruffle-embed')) {
+      await this.importFlashSaves(state);
+      // Reload page to apply changes for Flash
+      window.location.reload();
+      return;
+    }
+  }
+
+  // ============================================================
+  // FLASH GAME SAVES (IndexedDB)
+  // ============================================================
+  
+  private serializeRuffleData(data: any): string {
+    return JSON.stringify(data, (key, val) => {
+      if (val && typeof val === 'object') {
+        if (val.constructor && val.constructor.name === 'Uint8Array') {
+          return { __type: 'Uint8Array', data: Array.from(val as Uint8Array) };
+        }
+        if (val.constructor && val.constructor.name === 'ArrayBuffer') {
+          return { __type: 'ArrayBuffer', data: Array.from(new Uint8Array(val as ArrayBuffer)) };
+        }
+      }
+      return val;
+    });
+  }
+
+  private deserializeRuffleData(json: string): any {
+    return JSON.parse(json, (key, val) => {
+      if (val && typeof val === 'object') {
+        if (val.__type === 'Uint8Array') return new Uint8Array(val.data);
+        if (val.__type === 'ArrayBuffer') return new Uint8Array(val.data).buffer;
+      }
+      return val;
+    });
+  }
+
+  private async exportFlashSaves(): Promise<Blob | null> {
+    return new Promise((resolve, reject) => {
+      try {
+         const request = indexedDB.open('ruffle');
+         request.onerror = () => reject(new Error("Failed to open ruffle IndexedDB"));
+         request.onsuccess = (event: any) => {
+           const db = event.target.result;
+           const exportData: Record<string, Record<string, any>> = {};
+           
+           if (!db.objectStoreNames.length) {
+             db.close();
+             resolve(new Blob([this.serializeRuffleData(exportData)], { type: 'application/json' }));
+             return;
+           }
+           
+           const storeNames = Array.from(db.objectStoreNames) as string[];
+           let completed = 0;
+           
+           storeNames.forEach(storeName => {
+             exportData[storeName] = {};
+             const tx = db.transaction(storeName, 'readonly');
+             const store = tx.objectStore(storeName);
+             const reqAll = store.getAll();
+             const reqKeys = store.getAllKeys();
+             
+             reqAll.onsuccess = () => {
+               reqKeys.onsuccess = () => {
+                 const keys = reqKeys.result;
+                 const values = reqAll.result;
+                 for (let i = 0; i < keys.length; i++) {
+                   exportData[storeName][keys[i]] = values[i];
+                 }
+                 completed++;
+                 if (completed === storeNames.length) {
+                   db.close();
+                   const json = this.serializeRuffleData(exportData);
+                   resolve(new Blob([json], { type: 'application/json' }));
+                 }
+               };
+             };
+             tx.onerror = (e: any) => reject(e);
+           });
+         };
+      } catch (err: any) {
+        reject(err);
+      }
+    });
+  }
+
+  private async importFlashSaves(blob: Blob): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const text = await blob.text();
+        const importData = this.deserializeRuffleData(text);
+        
+        const request = indexedDB.open('ruffle');
+        request.onerror = () => reject(new Error("Failed to open ruffle IndexedDB for import"));
+        request.onsuccess = (event: any) => {
+          const db = event.target.result;
+          const storeNames = Array.from(db.objectStoreNames) as string[];
+          
+          if (storeNames.length === 0) {
+            db.close();
+            resolve();
+            return;
+          }
+          
+          let completed = 0;
+          
+          storeNames.forEach(storeName => {
+            const tx = db.transaction(storeName, 'readwrite');
+            const store = tx.objectStore(storeName);
+            
+            // Clear current data first
+            const reqClear = store.clear();
+            reqClear.onsuccess = () => {
+              if (importData[storeName]) {
+                const keys = Object.keys(importData[storeName]);
+                if (keys.length === 0) {
+                  completed++;
+                  if (completed === storeNames.length) {
+                    db.close();
+                    resolve();
+                  }
+                  return;
+                }
+                
+                let putsCompleted = 0;
+                keys.forEach(key => {
+                  const reqPut = store.put(importData[storeName][key], key);
+                  reqPut.onsuccess = () => {
+                    putsCompleted++;
+                    if (putsCompleted === keys.length) {
+                      completed++;
+                      if (completed === storeNames.length) {
+                        db.close();
+                        resolve();
+                      }
+                    }
+                  };
+                  reqPut.onerror = (err: any) => {
+                    console.error("Failed to write key", key, err);
+                    putsCompleted++;
+                    if (putsCompleted === keys.length) {
+                      completed++;
+                      if (completed === storeNames.length) {
+                        db.close();
+                        resolve();
+                      }
+                    }
+                  };
+                });
+              } else {
+                completed++;
+                if (completed === storeNames.length) {
+                  db.close();
+                  resolve();
+                }
+              }
+            };
+          });
+        };
+      } catch (err: any) {
+        reject(err);
+      }
+    });
   }
 
   isGameLoaded(): boolean {

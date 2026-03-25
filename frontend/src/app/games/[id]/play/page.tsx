@@ -178,8 +178,8 @@ export default function PlayPage() {
               )}
               <ExitOverlay
                 onExit={() => { unlock(); router.back(); }}
-                onSave={user && game?.system !== 'flash' && !isLoading && !error ? () => saveState.openSaveModal('save') : undefined}
-                onLoad={user && game?.system !== 'flash' && !isLoading && !error ? () => saveState.openSaveModal('load') : undefined}
+                onSave={user && !isLoading && !error ? () => saveState.openSaveModal('save') : undefined}
+                onLoad={user && !isLoading && !error ? () => saveState.openSaveModal('load') : undefined}
                 gameName={game?.name}
                 isFlash={game?.system === 'flash'}
               />
