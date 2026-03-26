@@ -25,7 +25,9 @@ const SYSTEMS = [
     { id: 'gb', name: 'Game Boy' },
     { id: 'gbc', name: 'Game Boy Color' },
     { id: 'arcade', name: 'Arcade' },
-    { id: 'neogeo', name: 'Neo Geo' }
+    { id: 'neogeo', name: 'Neo Geo' },
+    { id: 'flash', name: 'Flash Game' },
+    { id: 'j2me', name: 'Java Mobile' }
 ];
 
 // --------------------------------------------------------------------------------------------------------------------- Main Component ---------------------------------------------------------------------------------------------------------------------

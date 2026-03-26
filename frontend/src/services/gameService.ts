@@ -64,6 +64,7 @@ class GameService {
     if (lowerPath.endsWith('.gba')) return 'gba';
     if (lowerPath.endsWith('.md') || lowerPath.endsWith('.bin') || lowerPath.endsWith('.gen')) return 'genesis';
     if (lowerPath.endsWith('.nes')) return 'nes';
+    if (lowerPath.endsWith('.jar') || lowerPath.endsWith('.jad')) return 'j2me';
     
     // For zip files or unknown, we just return 'nes' for now until backend is updated
     return 'nes';

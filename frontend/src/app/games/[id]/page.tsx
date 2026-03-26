@@ -8,6 +8,7 @@ import {
 import { StarRating } from '@/components/game/StarRating';
 import { GameComments } from '@/components/game/GameComments';
 import { FlashGameDetail } from '@/components/game/FlashGameDetail';
+import { J2meGameDetail } from '@/components/game/J2meGameDetail';
 import { useGameDetail } from '@/features/games/hooks/useGameDetail';
 import { cn } from '@/lib/utils';
 
@@ -20,6 +21,10 @@ export default function GameDetailPage() {
 
   if (game.system === 'flash') {
     return <FlashGameDetail {...detailProps} game={game} />;
+  }
+
+  if (game.system === 'j2me') {
+    return <J2meGameDetail {...detailProps} game={game} />;
   }
 
   const {

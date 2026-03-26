@@ -613,5 +613,53 @@
     "tip2": "Use Save States to save progress at any time",
     "tip3": "Controls auto-hide after 3 seconds of inactivity",
     "tip4": "Try Fullscreen mode for immersive experience"
+  },
+  "flashPortal": {
+    "subtitle": "Remember those after-school hours spent at internet cafés playing Y8, Miniclip, and Newgrounds? From Stick War and Fireboy & Watergirl to epic Flash battles — they're all waiting for you to come back!",
+    "tag1": "Childhood Memories",
+    "tag2": "Play Free, Instantly",
+    "allGames": "All Flash Games",
+    "items": "ITEMS",
+    "empty": "No Flash games yet",
+    "emptyDesc": "Legendary Flash titles are being added by our team. Please check back soon!",
+    "badge": "Flash Classic",
+    "playCount": "PLAYS",
+    "infoTitle": "Internet Café Childhood Memories",
+    "infoDesc": "Remember those days? Rushing to the internet café right after school, pooling coins for a few hours of pure fun. From Y8 to Miniclip — every game is a treasure trove of school-day memories.",
+    "descTitle": "About This Game",
+    "commentsTitle": "Community Comments"
+  },
+  "javaPortal": {
+    "subtitle": "Remember sneaking your parents' phone during nap time to play Snake on a Nokia 1280? Or those epic Bounce Tales and Diamond Rush sessions on a tiny black-and-white screen? All those childhood memories are right here — ready to relive!",
+    "tag1": "Childhood Classics",
+    "tag2": "Play Free, Instantly",
+    "allGames": "All Java Games",
+    "items": "ITEMS",
+    "empty": "No Java games yet",
+    "emptyDesc": "Legendary Java mobile titles are being added by our team. Please check back soon!",
+    "badge": "Java Mobile Classic",
+    "playBtn": "PLAY JAVA NOW",
+    "playCount": "PLAYS",
+    "infoTitle": "Childhood Memories on Mobile",
+    "infoDesc": "Remember those summer afternoons, sneaking your parents' phone to play games? From Snake, Bounce Tales to Diamond Rush — every title is an unforgettable piece of our childhood.",
+    "descTitle": "About This Game",
+    "commentsTitle": "Community Comments",
+    "playerError": "Failed to load Java emulator. Please try again.",
+    "playerErrorTitle": "PLAYER ERROR",
+    "playerNoUrl": "Java game path not found.",
+    "playerLoading": "Initializing Java Player... Please wait a moment.",
+    "exitFullscreen": "Exit Fullscreen",
+    "controls": {
+      "title": "Controls (Nokia)",
+      "action": "Select / OK",
+      "softLeft": "Soft Left",
+      "softRight": "Soft Right",
+      "numpad": "Number Pad",
+      "mapping": "PC Keyboard",
+      "star": "Option Key (*)",
+      "hash": "Option Key (#)",
+      "system": "System",
+      "menu": "Emulator Menu"
+    }
   }
 }

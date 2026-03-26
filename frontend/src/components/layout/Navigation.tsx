@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Home, Gamepad2, Crown, Sparkles, ChevronDown, Dices, Trophy, BookOpen, Zap } from 'lucide-react';
+import { Home, Gamepad2, Crown, Sparkles, ChevronDown, Dices, Trophy, BookOpen, Zap, Smartphone } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { cn } from '@/lib/utils';
 import { WelcomePopup } from './WelcomePopup';
@@ -63,7 +63,7 @@ export function Navigation({ pathname, showWelcomePopup, dismissWelcome }: Navig
         <button
           className={cn(
             "px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap flex items-center gap-1",
-            (pathname === '/random' || pathname === '/leaderboard' || pathname === '/systems' || pathname === '/game-of-the-month')
+            (pathname === '/random' || pathname === '/leaderboard' || pathname === '/systems' || pathname === '/game-of-the-month' || pathname === '/java')
               ? "text-primary bg-primary/10"
               : "text-muted-foreground hover:text-foreground hover:bg-white/5"
           )}
@@ -139,6 +139,15 @@ export function Navigation({ pathname, showWelcomePopup, dismissWelcome }: Navig
                 <Zap className="w-4 h-4 text-orange-500" />
                 <span>Flash Classics</span>
                 <span className="ml-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-orange-500 text-white leading-none shadow-[0_0_10px_rgba(249,115,22,0.5)]">New</span>
+              </Link>
+              <div className="h-px bg-gradient-to-r from-transparent via-teal-500/30 to-transparent" />
+              <Link
+                href="/java"
+                className="flex items-center gap-3 px-4 py-3.5 text-sm font-bold transition-all hover:bg-teal-500/10 text-teal-500"
+              >
+                <Smartphone className="w-4 h-4 text-teal-500" />
+                <span>Java Mobile</span>
+                <span className="ml-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-teal-500 text-white leading-none shadow-[0_0_10px_rgba(20,184,166,0.5)]">New</span>
               </Link>
             </div>
           </div>

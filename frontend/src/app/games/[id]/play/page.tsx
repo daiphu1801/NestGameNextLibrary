@@ -11,6 +11,7 @@ import { PortraitOverlay } from '@/components/mobile/PortraitOverlay';
 import { PlayHeader } from '@/components/game/PlayHeader';
 import { PlaySaveModal } from '@/components/game/PlaySaveModal';
 import { FlashPlayer } from '@/components/game/FlashPlayer';
+import { J2mePlayer } from '@/components/game/J2mePlayer';
 import { usePlayPage } from '@/features/emulator/hooks/usePlayPage';
 import { usePlaySaveState } from '@/features/emulator/hooks/usePlaySaveState';
 import { cn } from '@/lib/utils';
@@ -29,7 +30,8 @@ export default function PlayPage() {
     isFavorite, isZapper, isMobile,
     loadGameEmulator, handleFavoriteToggle, toggleFullscreen, handleSwitchGame,
     user, t, locale, router, unlock,
-    flashGameUrl
+    flashGameUrl,
+    j2meGameUrl
   } = usePlayPage();
 
   const saveState = usePlaySaveState(game, user);
@@ -93,7 +95,7 @@ export default function PlayPage() {
       {/* Main 3-Column Layout */}
       <div className="flex-1 flex min-h-0 relative">
         {/* LEFT — Controls */}
-        {!isFullscreen && game?.system !== 'flash' && (
+        {!isFullscreen && game?.system !== 'flash' && game?.system !== 'j2me' && (
           <div className="hidden lg:block">
             <ControlsPanel
               system={game?.system}
@@ -161,6 +163,13 @@ export default function PlayPage() {
             )}>
               <FlashPlayer gameUrl={flashGameUrl || undefined} />
             </div>
+          ) : game?.system === 'j2me' ? (
+            <div className={cn(
+              "w-full h-full mx-auto my-auto transition-all animate-in fade-in zoom-in-95 duration-500 flex flex-col justify-center",
+              isMobile ? "max-w-none max-h-none p-0 sm:p-2" : "max-w-6xl max-h-[85vh] p-4 lg:p-8"
+            )}>
+              <J2mePlayer gameUrl={j2meGameUrl || undefined} />
+            </div>
           ) : (
             <div
               ref={containerRef}
@@ -173,7 +182,7 @@ export default function PlayPage() {
           {/* Mobile Controls & Overlays */}
           {isMobile && (
             <>
-              {game?.system !== 'flash' && (
+              {game?.system !== 'flash' && game?.system !== 'j2me' && (
                 <MobileControlsOverlay enabled={!isLoading && !error && !isTrialEnded} system={game?.system} />
               )}
               <ExitOverlay
@@ -181,7 +190,7 @@ export default function PlayPage() {
                 onSave={user && !isLoading && !error ? () => saveState.openSaveModal('save') : undefined}
                 onLoad={user && !isLoading && !error ? () => saveState.openSaveModal('load') : undefined}
                 gameName={game?.name}
-                isFlash={game?.system === 'flash'}
+                isFlash={game?.system === 'flash' || game?.system === 'j2me'}
               />
               <PortraitOverlay />
             </>
@@ -251,7 +260,7 @@ export default function PlayPage() {
       </div>
 
       {/* Bottom Control Hints */}
-      {!isMobile && game?.system !== 'flash' && (
+      {!isMobile && game?.system !== 'flash' && game?.system !== 'j2me' && (
         <div
           className={cn(
             "absolute bottom-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300",

@@ -31,8 +31,8 @@ export function RomDropZone({ onUploaded }: RomDropZoneProps) {
 
     const handleFile = async (file: File) => {
         const ext = file.name.split('.').pop()?.toLowerCase();
-        if (!['nes', 'sfc', 'smc', 'gba', 'md', 'gen', 'bin', 'zip', 'swf'].includes(ext || '')) {
-            setError('Chỉ hỗ trợ file .nes, .sfc, .gba, .md, .zip, .swf');
+        if (!['nes', 'sfc', 'smc', 'gba', 'md', 'gen', 'bin', 'zip', 'swf', 'jar', 'jad'].includes(ext || '')) {
+            setError('Chỉ hỗ trợ file .nes, .sfc, .gba, .md, .zip, .swf, .jar, .jad');
             return;
         }
         setError('');
@@ -91,7 +91,7 @@ export function RomDropZone({ onUploaded }: RomDropZoneProps) {
                     border: `2px dashed ${dragging ? '#3C50E0' : uploaded ? '#10B981' : '#2E3A47'}`,
                 }}
             >
-                <input ref={inputRef} type="file" accept=".nes,.zip,.sfc,.smc,.gba,.md,.gen,.bin,.swf" className="hidden" onChange={onInputChange} />
+                <input ref={inputRef} type="file" accept=".nes,.zip,.sfc,.smc,.gba,.md,.gen,.bin,.swf,.jar,.jad" className="hidden" onChange={onInputChange} />
 
                 {uploading ? (
                     <div className="flex flex-col items-center gap-2">
@@ -123,8 +123,8 @@ export function RomDropZone({ onUploaded }: RomDropZoneProps) {
                         <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(60,80,224,0.1)' }}>
                             <FileUp className="w-6 h-6" style={{ color: '#3C50E0' }} />
                         </div>
-                        <p className="text-white text-sm font-medium">Kéo thả hoặc click để chọn ROM / Game web</p>
-                        <p className="text-[#637381] text-xs">Hỗ trợ .nes · .sfc · .gba · .md · .zip · .swf</p>
+                        <p className="text-white text-sm font-medium">Kéo thả hoặc click để chọn ROM / Game web / Java</p>
+                        <p className="text-[#637381] text-xs">Hỗ trợ .nes · .sfc · .gba · .md · .zip · .swf · .jar</p>
                     </div>
                 )}
             </div>

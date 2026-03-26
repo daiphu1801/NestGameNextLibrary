@@ -157,7 +157,7 @@ export function FlashGameDetail({
               {/* Title Section */}
               <div>
                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[10px] font-black uppercase tracking-widest mb-6">
-                    <Zap className="w-3.5 h-3.5 fill-current" /> Web Flash Classic
+                    <Zap className="w-3.5 h-3.5 fill-current" /> {t('flashPortal.badge')}
                  </div>
                  <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-orange-200 tracking-tight leading-tight mb-8 drop-shadow-lg">
                     {game.name}
@@ -178,7 +178,7 @@ export function FlashGameDetail({
                     )}
                     <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-300">
                        <Trophy className="w-4 h-4 text-orange-500" />
-                       <span className="font-bold text-xs">{game.playCount || 0} LƯỢT CHƠI</span>
+                       <span className="font-bold text-xs">{game.playCount || 0} {t('flashPortal.playCount')}</span>
                     </div>
                  </div>
               </div>
@@ -190,9 +190,9 @@ export function FlashGameDetail({
                     <Info className="w-7 h-7 text-orange-400" />
                  </div>
                  <div className="relative z-10">
-                    <h3 className="text-xl font-black text-orange-400 mb-2 tracking-tight">Công nghệ giả lập WebAssembly</h3>
+                    <h3 className="text-xl font-black text-orange-400 mb-2 tracking-tight">{t('flashPortal.infoTitle')}</h3>
                     <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                      Trò chơi này hoạt động nguyên bản trên trình duyệt nhờ vào <strong className="text-orange-300 font-bold">Ruffle</strong> - trình giả lập Flash mã nguồn mở tiên tiến nhất. Không cần cài đặt Flash Player, an toàn tuyệt đối và siêu mượt mà.
+                      {t('flashPortal.infoDesc')}
                     </p>
                  </div>
               </div>
@@ -201,7 +201,7 @@ export function FlashGameDetail({
               <div className="pt-4">
                  <h2 className="flex items-center gap-3 text-2xl font-black text-white mb-6">
                     <div className="w-2 h-8 bg-gradient-to-b from-orange-500 to-rose-500 rounded-full" />
-                    Nội dung trò chơi
+                    {t('flashPortal.descTitle')}
                  </h2>
                  <p className="text-lg text-slate-300 leading-relaxed font-normal whitespace-pre-wrap bg-white/5 p-6 rounded-2xl border border-white/5">
                    {game.description || t('gameDetails.defaultDescription', { name: game.name })}
@@ -212,7 +212,7 @@ export function FlashGameDetail({
               <div className="pt-8 mt-12 border-t border-white/10">
                 <h2 className="flex items-center gap-3 text-2xl font-black text-white mb-8">
                   <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full" />
-                  Cộng đồng bình luận
+                  {t('flashPortal.commentsTitle')}
                 </h2>
                 <div className="bg-white/[0.02] p-6 rounded-2xl border border-white/5">
                   <GameComments gameId={Number(game.id)} />

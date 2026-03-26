@@ -45,6 +45,7 @@ export function usePlayPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [flashGameUrl, setFlashGameUrl] = useState<string | null>(null);
+  const [j2meGameUrl, setJ2meGameUrl] = useState<string | null>(null);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const hideControlsTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -105,6 +106,25 @@ export function usePlayPage() {
         setFlashGameUrl(resolvedUrl);
       } catch (err) {
         setError('Không thể tìm thấy đường dẫn tệp màn chơi Flash.');
+      }
+      return;
+    }
+
+    // Skip nostalgic emulator loading for J2ME games, as they use J2ME-For-Web
+    if (game.system === 'j2me') {
+      setIsLoading(false);
+      setGlobalLoading?.(false);
+      storageService.addRecentGame(game.id);
+      if (user) {
+        userService.recordPlayHistory(game.id).catch(err => {
+          console.error('Failed to record play history:', err);
+        });
+      }
+      try {
+        const resolvedUrl = await emulatorService.getRomUrl(game.path);
+        setJ2meGameUrl(resolvedUrl);
+      } catch (err) {
+        setError('Không thể tìm thấy đường dẫn tệp game Java.');
       }
       return;
     }
@@ -180,9 +200,9 @@ export function usePlayPage() {
   useEffect(() => { loadGameData(); }, [params.id]);
 
   useEffect(() => {
-    if (game && containerRef.current && game.system !== 'flash') {
+    if (game && containerRef.current && game.system !== 'flash' && game.system !== 'j2me') {
       loadGameEmulator();
-    } else if (game?.system === 'flash') {
+    } else if (game?.system === 'flash' || game?.system === 'j2me') {
       loadGameEmulator(); // Just records history and stops loading state
     }
     return () => { emulatorService.unload(); };
@@ -297,6 +317,7 @@ export function usePlayPage() {
     showRegisterModal, setShowRegisterModal,
     isFavorite, isZapper, isMobile,
     flashGameUrl,
+    j2meGameUrl,
     // Actions
     loadGameEmulator, handleFavoriteToggle, toggleFullscreen, handleSwitchGame,
     // Context

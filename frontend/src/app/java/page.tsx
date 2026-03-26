@@ -7,11 +7,11 @@ import { GameGrid } from '@/components/game/GameGrid';
 import { useGameStore } from '@/features/games/store/gameStore';
 import { gameService } from '@/services/gameService';
 import { validateEnv } from '@/config/env';
-import { Zap, Flame, MonitorPlay } from 'lucide-react';
+import { Smartphone, Sparkles, Wifi } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { motion } from 'framer-motion';
 
-export default function FlashPortalPage() {
+export default function JavaPortalPage() {
   const { allGames, isLoading: isGamesLoading, setGames } = useGameStore();
   const { t } = useLanguage();
   const router = useRouter();
@@ -25,8 +25,8 @@ export default function FlashPortalPage() {
     loadGames();
   }, [setGames]);
 
-  // Handle local state for Flash games
-  const filteredGames = useMemo(() => allGames.filter(g => g.system === 'flash'), [allGames]);
+  // Filter only J2ME games
+  const filteredGames = useMemo(() => allGames.filter(g => g.system === 'j2me'), [allGames]);
   const [page, setPage] = useState(1);
   const gamesPerPage = 25;
   
@@ -40,12 +40,12 @@ export default function FlashPortalPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0F0A0A]">
+      <div className="min-h-screen flex items-center justify-center bg-[#060F0D]">
         <div className="text-center space-y-6 relative">
-          <div className="absolute inset-0 bg-orange-500/30 blur-3xl rounded-full" />
-          <div className="w-16 h-16 border-4 border-orange-500/30 border-t-orange-500 rounded-full animate-spin mx-auto relative z-10" />
-          <p className="text-base font-medium text-orange-400 animate-pulse relative z-10 font-tech uppercase tracking-wider">
-            Loading Flash Gateway...
+          <div className="absolute inset-0 bg-teal-500/30 blur-3xl rounded-full" />
+          <div className="w-16 h-16 border-4 border-teal-500/30 border-t-teal-500 rounded-full animate-spin mx-auto relative z-10" />
+          <p className="text-base font-medium text-teal-400 animate-pulse relative z-10 font-tech uppercase tracking-wider">
+            Loading Java Gateway...
           </p>
         </div>
       </div>
@@ -53,16 +53,16 @@ export default function FlashPortalPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0F0F23] text-slate-200 selection:bg-orange-500/30 relative overflow-hidden">
-      {/* Intense Amber/Orange Aurora Background (Enterprise Gateway style) */}
+    <main className="min-h-screen bg-[#060F0D] text-slate-200 selection:bg-teal-500/30 relative overflow-hidden">
+      {/* Teal/Green Nokia Aurora Background */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[#0F0A0A]" />
+        <div className="absolute inset-0 bg-[#060F0D]" />
         
         {/* Animated Glows */}
         <div 
           className="absolute -top-[20%] left-[10%] w-[60%] h-[60%] rounded-full mix-blend-screen opacity-40 animate-pulse"
           style={{
-            background: 'radial-gradient(circle, rgba(234, 88, 12, 0.4) 0%, rgba(225, 29, 72, 0.1) 40%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(20, 184, 166, 0.4) 0%, rgba(16, 185, 129, 0.1) 40%, transparent 70%)',
             filter: 'blur(60px)',
             animationDuration: '4s'
           }}
@@ -70,7 +70,7 @@ export default function FlashPortalPage() {
         <div 
           className="absolute top-[40%] right-[-10%] w-[50%] h-[70%] rounded-full mix-blend-screen opacity-30 animate-pulse"
           style={{
-            background: 'radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, rgba(234, 88, 12, 0.1) 50%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(52, 211, 153, 0.3) 0%, rgba(20, 184, 166, 0.1) 50%, transparent 70%)',
             filter: 'blur(80px)',
             animationDuration: '6s'
           }}
@@ -82,8 +82,8 @@ export default function FlashPortalPage() {
           className="absolute inset-0"
           style={{
             backgroundImage: `
-              linear-gradient(to right, rgba(234, 88, 12, 0.05) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(234, 88, 12, 0.05) 1px, transparent 1px)
+              linear-gradient(to right, rgba(20, 184, 166, 0.05) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(20, 184, 166, 0.05) 1px, transparent 1px)
             `,
             backgroundSize: '40px 40px',
             maskImage: 'radial-gradient(circle at center, black 40%, transparent 100%)',
@@ -96,19 +96,19 @@ export default function FlashPortalPage() {
 
       <div className="container mx-auto px-4 lg:px-8 pt-8 pb-24 lg:py-12 relative z-10">
         
-        {/* Flash Hero Banner */}
+        {/* Java Hero Banner */}
         <motion.div 
           initial={{ opacity: 0, y: 30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative rounded-3xl overflow-hidden mb-12 border border-orange-500/20 bg-black/40 backdrop-blur-md shadow-2xl shadow-orange-900/20"
+          className="relative rounded-3xl overflow-hidden mb-12 border border-teal-500/20 bg-black/40 backdrop-blur-md shadow-2xl shadow-teal-900/20"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-rose-600/20" />
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500" />
+          <div className="absolute inset-0 bg-gradient-to-r from-teal-600/20 to-emerald-600/20" />
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 via-emerald-500 to-green-500" />
           
           <div className="relative p-8 lg:p-12 flex flex-col items-center justify-center text-center">
             
-            {/* 3D Floating Icon Container */}
+            {/* 3D Floating Phone Icon */}
             <div className="mb-8" style={{ perspective: "1000px" }}>
               <motion.div 
                 animate={{ 
@@ -122,10 +122,10 @@ export default function FlashPortalPage() {
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-gradient-to-br from-orange-500 to-rose-600 shadow-2xl shadow-orange-500/60 border border-orange-400/40 relative transform-style-3d cursor-pointer group"
+                className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-2xl shadow-teal-500/60 border border-teal-400/40 relative transform-style-3d cursor-pointer group"
               >
                 <div className="absolute inset-0 rounded-3xl bg-white/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <Zap className="w-12 h-12 text-white fill-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
+                <Smartphone className="w-12 h-12 text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
               </motion.div>
             </div>
             
@@ -135,28 +135,28 @@ export default function FlashPortalPage() {
               transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
               className="text-4xl lg:text-6xl font-black text-white tracking-tight mb-4"
             >
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
-                FLASH
-              </span> CLASSICS GATEWAY
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">
+                JAVA
+              </span> MOBILE GATEWAY
             </motion.h1>
             
-            <p className="text-lg text-orange-200/80 max-w-2xl mx-auto mb-8 leading-relaxed">
-              {t('flashPortal.subtitle')}
+            <p className="text-lg text-teal-200/80 max-w-2xl mx-auto mb-8 leading-relaxed">
+              {t('javaPortal.subtitle')}
             </p>
 
-            <div className="flex items-center justify-center gap-6 text-sm font-tech font-bold uppercase tracking-wider text-orange-400">
+            <div className="flex items-center justify-center gap-6 text-sm font-tech font-bold uppercase tracking-wider text-teal-400">
               <div className="flex items-center gap-2">
-                <Flame className="w-4 h-4" /> {t('flashPortal.tag1')}
+                <Sparkles className="w-4 h-4" /> {t('javaPortal.tag1')}
               </div>
-              <div className="w-1.5 h-1.5 rounded-full bg-orange-500/50" />
+              <div className="w-1.5 h-1.5 rounded-full bg-teal-500/50" />
               <div className="flex items-center gap-2">
-                <MonitorPlay className="w-4 h-4" /> {t('flashPortal.tag2')}
+                <Wifi className="w-4 h-4" /> {t('javaPortal.tag2')}
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Flash Games Grid */}
+        {/* Java Games Grid */}
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -165,11 +165,11 @@ export default function FlashPortalPage() {
         >
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold flex items-center gap-3 text-white">
-              <div className="w-1 h-6 rounded-full bg-gradient-to-b from-orange-500 to-rose-500" />
-              {t('flashPortal.allGames')}
+              <div className="w-1 h-6 rounded-full bg-gradient-to-b from-teal-500 to-emerald-500" />
+              {t('javaPortal.allGames')}
             </h2>
-            <div className="px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 font-tech text-sm font-bold">
-              {filteredGames.length} {t('flashPortal.items')}
+            <div className="px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 font-tech text-sm font-bold">
+              {filteredGames.length} {t('javaPortal.items')}
             </div>
           </div>
 
@@ -184,9 +184,9 @@ export default function FlashPortalPage() {
               />
             ) : (
               <div className="text-center py-20">
-                <Zap className="w-16 h-16 text-orange-500/20 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">{t('flashPortal.empty')}</h3>
-                <p className="text-slate-400">{t('flashPortal.emptyDesc')}</p>
+                <Smartphone className="w-16 h-16 text-teal-500/20 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-white mb-2">{t('javaPortal.empty')}</h3>
+                <p className="text-slate-400">{t('javaPortal.emptyDesc')}</p>
               </div>
             )}
           </div>

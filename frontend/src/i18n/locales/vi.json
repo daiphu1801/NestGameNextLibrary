@@ -611,5 +611,53 @@
     "tip2": "Dùng Save State để lưu tiến trình bất cứ lúc nào",
     "tip3": "Các nút điều khiển tự ẩn sau 3 giây không hoạt động",
     "tip4": "Thử chế độ Fullscreen để trải nghiệm chân thật hơn"
+  },
+  "flashPortal": {
+    "subtitle": "Còn nhớ những buổi chiều tan học, rủ nhau ra quán net chơi game trên Y8, 24h, GameVui không? Từ Stick War, Fire Boy & Water Girl đến những trận đấu Stick Fighter — tất cả đều đang chờ bạn quay lại!",
+    "tag1": "Tuổi thơ quán net",
+    "tag2": "Chơi ngay, miễn phí",
+    "allGames": "Tất cả Game Flash",
+    "items": "MỤC",
+    "empty": "Chưa có game Flash nào",
+    "emptyDesc": "Các tựa game huyền thoại đang được ban quản trị cập nhật. Vui lòng quay trở lại sau nhé!",
+    "badge": "Flash Classic",
+    "playCount": "LƯỢT CHƠI",
+    "infoTitle": "Ký ức quán net tuổi thơ",
+    "infoDesc": "Nhớ hồi đó không? Tan học là chạy ù ra quán net, gom mấy nghìn chơi mấy tiếng. Từ Y8, 24h đến GameVui — mỗi tựa game là cả một trời kỷ niệm của thế hệ học trò Việt Nam.",
+    "descTitle": "Nội dung trò chơi",
+    "commentsTitle": "Cộng đồng bình luận"
+  },
+  "javaPortal": {
+    "subtitle": "Bạn còn nhớ những buổi trưa trốn ngủ, lén chơi Rắn Săn Mồi trên Nokia 1280? Hay những ván Bounce Tales, Diamond Rush trên chiếc điện thoại đen trắng? Tất cả ký ức tuổi thơ ấy đều ở đây — sẵn sàng để bạn sống lại!",
+    "tag1": "Tuổi thơ dữ dội",
+    "tag2": "Chơi ngay, miễn phí",
+    "allGames": "Tất cả Game Java",
+    "items": "MỤC",
+    "empty": "Chưa có game Java nào",
+    "emptyDesc": "Các tựa game Java huyền thoại đang được ban quản trị cập nhật. Hãy quay trở lại sau nhé!",
+    "badge": "Java Mobile Classic",
+    "playBtn": "CHƠI JAVA NGAY",
+    "playCount": "LƯỢT CHƠI",
+    "infoTitle": "Ký ức tuổi thơ trên điện thoại",
+    "infoDesc": "Nhớ không? Những buổi trưa hè trốn ngủ, lén mượn điện thoại bố mẹ để chơi game. Từ Rắn Săn Mồi, Bounce Tales đến Diamond Rush — mỗi tựa game đều là một phần ký ức không thể quên của thế hệ 8x, 9x.",
+    "descTitle": "Nội dung trò chơi",
+    "commentsTitle": "Cộng đồng bình luận",
+    "playerError": "Không thể tải trình giả lập Java. Vui lòng thử lại.",
+    "playerErrorTitle": "LỖI TẢI PLAYER",
+    "playerNoUrl": "Không tìm thấy đường dẫn game Java.",
+    "playerLoading": "Đang khởi tạo Java Player... Vui lòng đợi trong giây lát.",
+    "exitFullscreen": "Thu nhỏ",
+    "controls": {
+      "title": "H.Dẫn Điều Khiển (Nokia)",
+      "action": "Chọn / OK",
+      "softLeft": "Phím trái",
+      "softRight": "Phím phải",
+      "numpad": "Phím Số",
+      "mapping": "Bàn phím PC",
+      "star": "Phím Tùy chọn (*)",
+      "hash": "Phím Tùy chọn (#)",
+      "system": "Hệ thống",
+      "menu": "Menu Giả Lập"
+    }
   }
 }

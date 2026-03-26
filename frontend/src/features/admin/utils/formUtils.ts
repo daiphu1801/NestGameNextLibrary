@@ -17,5 +17,5 @@ export function deriveImageUrls(base: string): { imageUrl: string; imageSnap: st
 }
 
 export function stripRomExt(fileName: string): string {
-  return fileName.replace(/\.(nes|zip|NES|ZIP)$/, '').trim();
+  return fileName.replace(/\.(nes|zip|NES|ZIP|swf|SWF|jar|JAR|jad|JAD)$/, '').trim();
 }

@@ -13,7 +13,8 @@ const SYSTEMS = [
     { id: 'gbc', name: 'Game Boy Color' },
     { id: 'arcade', name: 'Arcade' },
     { id: 'neogeo', name: 'Neo Geo' },
-    { id: 'flash', name: 'Flash Game (.swf)' }
+    { id: 'flash', name: 'Flash Game (.swf)' },
+    { id: 'j2me', name: 'Java Mobile (.jar)' }
 ];
 
 const inputCls = "w-full px-3 py-2.5 rounded-md text-white text-sm focus:outline-none focus:ring-1 focus:ring-[#3C50E0]/50 transition-colors border";
