@@ -97,6 +97,14 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: '/j2me-emulator/:path*',
+        destination: 'https://pub-87204256ff0f4764bde4d1dd64f4c380.r2.dev/j2me-emulator/:path*'
+      }
+    ];
+  }
 };
 
 module.exports = nextConfig;

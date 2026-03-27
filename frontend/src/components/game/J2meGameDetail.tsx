@@ -2,8 +2,6 @@ import Image from 'next/image';
 import { ArrowLeft, Play, Calendar, Globe, Tag, Smartphone, Heart, Loader2, Share2, Info, Trophy } from 'lucide-react';
 import { StarRating } from '@/components/game/StarRating';
 import { GameComments } from '@/components/game/GameComments';
-import { J2meControlsPane } from '@/components/game/J2meControlsPane';
-import { J2mePlayer } from '@/components/game/J2mePlayer';
 import { cn } from '@/lib/utils';
 import { Game } from '@/types';
 
@@ -93,20 +91,22 @@ export function J2meGameDetail({
            
             {/* Left: Player + Controls Container */}
             <div className="w-full lg:col-span-8 flex flex-col gap-6">
-               <div className="relative w-full aspect-[4/3] sm:aspect-video rounded-2xl overflow-hidden border border-white/5 shadow-2xl bg-[#0a0a0a]">
-                 {!game.path ? (
-                   <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-white/[0.02]">
-                     <Smartphone className="w-12 h-12 text-teal-500/50 mb-4" />
-                     <p className="text-slate-400 font-medium">No game ROM path provided</p>
-                   </div>
-                 ) : (
-                   <div className="absolute inset-0 flex">
-                      <div className="flex-1 relative">
-                         <J2mePlayer gameUrl={game.path} />
-                      </div>
-                      <J2meControlsPane />
-                   </div>
-                 )}
+               <div className="relative w-full aspect-[4/3] sm:aspect-video rounded-2xl overflow-hidden border border-white/5 shadow-2xl bg-[#0a0a0a] group group-hover:ring-teal-500/50 transition-all">
+                  <div className="absolute inset-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={imageUrl || '/game-console.png'} alt={game.name} className="w-full h-full object-cover opacity-40 blur-sm scale-105 group-hover:scale-100 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent" />
+                  </div>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10 transition-transform duration-500 group-hover:-translate-y-2">
+                     <button
+                       onClick={handlePlayNow}
+                       className="group/btn relative w-20 h-20 bg-teal-500 hover:bg-teal-400 rounded-full flex items-center justify-center transition-all hover:scale-105 shadow-[0_0_40px_rgba(20,184,166,0.5)] mb-6 cursor-pointer"
+                     >
+                       <Play className="w-8 h-8 text-black ml-2" fill="currentColor" />
+                       <div className="absolute inset-0 rounded-full border-2 border-teal-500 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite] opacity-20" />
+                     </button>
+                     <h2 className="text-3xl font-black text-white tracking-tight mb-2">{t('gameDetails.playGame')}</h2>
+                  </div>
                </div>
 
                {/* Rating Card */}

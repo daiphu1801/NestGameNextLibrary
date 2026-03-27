@@ -95,7 +95,7 @@ export default function PlayPage() {
       {/* Main 3-Column Layout */}
       <div className="flex-1 flex min-h-0 relative">
         {/* LEFT — Controls */}
-        {!isFullscreen && game?.system !== 'flash' && game?.system !== 'j2me' && (
+        {!isFullscreen && game?.system !== 'flash' && (
           <div className="hidden lg:block">
             <ControlsPanel
               system={game?.system}
