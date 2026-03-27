@@ -12,7 +12,7 @@ const ROM_FOLDERS = [
 const LIBRARY_PATH = path.join(process.cwd(), 'LibraryNes');
 
 // Allowed file extensions for ROM files (security)
-const ALLOWED_EXTENSIONS = ['.nes', '.zip', '.sfc', '.smc', '.gba', '.md', '.gen', '.bin', '.cue', '.iso', '.chd', '.pbp', '.cso'];
+const ALLOWED_EXTENSIONS = ['.nes', '.zip', '.sfc', '.smc', '.gba', '.md', '.gen', '.bin', '.cue', '.iso', '.chd', '.pbp', '.cso', '.jar', '.jad', '.swf'];
 
 /**
  * Find ROM file with security checks.
@@ -73,7 +73,31 @@ async function handleRomRequest(
 
         const romPath = findRomPath(joined);
         if (!romPath) {
-            return NextResponse.json({ error: 'ROM not found locally', fileName: joined }, { status: 404 });
+            // Fallback: proxy the file from Cloudflare R2 (for J2ME .jar, Flash .swf, etc.)
+            const r2BaseUrl = process.env.NEXT_PUBLIC_R2_URL || process.env.R2_PUBLIC_URL;
+            if (r2BaseUrl) {
+                const r2Url = `${r2BaseUrl.replace(/\/$/, '')}/${joined}`;
+                try {
+                    const r2Response = await fetch(r2Url);
+                    if (r2Response.ok && r2Response.body) {
+                        const r2Headers: Record<string, string> = {
+                            'Content-Type': r2Response.headers.get('content-type') || 'application/octet-stream',
+                            'Cache-Control': 'public, max-age=31536000, immutable',
+                            'Access-Control-Allow-Origin': '*',
+                        };
+                        const contentLength = r2Response.headers.get('content-length');
+                        if (contentLength) r2Headers['Content-Length'] = contentLength;
+
+                        if (!includeBody) {
+                            return new NextResponse(null, { status: 200, headers: r2Headers });
+                        }
+                        return new NextResponse(r2Response.body as ReadableStream, { status: 200, headers: r2Headers });
+                    }
+                } catch (e) {
+                    console.error('R2 proxy fallback failed:', e);
+                }
+            }
+            return NextResponse.json({ error: 'ROM not found', fileName: joined }, { status: 404 });
         }
 
         const ext = path.extname(romPath).toLowerCase();
@@ -86,6 +110,8 @@ async function handleRomRequest(
         else if (ext === '.bin' || ext === '.iso' || ext === '.chd' || ext === '.cue' || ext === '.pbp' || ext === '.cso') {
             contentType = 'application/octet-stream';
         }
+        else if (ext === '.jar' || ext === '.jad') contentType = 'application/java-archive';
+        else if (ext === '.swf') contentType = 'application/x-shockwave-flash';
 
         const stat = fs.statSync(romPath);
         const headers: Record<string, string> = {

@@ -22,7 +22,9 @@ export function J2mePlayer({ gameUrl }: J2mePlayerProps) {
   const { t } = useLanguage();
 
   // Build the emulator URL with the midlet param
-  const J2ME_EMULATOR_HOST = process.env.NEXT_PUBLIC_J2ME_EMULATOR_URL || '/j2me-emulator';
+  // IMPORTANT: Always use the local Next.js rewrite proxy to avoid COEP (Cross-Origin-Embedder-Policy) blocks.
+  // The proxy is defined in next.config.js and forwards /j2me-emulator/* → R2.
+  const J2ME_EMULATOR_HOST = '/j2me-emulator';
 
   const emulatorUrl = gameUrl
     ? `${J2ME_EMULATOR_HOST}/?midlet=${encodeURIComponent(gameUrl)}`

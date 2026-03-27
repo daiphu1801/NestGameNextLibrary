@@ -121,8 +121,13 @@ export function usePlayPage() {
         });
       }
       try {
-        const resolvedUrl = await emulatorService.getRomUrl(game.path);
-        setJ2meGameUrl(resolvedUrl);
+        // IMPORTANT: For J2ME games, always use the same-origin /api/roms/ proxy
+        // to avoid COEP (Cross-Origin-Embedder-Policy) blocks.
+        // The emulator iframe runs through a Next.js rewrite proxy, and it needs
+        // the ROM URL to also be same-origin to fetch it successfully.
+        const cleanPath = game.path.startsWith('/') ? game.path.slice(1) : game.path;
+        const proxyUrl = `${window.location.origin}/api/roms/${encodeURIComponent(cleanPath)}`;
+        setJ2meGameUrl(proxyUrl);
       } catch (err) {
         setError('Không thể tìm thấy đường dẫn tệp game Java.');
       }
