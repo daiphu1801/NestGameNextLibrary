@@ -656,10 +656,20 @@ public class AdminService {
                 categoryMap.put(cat.getName().toLowerCase(), cat);
             }
 
-            int added = 0, skipped = 0;
+            int added = 0, skipped = 0, updated = 0;
             for (JsonGame jg : jsonGames) {
                 String fileName = jg.getFileName();
-                if (fileName == null || existingFileNames.contains(fileName)) {
+                if (fileName == null) continue;
+
+                if (existingFileNames.contains(fileName)) {
+                    // Update existing game's image URL if it's different
+                    Game existing = gameRepository.findByFileName(fileName).orElse(null);
+                    if (existing != null && jg.getImage() != null &&
+                       (existing.getImageUrl() == null || !existing.getImageUrl().equals(jg.getImage()))) {
+                        existing.setImageUrl(jg.getImage());
+                        gameRepository.save(existing);
+                        updated++;
+                    }
                     skipped++;
                     continue;
                 }
@@ -695,13 +705,14 @@ public class AdminService {
                 added++;
             }
 
-            log.info("[Reseed] Done — added: {}, skipped (already exist): {}", added, skipped);
+            log.info("[Reseed] Done — added: {}, updated: {}, skipped (already exist): {}", added, updated, skipped);
             logActivity("system", "RESEED", "GAME", "games.json",
-                    String.format("Reseed: +%d mới, %d bỏ qua", added, skipped));
+                    String.format("Reseed: +%d mới, ~%d cập nhật, %d bỏ qua", added, updated, skipped));
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("total", jsonGames.size());
             result.put("added", added);
+            result.put("updated", updated);
             result.put("skipped", skipped);
             return result;
 
