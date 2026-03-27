@@ -47,7 +47,9 @@ self.addEventListener('fetch', (event) => {
     'media.rawg.io',
     'thumbnails.libretro.com',
     'assets-prd.ignimgs.com',
-    'images.igdb.com'
+    'images.igdb.com',
+    'r2.dev',
+    'r2.cloudflarestorage.com'
   ];
   if (externalDomains.some(domain => url.hostname.includes(domain))) {
     return;
@@ -70,6 +72,9 @@ self.addEventListener('fetch', (event) => {
           }
           return response;
         });
+      }).catch(() => {
+        // Must always return a Response, never undefined
+        return new Response('Network error and not cached', { status: 503, statusText: 'Service Unavailable' });
       })
     );
     return;
@@ -85,6 +90,14 @@ self.addEventListener('fetch', (event) => {
         }
         return response;
       })
-      .catch(() => caches.match(request))
+      .catch(async () => {
+        const cached = await caches.match(request);
+        if (cached) return cached;
+        return new Response('Network error and no cache available', { 
+            status: 503, 
+            statusText: 'Service Unavailable',
+            headers: new Headers({ 'Content-Type': 'text/plain' })
+        });
+      })
   );
 });
