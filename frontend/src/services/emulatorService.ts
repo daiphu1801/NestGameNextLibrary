@@ -255,7 +255,13 @@ class EmulatorService {
     const decoded = decodeURIComponent(gamePath.startsWith('/') ? gamePath.slice(1) : gamePath);
     const cleanPath = decoded;
     // Encode each path segment individually (preserve '/' separators)
-    const localApiUrl = `/api/roms/${cleanPath.split('/').map(s => encodeURIComponent(s)).join('/')}`;
+    const encodedPath = cleanPath.split('/').map(s => encodeURIComponent(s)).join('/');
+    
+    // Nostalgist treats relative paths (e.g. "/api/...) as "known games" and tries 
+    // to load them from external CDNs depending on the core. 
+    // We MUST use an absolute URL so it fetches directly from our server.
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const localApiUrl = `${baseUrl}/api/roms/${encodedPath}`;
 
     try {
       const response = await fetch(localApiUrl, { method: 'HEAD' });
@@ -273,10 +279,10 @@ class EmulatorService {
       throw new Error('No R2 URL configured and ROM not found locally');
     }
 
-    const baseUrl = env.r2Url.endsWith('/') ? env.r2Url : `${env.r2Url}/`;
+    const r2BaseUrl = env.r2Url.endsWith('/') ? env.r2Url : `${env.r2Url}/`;
     // Encode each path segment individually to preserve '/' separators
-    const encodedPath = cleanPath.split('/').map(s => encodeURIComponent(s)).join('/');
-    const r2Url = `${baseUrl}${encodedPath}`;
+    const r2EncodedPath = cleanPath.split('/').map(s => encodeURIComponent(s)).join('/');
+    const r2Url = `${r2BaseUrl}${r2EncodedPath}`;
     this._isOfflineMode = false;
     return r2Url;
   }
