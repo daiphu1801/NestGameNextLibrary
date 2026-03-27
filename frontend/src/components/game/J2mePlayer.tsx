@@ -21,14 +21,19 @@ export function J2mePlayer({ gameUrl }: J2mePlayerProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const { t } = useLanguage();
 
-  // Build the emulator URL pointing directly to R2-hosted emulator.
-  // We use the direct R2 URL because same-origin proxying causes cascading COEP/SW issues.
-  // COEP 'credentialless' on the parent page allows cross-origin iframes without credentials.
+  // Build the emulator URL using run.html (the game runner page).
   const J2ME_EMULATOR_HOST = 'https://pub-87204256ff0f4764bde4d1dd64f4c380.r2.dev/j2me-emulator';
-
-  const emulatorUrl = gameUrl
-    ? `${J2ME_EMULATOR_HOST}/index.html?midlet=${encodeURIComponent(gameUrl)}`
-    : null;
+  // The emulator's main.js loads JARs from CheerpJ virtual path: /app/j2me-emulator/jar/<jar_param>
+  // which maps to R2: j2me-emulator/jar/<jar_param>
+  // We use ../../roms/filename.jar to navigate: j2me-emulator/jar/../../roms/file.jar → roms/file.jar
+  let emulatorUrl: string | null = null;
+  if (gameUrl) {
+    // Extract just the filename from the full URL or path
+    const romFilename = gameUrl.split('/').pop() || 'game.jar';
+    // Use relative path from j2me-emulator/jar/ → roms/
+    const jarParam = `../../roms/${romFilename}`;
+    emulatorUrl = `${J2ME_EMULATOR_HOST}/run.html?jar=${encodeURIComponent(jarParam)}`;
+  }
 
   // Focus the iframe when loaded so keyboard events go to the emulator
   const handleIframeLoad = useCallback(() => {
