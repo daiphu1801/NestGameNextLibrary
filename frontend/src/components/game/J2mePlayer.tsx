@@ -85,6 +85,8 @@ export function J2mePlayer({ gameUrl }: J2mePlayerProps) {
           src={emulatorUrl}
           className="absolute inset-0 w-full h-full z-10 border-0"
           allow="autoplay; gamepad; cross-origin-isolated"
+          // @ts-ignore — 'credentialless' is a valid HTML attribute but not yet in React's type definitions
+          credentialless="true"
           onLoad={handleIframeLoad}
           onError={handleIframeError}
           title="J2ME Game Emulator"
