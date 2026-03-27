@@ -4,6 +4,8 @@ import { useLanguage } from '@/components/providers/LanguageProvider';
 
 interface J2mePlayerProps {
   gameUrl?: string;
+  onLoaded?: () => void;
+  isMobile?: boolean;
 }
 
 /**
@@ -13,7 +15,7 @@ interface J2mePlayerProps {
  * The emulator is expected to be self-hosted and accept a `midlet` query param.
  * Example: https://your-j2me-host.com/?midlet=https://cdn.example.com/game.jar
  */
-export function J2mePlayer({ gameUrl }: J2mePlayerProps) {
+export function J2mePlayer({ gameUrl, onLoaded, isMobile }: J2mePlayerProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -32,16 +34,18 @@ export function J2mePlayer({ gameUrl }: J2mePlayerProps) {
     const romFilename = gameUrl.split('/').pop() || 'game.jar';
     // Use relative path from j2me-emulator/jar/ → roms/
     const jarParam = `../../roms/${romFilename}`;
-    emulatorUrl = `${J2ME_EMULATOR_HOST}/run.html?jar=${encodeURIComponent(jarParam)}`;
+    emulatorUrl = `${J2ME_EMULATOR_HOST}/run.html?jar=${encodeURIComponent(jarParam)}${isMobile ? '&mobile=1' : ''}`;
   }
 
   // Focus the iframe when loaded so keyboard events go to the emulator
   const handleIframeLoad = useCallback(() => {
     setIsLoaded(true);
+    // CheerpJ takes extra time after HTML loads — wait before signaling ready
     setTimeout(() => {
+      onLoaded?.();
       iframeRef.current?.focus();
-    }, 300);
-  }, []);
+    }, 2000);
+  }, [onLoaded]);
 
   const handleIframeError = useCallback(() => {
     setError(t('javaPortal.playerError'));

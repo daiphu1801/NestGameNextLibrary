@@ -15,6 +15,7 @@ import { J2mePlayer } from '@/components/game/J2mePlayer';
 import { usePlayPage } from '@/features/emulator/hooks/usePlayPage';
 import { usePlaySaveState } from '@/features/emulator/hooks/usePlaySaveState';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
 export default function PlayPage() {
   const {
@@ -35,6 +36,7 @@ export default function PlayPage() {
   } = usePlayPage();
 
   const saveState = usePlaySaveState(game, user);
+  const [isJ2meLoading, setIsJ2meLoading] = useState(true);
 
   // Initial loading
   if (isLoading && !game) {
@@ -108,7 +110,7 @@ export default function PlayPage() {
 
         {/* CENTER — Game Canvas */}
         <div className="flex-1 flex items-center justify-center bg-black relative transition-all duration-300 overflow-hidden">
-          {isLoading && game && (
+          {(isLoading || (game?.system === 'j2me' && isJ2meLoading)) && game && (
             <GameLoadingOverlay game={game} onClose={() => router.back()} />
           )}
 
@@ -168,7 +170,7 @@ export default function PlayPage() {
               "w-full h-full mx-auto my-auto transition-all animate-in fade-in zoom-in-95 duration-500 flex flex-col justify-center",
               isMobile ? "max-w-none max-h-none p-0 sm:p-2" : "max-w-6xl max-h-[85vh] p-4 lg:p-8"
             )}>
-              <J2mePlayer gameUrl={j2meGameUrl || undefined} />
+              <J2mePlayer gameUrl={j2meGameUrl || undefined} onLoaded={() => setIsJ2meLoading(false)} isMobile={isMobile} />
             </div>
           ) : (
             <div
@@ -192,7 +194,7 @@ export default function PlayPage() {
                 gameName={game?.name}
                 isFlash={game?.system === 'flash' || game?.system === 'j2me'}
               />
-              <PortraitOverlay />
+              {game?.system !== 'j2me' && <PortraitOverlay />}
             </>
           )}
         </div>

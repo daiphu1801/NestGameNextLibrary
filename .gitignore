@@ -1,3 +1,7 @@
+# Dependencies
+node_modules/
+package-lock.json
+
 # Backend
 backend/src/main/resources/application-local.yml
 backend/target/
@@ -68,3 +72,8 @@ __pycache__/
 render-backend.env
 
 scripts/*.log
+
+# J2ME Emulator Source (not needed for deployment)
+j2me-emulator/
+
+scripts/

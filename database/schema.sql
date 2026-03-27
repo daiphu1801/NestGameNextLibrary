@@ -42,6 +42,7 @@ CREATE TABLE games (
     image_snap VARCHAR(500),                -- URL ảnh gameplay
     image_title VARCHAR(500),               -- URL ảnh title screen
     play_count INTEGER DEFAULT 0,           -- Số lượt chơi
+    game_system VARCHAR(255) DEFAULT 'nes', -- Hệ máy: nes, snes, gba, flash, j2me...
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
