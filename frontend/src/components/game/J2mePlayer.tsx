@@ -27,7 +27,7 @@ export function J2mePlayer({ gameUrl }: J2mePlayerProps) {
   const J2ME_EMULATOR_HOST = '/j2me-emulator';
 
   const emulatorUrl = gameUrl
-    ? `${J2ME_EMULATOR_HOST}/?midlet=${encodeURIComponent(gameUrl)}`
+    ? `${J2ME_EMULATOR_HOST}/index.html?midlet=${encodeURIComponent(gameUrl)}`
     : null;
 
   // Focus the iframe when loaded so keyboard events go to the emulator
