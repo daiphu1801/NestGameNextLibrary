@@ -94,14 +94,14 @@ export default function JavaPortalPage() {
 
       <Header />
 
-      <div className="container mx-auto px-4 lg:px-8 pt-8 pb-24 lg:py-12 relative z-10">
+      <div className="container mx-auto px-2 sm:px-4 lg:px-8 pt-6 sm:pt-8 pb-24 lg:py-12 relative z-10">
         
         {/* Java Hero Banner */}
         <motion.div 
           initial={{ opacity: 0, y: 30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative rounded-3xl overflow-hidden mb-12 border border-teal-500/20 bg-black/40 backdrop-blur-md shadow-2xl shadow-teal-900/20"
+          className="relative rounded-2xl sm:rounded-3xl overflow-hidden mb-8 sm:mb-12 border border-teal-500/20 bg-black/40 backdrop-blur-md shadow-2xl shadow-teal-900/20"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-teal-600/20 to-emerald-600/20" />
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 via-emerald-500 to-green-500" />
@@ -173,7 +173,7 @@ export default function JavaPortalPage() {
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-black/40 border border-white/5 backdrop-blur-sm">
+          <div className="p-3 sm:p-6 rounded-2xl bg-black/40 border border-white/5 backdrop-blur-sm">
             {paginatedGames.length > 0 ? (
               <GameGrid 
                 games={paginatedGames}

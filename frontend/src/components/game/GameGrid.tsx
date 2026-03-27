@@ -83,7 +83,12 @@ export function GameGrid({ games, totalGames, currentPage, totalPages, onPageCha
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
+      <div className={cn(
+        "grid gap-3 sm:gap-6",
+        games.length === 1 
+          ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-[280px] sm:max-w-none mx-auto sm:mx-0" 
+          : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+      )}>
         {games.map((game, index) => (
           <GameCard
             key={game.id}
