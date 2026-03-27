@@ -123,10 +123,17 @@ export function usePlayPage() {
       try {
         // IMPORTANT: For J2ME games, always use the same-origin /api/roms/ proxy
         // to avoid COEP (Cross-Origin-Embedder-Policy) blocks.
-        // The emulator iframe runs through a Next.js rewrite proxy, and it needs
-        // the ROM URL to also be same-origin to fetch it successfully.
-        const cleanPath = game.path.startsWith('/') ? game.path.slice(1) : game.path;
-        const proxyUrl = `${window.location.origin}/api/roms/${encodeURIComponent(cleanPath)}`;
+        // game.path may be a full R2 URL like "https://pub-xxx.r2.dev/roms/Game.jar"
+        // We need to extract just the relative path "roms/Game.jar"
+        let romPath = game.path;
+        // Strip the R2 base URL to get relative path
+        const r2Pattern = /^https?:\/\/pub-[a-z0-9]+\.r2\.dev\//;
+        if (r2Pattern.test(romPath)) {
+          romPath = romPath.replace(r2Pattern, '');
+        } else if (romPath.startsWith('/')) {
+          romPath = romPath.slice(1);
+        }
+        const proxyUrl = `${window.location.origin}/api/roms/${romPath}`;
         setJ2meGameUrl(proxyUrl);
       } catch (err) {
         setError('Không thể tìm thấy đường dẫn tệp game Java.');
