@@ -1,3 +1,5 @@
+'use client';
+
 import { Loader2, AlertCircle, LogIn, Gamepad2, X } from 'lucide-react';
 import { GameLoadingOverlay } from '@/components/game/GameLoadingOverlay';
 import { LoginModal, RegisterModal } from '@/components/auth';
