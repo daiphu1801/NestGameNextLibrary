@@ -21,6 +21,7 @@ const ROM_FOLDERS = [
 
 const SYSTEMS = [
     { id: 'ps1', name: 'PlayStation 1' },
+    { id: 'ps2', name: 'PlayStation 2' },
     { id: 'psp', name: 'PSP' },
     { id: 'nes', name: 'NES' },
     { id: 'snes', name: 'SNES' },
@@ -35,7 +36,7 @@ function fmtSize(bytes: number) {
 }
 
 function stripRomExt(fileName: string): string {
-    return fileName.replace(/\.(nes|zip|NES|ZIP|sfc|smc|gba|md|gen|bin|iso|img|pbp)$/i, '').trim();
+    return fileName.replace(/\.(nes|zip|NES|ZIP|sfc|smc|gba|md|gen|bin|iso|img|pbp|cso|chd)$/i, '').trim();
 }
 
 /** Given a base URL, auto-derive imageUrl / imageSnap / imageTitle by swapping extension */
@@ -96,7 +97,7 @@ function RomDropZone({ onUploaded }: { onUploaded: (fileName: string, path: stri
 
     const handleFile = async (file: File) => {
         const ext = file.name.split('.').pop()?.toLowerCase();
-        const supported = ['nes', 'sfc', 'smc', 'gba', 'md', 'gen', 'bin', 'zip', 'iso', 'img', 'pbp'];
+        const supported = ['nes', 'sfc', 'smc', 'gba', 'md', 'gen', 'bin', 'zip', 'iso', 'img', 'pbp', 'cso', 'chd'];
         if (!supported.includes(ext || '')) {
             setError('Định dạng file không được hỗ trợ!');
             return;
@@ -166,7 +167,7 @@ function RomDropZone({ onUploaded }: { onUploaded: (fileName: string, path: stri
                         </div>
                         <div>
                             <p className="text-white text-sm font-bold">Kéo thả ROM vào đây</p>
-                            <p className="text-[#637381] text-[11px] mt-1">Hỗ trợ .nes, .sfc, .gba, .zip, .iso, .pbp...</p>
+                            <p className="text-[#637381] text-[11px] mt-1">Hỗ trợ .nes, .sfc, .gba, .zip, .iso, .pbp, .cso...</p>
                         </div>
                     </div>
                 )}

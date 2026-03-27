@@ -25,24 +25,24 @@ type SystemOption = {
 };
 
 const SYSTEMS: SystemOption[] = [
-  { 
-    id: 'all', nameKey: 'system.all', icon: <LayoutGrid className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-80" />, 
+  {
+    id: 'all', nameKey: 'system.all', icon: <LayoutGrid className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-80" />,
     subtitle: 'All Systems',
     bgDesc: 'from-gray-600/20 to-gray-900/60',
     activeColor: 'bg-gray-500/20 text-gray-200', activeBorder: 'border-gray-400/50',
     lightActiveColor: 'bg-gray-200 text-gray-800', lightActiveBorder: 'border-gray-400',
     shadow: 'shadow-[0_0_30px_rgba(107,114,128,0.3)]'
   },
-  { 
-    id: 'nes', nameKey: 'system.nes', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-80" />, 
+  {
+    id: 'nes', nameKey: 'system.nes', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-80" />,
     subtitle: '8-bit Classic',
     bgDesc: 'from-red-600/20 to-red-950/60',
     activeColor: 'bg-red-500/20 text-red-400', activeBorder: 'border-red-500/50',
     lightActiveColor: 'bg-red-100 text-red-700', lightActiveBorder: 'border-red-400',
     shadow: 'shadow-[0_0_30px_rgba(239,68,68,0.4)]'
   },
-  { 
-    id: 'snes', nameKey: 'system.snes', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-80" />, 
+  {
+    id: 'snes', nameKey: 'system.snes', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-80" />,
     subtitle: '16-bit Era',
     bgDesc: 'from-purple-600/20 to-purple-950/60',
     activeColor: 'bg-purple-500/20 text-purple-300', activeBorder: 'border-purple-500/50',
@@ -50,8 +50,8 @@ const SYSTEMS: SystemOption[] = [
     shadow: 'shadow-[0_0_30px_rgba(168,85,247,0.4)]',
     complete: true
   },
-  { 
-    id: 'gba', nameKey: 'system.gba', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
+  {
+    id: 'gba', nameKey: 'system.gba', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
     subtitle: 'Advance Handheld',
     bgDesc: 'from-blue-600/20 to-blue-950/60',
     activeColor: 'bg-blue-500/20 text-blue-300', activeBorder: 'border-blue-500/50',
@@ -59,8 +59,8 @@ const SYSTEMS: SystemOption[] = [
     shadow: 'shadow-[0_0_30px_rgba(59,130,246,0.4)]',
     demo: true
   },
-  { 
-    id: 'gb', nameKey: 'system.gb', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
+  {
+    id: 'gb', nameKey: 'system.gb', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
     subtitle: 'Classic Handheld',
     bgDesc: 'from-zinc-600/20 to-zinc-950/60',
     activeColor: 'bg-zinc-500/20 text-zinc-300', activeBorder: 'border-zinc-500/50',
@@ -68,8 +68,8 @@ const SYSTEMS: SystemOption[] = [
     shadow: 'shadow-[0_0_30px_rgba(161,161,170,0.4)]',
     demo: true
   },
-  { 
-    id: 'gbc', nameKey: 'system.gbc', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
+  {
+    id: 'gbc', nameKey: 'system.gbc', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
     subtitle: 'Color Handheld',
     bgDesc: 'from-pink-600/20 to-pink-950/60',
     activeColor: 'bg-pink-500/20 text-pink-300', activeBorder: 'border-pink-500/50',
@@ -77,8 +77,8 @@ const SYSTEMS: SystemOption[] = [
     shadow: 'shadow-[0_0_30px_rgba(236,72,153,0.4)]',
     disabled: true, comingSoon: true
   },
-  { 
-    id: 'genesis', nameKey: 'system.genesis', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
+  {
+    id: 'genesis', nameKey: 'system.genesis', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
     subtitle: 'Blast Processing',
     bgDesc: 'from-indigo-600/20 to-indigo-950/60',
     activeColor: 'bg-indigo-500/20 text-indigo-300', activeBorder: 'border-indigo-500/50',
@@ -86,8 +86,8 @@ const SYSTEMS: SystemOption[] = [
     shadow: 'shadow-[0_0_30px_rgba(99,102,241,0.4)]',
     disabled: true, comingSoon: true
   },
-  { 
-    id: 'arcade', nameKey: 'system.arcade', icon: <LayoutGrid className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
+  {
+    id: 'arcade', nameKey: 'system.arcade', icon: <LayoutGrid className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
     subtitle: 'Coin-Op',
     bgDesc: 'from-orange-600/20 to-orange-950/60',
     activeColor: 'bg-orange-500/20 text-orange-300', activeBorder: 'border-orange-500/50',
@@ -95,8 +95,8 @@ const SYSTEMS: SystemOption[] = [
     shadow: 'shadow-[0_0_30px_rgba(249,115,22,0.4)]',
     disabled: true, comingSoon: true
   },
-  { 
-    id: 'neogeo', nameKey: 'system.neogeo', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />, 
+  {
+    id: 'neogeo', nameKey: 'system.neogeo', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
     subtitle: 'The 100 Mega Shock',
     bgDesc: 'from-yellow-600/20 to-yellow-950/60',
     activeColor: 'bg-yellow-500/20 text-yellow-300', activeBorder: 'border-yellow-500/50',
@@ -131,11 +131,11 @@ export function SystemFilter() {
           <LayoutGrid className="w-3.5 h-3.5" />
           {t('system.title') || 'Select Console'}
         </h3>
-        
+
         {/* Decorative line */}
         <div className="h-px flex-1 ml-4 bg-gradient-to-r from-white/20 to-transparent" />
       </div>
-      
+
       {/* Grid Container */}
       <div className="relative group/grid w-full">
         {/* Connecting background line - only for desktop single row */}
@@ -144,7 +144,7 @@ export function SystemFilter() {
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:flex lg:flex-wrap lg:justify-center gap-2 md:gap-3 lg:gap-4 relative z-10 w-full px-1">
           {SYSTEMS.map((system) => {
             const isActive = currentSystem === system.id;
-            
+
             return (
               <button
                 key={system.id}
@@ -157,7 +157,7 @@ export function SystemFilter() {
                   isActive && !isLight && `${system.activeColor} ${system.activeBorder} ${system.shadow} scale-105 -translate-y-1 z-20`,
                   // Active State (Light)
                   isActive && isLight && `${system.lightActiveColor} ${system.lightActiveBorder} ${system.shadow} scale-105 -translate-y-1 z-20`,
-                  
+
                   // Inactive State
                   !isActive && !isLight && `bg-[#0a0a0a] border-white/10 hover:border-white/20 hover:bg-white/5 text-gray-500 hover:text-gray-300`,
                   !isActive && isLight && `bg-gray-50 border-gray-200 hover:border-gray-300 shadow-sm text-gray-500 hover:text-gray-800`,
@@ -175,24 +175,24 @@ export function SystemFilter() {
                     system.bgDesc
                   )} />
                 )}
-                
+
                 {/* Inner content */}
                 <div className="relative z-10 flex flex-col items-center w-full">
                   <div className={cn(
                     "transition-transform duration-500",
                     isActive ? "scale-105 drop-shadow-md pb-0.5" : "group-hover:scale-110 opacity-70 group-hover:opacity-100 pb-1",
-                    "[&>svg]:w-5 [&>svg]:h-5 md:[&>svg]:w-7 md:[&>svg]:h-7" 
+                    "[&>svg]:w-5 [&>svg]:h-5 md:[&>svg]:w-7 md:[&>svg]:h-7"
                   )}>
                     {system.icon}
                   </div>
-                  
+
                   <span className={cn(
                     "font-bold text-[9px] md:text-xs lg:text-sm tracking-widest uppercase transition-colors truncate w-full text-center px-1",
                     isActive ? "text-current" : ""
                   )}>
                     {t(system.nameKey, undefined, system.id === 'all' ? 'Tất cả' : system.id.toUpperCase())}
                   </span>
-                  
+
                   {/* Subtitle - only show when active to save space */}
                   <span className={cn(
                     "text-[7px] md:text-[8px] font-medium tracking-tight mt-0.5 opacity-60 uppercase overflow-hidden transition-all duration-300 truncate w-full text-center px-1 hidden lg:block",
@@ -201,7 +201,7 @@ export function SystemFilter() {
                     {system.subtitle}
                   </span>
                 </div>
-                
+
                 {/* Neon border glow effect on hover if inactive */}
                 {!isActive && !isLight && !system.disabled && (
                   <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ boxShadow: `inset 0 0 15px rgba(255,255,255,0.03)` }} />

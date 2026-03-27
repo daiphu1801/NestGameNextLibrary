@@ -5,7 +5,7 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const LIBRARY_PATH = path.join(process.cwd(), 'LibraryNes');
-const ALLOWED_EXTENSIONS = ['.nes', '.zip', '.sfc', '.smc', '.gba', '.md', '.gen', '.bin', '.swf', '.jar', '.jad'];
+const ALLOWED_EXTENSIONS = ['.nes', '.zip', '.sfc', '.smc', '.gba', '.md', '.gen', '.bin', '.swf', '.jar', '.jad', '.iso', '.cso', '.chd'];
 
 function getR2Client(): S3Client | null {
     const accountId = process.env.R2_ACCOUNT_ID;
@@ -50,6 +50,8 @@ function getContentType(ext: string): string {
     if (ext === '.swf') return 'application/x-shockwave-flash';
     if (ext === '.jar') return 'application/java-archive';
     if (ext === '.jad') return 'text/vnd.sun.j2me.app-descriptor';
+    if (ext === '.iso' || ext === '.cso') return 'application/x-iso9660-image';
+    if (ext === '.chd') return 'application/x-chd';
     return 'application/octet-stream';
 }
 
@@ -63,7 +65,7 @@ export async function POST(request: NextRequest) {
 
         const ext = path.extname(fileName).toLowerCase();
         if (!ALLOWED_EXTENSIONS.includes(ext)) {
-            return NextResponse.json({ error: `"${ext}" không được hỗ trợ. Chỉ dùng .nes, .sfc, .gba, .md, .zip, .swf, .jar.` }, { status: 400 });
+            return NextResponse.json({ error: `"${ext}" không được hỗ trợ. Các định dạng cho phép: .nes, .sfc, .gba, .md, .zip, .swf, .jar, .iso, .cso, .chd` }, { status: 400 });
         }
 
         if (!isProduction()) {

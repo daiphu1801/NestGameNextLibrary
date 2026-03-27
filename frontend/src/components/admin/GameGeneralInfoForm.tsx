@@ -13,6 +13,9 @@ const SYSTEMS = [
     { id: 'gbc', name: 'Game Boy Color' },
     { id: 'arcade', name: 'Arcade' },
     { id: 'neogeo', name: 'Neo Geo' },
+    { id: 'ps1', name: 'PlayStation 1' },
+    { id: 'ps2', name: 'PlayStation 2' },
+    { id: 'psp', name: 'PlayStation Portable' },
     { id: 'flash', name: 'Flash Game (.swf)' },
     { id: 'j2me', name: 'Java Mobile (.jar)' }
 ];

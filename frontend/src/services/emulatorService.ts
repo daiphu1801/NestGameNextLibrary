@@ -377,6 +377,7 @@ class EmulatorService {
       else if (system === 'genesis') core = 'genesis_plus_gx';
       else if (system === 'arcade') core = 'fbneo';
       else if (system === 'ps1' || system === 'psx') core = 'pcsx_rearmed';
+      else if (system === 'ps2') core = 'play';
       else if (system === 'psp') core = 'ppsspp';
       else if (system === 'saturn') core = 'beetle_saturn';
 
