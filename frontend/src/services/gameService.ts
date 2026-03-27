@@ -134,6 +134,67 @@ class GameService {
     }
   }
 
+  /**
+   * Load games with SERVER-SIDE pagination and filtering.
+   * Much faster than loadGames() for pages that only need a subset (e.g. /java, /library).
+   */
+  async loadGamesPaginated(options: {
+    page?: number;
+    size?: number;
+    system?: string;
+    category?: string;
+    search?: string;
+    sortBy?: string;
+    sortDir?: string;
+    isFeatured?: boolean;
+  } = {}): Promise<{ games: Game[]; totalPages: number; totalElements: number; currentPage: number }> {
+    const { page = 0, size = 25, system, category, search, sortBy = 'name', sortDir = 'asc', isFeatured } = options;
+
+    try {
+      if (this.useBackend) {
+        try {
+          const params: Record<string, any> = { page, size, sortBy, sortDir };
+          if (system) params.system = system;
+          if (category) params.category = category;
+          if (search) params.search = search;
+          if (isFeatured !== undefined) params.isFeatured = isFeatured;
+
+          const response = await apiClient.get<{
+            content: GameDTO[];
+            totalElements: number;
+            totalPages: number;
+            number: number;
+          }>('/games', { params });
+
+          const games = response.data.content.map(dto => this.mapGameDTO(dto));
+          return {
+            games,
+            totalPages: response.data.totalPages,
+            totalElements: response.data.totalElements,
+            currentPage: response.data.number,
+          };
+        } catch (apiError) {
+          console.warn('⚠️ Backend API not available for paginated load, falling back to JSON');
+          this.useBackend = false;
+        }
+      }
+
+      // Fallback: client-side pagination from JSON
+      let fallback = gamesData as unknown as Game[];
+      if (system) fallback = fallback.filter(g => g.system === system);
+      if (search) fallback = fallback.filter(g => g.name.toLowerCase().includes(search.toLowerCase()));
+      const totalElements = fallback.length;
+      const totalPages = Math.ceil(totalElements / size);
+      const start = page * size;
+      const games = fallback.slice(start, start + size);
+
+      return { games, totalPages, totalElements, currentPage: page };
+    } catch (error) {
+      console.error('Failed to load paginated games:', error);
+      return { games: [], totalPages: 0, totalElements: 0, currentPage: 0 };
+    }
+  }
+
   getAllGames(): Game[] {
     return this.games;
   }

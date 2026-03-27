@@ -157,7 +157,8 @@ public class AdminService {
     // ==================== GAMES ====================
 
     @Transactional(readOnly = true)
-    public Page<GameDTO> getGames(String search, String category, String system, Boolean isFeatured, String region, Pageable pageable) {
+    public Page<GameDTO> getGames(String search, String category, String system, Boolean isFeatured, String region,
+            Pageable pageable) {
         Specification<Game> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -364,11 +365,11 @@ public class AdminService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy game"));
         game.setIsGameOfMonth(true);
         if (period == null || period.trim().isEmpty()) {
-             period = LocalDateTime.now().getYear() + "-" + String.format("%02d", LocalDateTime.now().getMonthValue());
+            period = LocalDateTime.now().getYear() + "-" + String.format("%02d", LocalDateTime.now().getMonthValue());
         }
         game.setGameOfMonthPeriod(period);
         game = gameRepository.save(game);
-        
+
         log.info("Set Game of the Month to game {} for period {}", gameId, game.getGameOfMonthPeriod());
         logActivity("system", "UPDATE", "GAME", game.getName(), "Đặt làm Game của Tháng: " + game.getName());
         return toGameDTO(game);
@@ -641,7 +642,8 @@ public class AdminService {
         try {
             ClassPathResource resource = new ClassPathResource("games.json");
             InputStream inputStream = resource.getInputStream();
-            List<JsonGame> jsonGames = objectMapper.readValue(inputStream, new TypeReference<List<JsonGame>>() {});
+            List<JsonGame> jsonGames = objectMapper.readValue(inputStream, new TypeReference<List<JsonGame>>() {
+            });
             log.info("[Reseed] Read {} games from games.json", jsonGames.size());
 
             // Collect all existing fileNames in one query
@@ -659,14 +661,15 @@ public class AdminService {
             int added = 0, skipped = 0, updated = 0;
             for (JsonGame jg : jsonGames) {
                 String fileName = jg.getFileName();
-                if (fileName == null) continue;
+                if (fileName == null)
+                    continue;
 
                 if (existingFileNames.contains(fileName)) {
                     // Update existing game's image URL if it's different (only for J2ME games)
                     if ("j2me".equals(jg.getSystem())) {
                         Game existing = gameRepository.findByFileName(fileName).orElse(null);
                         if (existing != null && jg.getImage() != null &&
-                           (existing.getImageUrl() == null || !existing.getImageUrl().equals(jg.getImage()))) {
+                                (existing.getImageUrl() == null || !existing.getImageUrl().equals(jg.getImage()))) {
                             existing.setImageUrl(jg.getImage());
                             gameRepository.save(existing);
                             updated++;

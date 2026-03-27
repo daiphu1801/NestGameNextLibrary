@@ -1,40 +1,52 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Header } from '@/components/layout/Header';
 import { GameGrid } from '@/components/game/GameGrid';
-import { useGameStore } from '@/features/games/store/gameStore';
 import { gameService } from '@/services/gameService';
-import { validateEnv } from '@/config/env';
 import { Smartphone } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import { Game } from '@/types';
 
 export default function JavaPortalPage() {
-  const { allGames, isLoading: isGamesLoading, setGames } = useGameStore();
   const { t } = useLanguage();
-
-  useEffect(() => {
-    validateEnv();
-    const loadGames = async () => {
-      const games = await gameService.loadGames();
-      setGames(games);
-    };
-    loadGames();
-  }, [setGames]);
-
-  const filteredGames = useMemo(() => allGames.filter(g => g.system === 'j2me'), [allGames]);
+  const [games, setGames] = useState<Game[]>([]);
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalGames, setTotalGames] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const gamesPerPage = 25;
 
-  const totalPages = Math.ceil(filteredGames.length / gamesPerPage);
-  const paginatedGames = useMemo(() => {
-    const start = (page - 1) * gamesPerPage;
-    return filteredGames.slice(start, start + gamesPerPage);
-  }, [filteredGames, page, gamesPerPage]);
+  const loadPage = useCallback(async (pageNum: number) => {
+    setIsLoading(true);
+    try {
+      const result = await gameService.loadGamesPaginated({
+        page: pageNum - 1, // API is 0-indexed
+        size: gamesPerPage,
+        system: 'j2me',
+        sortBy: 'name',
+        sortDir: 'asc',
+      });
+      setGames(result.games);
+      setTotalPages(result.totalPages);
+      setTotalGames(result.totalElements);
+    } catch (error) {
+      console.error('Failed to load J2ME games:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [gamesPerPage]);
 
-  const isLoading = isGamesLoading && allGames.length === 0;
+  useEffect(() => {
+    loadPage(page);
+  }, [page, loadPage]);
 
-  if (isLoading) {
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (isLoading && games.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-6 relative">
@@ -100,7 +112,7 @@ export default function JavaPortalPage() {
           </p>
           <div className="mt-2 sm:mt-4 flex items-center gap-3 sm:gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-teal-400 font-tech text-xl sm:text-2xl font-bold">{filteredGames.length}</span>
+              <span className="text-teal-400 font-tech text-xl sm:text-2xl font-bold">{totalGames}</span>
               <span className="text-muted-foreground font-tech uppercase text-xs sm:text-base">{t('javaPortal.items')}</span>
             </div>
           </div>
@@ -108,11 +120,11 @@ export default function JavaPortalPage() {
 
         {/* Game Grid */}
         <GameGrid
-          games={paginatedGames}
-          totalGames={filteredGames.length}
+          games={games}
+          totalGames={totalGames}
           currentPage={page}
           totalPages={totalPages}
-          onPageChange={setPage}
+          onPageChange={handlePageChange}
         />
       </div>
     </main>
