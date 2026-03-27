@@ -32,7 +32,10 @@ export const J2mePlayer = forwardRef<J2mePlayerHandle, J2mePlayerProps>(
     const J2ME_EMULATOR_HOST = 'https://pub-87204256ff0f4764bde4d1dd64f4c380.r2.dev/j2me-emulator';
     let emulatorUrl: string | null = null;
     if (gameUrl) {
-      const romFilename = gameUrl.split('/').pop() || 'game.jar';
+      // url might be /api/roms/roms%2F1vs100.jar due to local API proxy fallback check
+      // We decode it first before splitting, so 'roms/1vs100.jar' properly splits
+      const decodedUrl = decodeURIComponent(gameUrl);
+      const romFilename = decodedUrl.split('/').pop() || 'game.jar';
       const jarParam = `../../roms/${romFilename}`;
       emulatorUrl = `${J2ME_EMULATOR_HOST}/run.html?jar=${encodeURIComponent(jarParam)}${isMobile ? '&mobile=1' : ''}&fractionScale=true`;
     }
