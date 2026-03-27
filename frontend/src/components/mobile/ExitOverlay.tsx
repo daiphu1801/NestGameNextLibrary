@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ArrowLeft, Save, FolderOpen } from 'lucide-react';
+import { ArrowLeft, Save, FolderOpen, Menu, X } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 
 interface ExitOverlayProps {
@@ -11,9 +11,10 @@ interface ExitOverlayProps {
   gameName?: string;
   autoHideDelay?: number;
   isFlash?: boolean;
+  isJ2me?: boolean;
 }
 
-export function ExitOverlay({ onExit, onSave, onLoad, gameName, autoHideDelay = 3000, isFlash }: ExitOverlayProps) {
+export function ExitOverlay({ onExit, onSave, onLoad, gameName, autoHideDelay = 3000, isFlash, isJ2me }: ExitOverlayProps) {
   const { t } = useLanguage();
   const [visible, setVisible] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -25,7 +26,7 @@ export function ExitOverlay({ onExit, onSave, onLoad, gameName, autoHideDelay = 
   }, [autoHideDelay]);
 
   const handleTap = useCallback((e: TouchEvent) => {
-    if (isFlash) return; // Do not use tap-to-show zone for Flash games
+    if (isFlash || isJ2me) return; // Do not use tap-to-show zone for iframe games
 
     const x = e.changedTouches[0]?.clientX;
     const y = e.changedTouches[0]?.clientY;
@@ -40,31 +41,61 @@ export function ExitOverlay({ onExit, onSave, onLoad, gameName, autoHideDelay = 
   }, [show, isFlash]);
 
   useEffect(() => {
-    if (isFlash) return;
+    if (isFlash || isJ2me) return;
     document.addEventListener('touchstart', handleTap, { passive: true });
     return () => {
       document.removeEventListener('touchstart', handleTap);
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [handleTap, isFlash]);
+  }, [handleTap, isFlash, isJ2me]);
 
-  // Flash Game Mode: Permanent ghost button in top-left
-  if (isFlash) {
+  // Iframe Game Mode (Flash or J2ME): Floating menu in top-left since iframe swallows touches
+  if (isFlash || isJ2me) {
     return (
       <div
-        className="absolute z-50 pointer-events-auto"
+        className="absolute z-50 pointer-events-auto flex flex-col items-start gap-2"
         style={{
           top: 'max(16px, env(safe-area-inset-top, 16px))',
           left: 'max(16px, env(safe-area-inset-left, 16px))',
         }}
       >
         <button
-          onClick={onExit}
-          className="flex items-center justify-center w-10 h-10 rounded-full bg-black/20 backdrop-blur-sm border border-white/10 text-white/50 hover:bg-black/50 hover:text-white active:scale-95 transition-all shadow-lg"
-          aria-label={t('common.back') || 'Back'}
+          onClick={() => setVisible(!visible)}
+          className="flex items-center justify-center w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white/80 hover:bg-black/70 hover:text-white active:scale-95 transition-all shadow-xl"
+          aria-label="Menu"
         >
-          <ArrowLeft className="w-5 h-5" />
+          {visible ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
+
+        {visible && (
+          <div className="flex flex-col gap-2 animate-in slide-in-from-top-2 fade-in duration-200">
+            <button
+              onClick={onExit}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-black/70 backdrop-blur-xl border border-white/10 text-white text-sm font-medium active:scale-95 transition-transform shadow-lg"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {t('common.back') || 'Quay lại'}
+            </button>
+            {onSave && (
+              <button
+                onClick={() => { setVisible(false); onSave(); }}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-600/80 backdrop-blur-xl border border-emerald-500/30 text-emerald-50 text-sm font-medium active:scale-95 transition-transform shadow-lg shadow-emerald-900/20"
+              >
+                <Save className="w-4 h-4" />
+                {t('saveState.save') || 'Lưu'}
+              </button>
+            )}
+            {onLoad && (
+              <button
+                onClick={() => { setVisible(false); onLoad(); }}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-blue-600/80 backdrop-blur-xl border border-blue-500/30 text-blue-50 text-sm font-medium active:scale-95 transition-transform shadow-lg shadow-blue-900/20"
+              >
+                <FolderOpen className="w-4 h-4" />
+                {t('saveState.load') || 'Tải'}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     );
   }

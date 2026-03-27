@@ -230,6 +230,7 @@ export default function PlayPage() {
                 onLoad={user && !isLoading && !error ? () => saveState.openSaveModal('load') : undefined}
                 gameName={game?.name}
                 isFlash={game?.system === 'flash'}
+                isJ2me={game?.system === 'j2me'}
               />
               {game?.system !== 'j2me' && <PortraitOverlay />}
             </>
