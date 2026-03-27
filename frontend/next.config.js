@@ -74,7 +74,8 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        // Apply COEP to all pages EXCEPT j2me-emulator proxy and ROM API
+        source: '/((?!j2me-emulator|api/roms).*)',
         headers: [
           {
             key: 'Cross-Origin-Embedder-Policy',

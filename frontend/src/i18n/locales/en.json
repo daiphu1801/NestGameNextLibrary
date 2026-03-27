@@ -507,7 +507,8 @@
     "comments": "Comments",
     "noComments": "No comments yet",
     "writeComment": "Write a comment...",
-    "loginToComment": "Please login to comment"
+    "loginToComment": "Please login to comment",
+    "playGame": "PLAY NOW"
   },
   "common": {
     "classic": "Classic",

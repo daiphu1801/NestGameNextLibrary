@@ -84,15 +84,50 @@ export function ControlsGuideCompact({ system = 'nes', isZapper = false }: { sys
   if (system === 'j2me') {
     return (
       <div className="space-y-4">
-        <BalancedPlayerCard
-          tag="Nokia" label="D-Pad" tagColor="cyan"
-          moveKeys={['↑', '←', '↓', '→']}
-          actions={[
-            ['Enter', t('javaPortal.controls.action')],
-            ['Q', t('javaPortal.controls.softLeft')],
-            ['W', t('javaPortal.controls.softRight')]
-          ]}
-        />
+        {/* Nokia D-Pad */}
+        <div className="rounded-xl border p-3 bg-cyan-500/[0.05] border-cyan-500/[0.1]">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-400">Nokia</span>
+            <span className="text-[10px] font-bold text-cyan-400">D-Pad</span>
+          </div>
+
+          <div className="flex items-start gap-4">
+            {/* Arrow keys */}
+            <div>
+              <div className="text-[8px] text-slate-600 uppercase tracking-wider mb-1">ARROW</div>
+              <div className="grid grid-cols-3 gap-0.5 w-fit">
+                <div />
+                <kbd className="flex items-center justify-center w-6 h-5 rounded border text-[10px] font-mono font-semibold bg-cyan-500/10 border-cyan-500/25 text-cyan-300">↑</kbd>
+                <div />
+                <kbd className="flex items-center justify-center w-6 h-5 rounded border text-[10px] font-mono font-semibold bg-cyan-500/10 border-cyan-500/25 text-cyan-300">←</kbd>
+                <kbd className="flex items-center justify-center w-6 h-5 rounded border text-[10px] font-mono font-semibold bg-cyan-500/10 border-cyan-500/25 text-cyan-300">↓</kbd>
+                <kbd className="flex items-center justify-center w-6 h-5 rounded border text-[10px] font-mono font-semibold bg-cyan-500/10 border-cyan-500/25 text-cyan-300">→</kbd>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="w-px h-14 bg-white/[0.06] self-center" />
+
+            {/* Action buttons — vertical list for long labels */}
+            <div className="flex-1">
+              <div className="text-[8px] text-slate-600 uppercase tracking-wider mb-1.5">BUTTONS</div>
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-1.5">
+                  <kbd className="inline-flex items-center justify-center min-w-[36px] h-5 px-1.5 rounded border bg-cyan-500/10 border-cyan-500/25 text-cyan-300 text-[9px] font-mono font-semibold">Enter</kbd>
+                  <span className="text-slate-400 text-[10px]">{t('javaPortal.controls.action')}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <kbd className="inline-flex items-center justify-center min-w-[36px] h-5 px-1.5 rounded border bg-cyan-500/10 border-cyan-500/25 text-cyan-300 text-[9px] font-mono font-semibold">Q</kbd>
+                  <span className="text-slate-400 text-[10px]">{t('javaPortal.controls.softLeft')}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <kbd className="inline-flex items-center justify-center min-w-[36px] h-5 px-1.5 rounded border bg-cyan-500/10 border-cyan-500/25 text-cyan-300 text-[9px] font-mono font-semibold">W</kbd>
+                  <span className="text-slate-400 text-[10px]">{t('javaPortal.controls.softRight')}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="rounded-xl border p-3 bg-teal-500/[0.05] border-teal-500/[0.1]">
           <div className="flex items-center gap-2 mb-3">
              <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-teal-500/15 text-teal-400">NUM</span>
