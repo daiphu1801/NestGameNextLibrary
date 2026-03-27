@@ -662,5 +662,8 @@
       "system": "System",
       "menu": "Emulator Menu"
     }
+  },
+  "javaFilter": {
+    "publisher": "Publisher / Category"
   }
 }

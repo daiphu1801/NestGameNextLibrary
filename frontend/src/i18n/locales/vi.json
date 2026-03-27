@@ -660,5 +660,8 @@
       "system": "Hệ thống",
       "menu": "Menu Giả Lập"
     }
+  },
+  "javaFilter": {
+    "publisher": "Nhà phát hành / Phân loại"
   }
 }
