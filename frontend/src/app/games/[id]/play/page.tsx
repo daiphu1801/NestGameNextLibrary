@@ -1,5 +1,3 @@
-'use client';
-
 import { Loader2, AlertCircle, LogIn, Gamepad2, X } from 'lucide-react';
 import { GameLoadingOverlay } from '@/components/game/GameLoadingOverlay';
 import { LoginModal, RegisterModal } from '@/components/auth';
@@ -12,10 +10,12 @@ import { PlayHeader } from '@/components/game/PlayHeader';
 import { PlaySaveModal } from '@/components/game/PlaySaveModal';
 import { FlashPlayer } from '@/components/game/FlashPlayer';
 import { J2mePlayer } from '@/components/game/J2mePlayer';
+import type { J2mePlayerHandle } from '@/components/game/J2mePlayer';
 import { usePlayPage } from '@/features/emulator/hooks/usePlayPage';
 import { usePlaySaveState } from '@/features/emulator/hooks/usePlaySaveState';
+import { saveStateService } from '@/services/saveStateService';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 export default function PlayPage() {
   const {
@@ -37,6 +37,39 @@ export default function PlayPage() {
 
   const saveState = usePlaySaveState(game, user);
   const [isJ2meLoading, setIsJ2meLoading] = useState(true);
+  const j2mePlayerRef = useRef<J2mePlayerHandle>(null);
+
+  // J2ME-specific save/load handlers using postMessage bridge
+  const j2meSaveToSlot = useCallback(async (slot: number) => {
+    if (!j2mePlayerRef.current || !game) return;
+    saveState.setSavingSlot?.(slot);
+    try {
+      const result = await j2mePlayerRef.current.exportSave();
+      if (!result) throw new Error('Export failed');
+      await saveStateService.saveToServer(game.id, slot, result.state, result.thumbnail);
+      saveState.setSaveStatus?.({ type: 'success', message: t('saveState.saved', { slot }) || `Đã lưu vào Slot ${slot}!` });
+      saveState.loadSlotInfo?.();
+    } catch (err: any) {
+      saveState.setSaveStatus?.({ type: 'error', message: err.message || 'Lưu thất bại' });
+    } finally {
+      saveState.setSavingSlot?.(null);
+    }
+  }, [game, saveState, t]);
+
+  const j2meLoadFromSlot = useCallback(async (slot: number) => {
+    if (!j2mePlayerRef.current || !game) return;
+    saveState.setSavingSlot?.(slot);
+    try {
+      const stateBlob = await saveStateService.loadFromServer(game.id, slot);
+      await j2mePlayerRef.current.importSave(stateBlob);
+      saveState.setSaveStatus?.({ type: 'success', message: t('saveState.loaded', { slot }) || `Đã tải Slot ${slot}!` });
+      setTimeout(() => saveState.setShowSaveModal(false), 800);
+    } catch (err: any) {
+      saveState.setSaveStatus?.({ type: 'error', message: err.message || 'Tải thất bại' });
+    } finally {
+      saveState.setSavingSlot?.(null);
+    }
+  }, [game, saveState, t]);
 
   // Initial loading
   if (isLoading && !game) {
@@ -172,7 +205,7 @@ export default function PlayPage() {
               "w-full h-full mx-auto my-auto transition-all animate-in fade-in zoom-in-95 duration-500 flex flex-col justify-center",
               isMobile ? "max-w-none max-h-none p-0 sm:p-2" : "max-w-6xl max-h-[85vh] p-4 lg:p-8"
             )}>
-              <J2mePlayer gameUrl={j2meGameUrl || undefined} onLoaded={() => setIsJ2meLoading(false)} isMobile={isMobile} />
+              <J2mePlayer ref={j2mePlayerRef} gameUrl={j2meGameUrl || undefined} onLoaded={() => setIsJ2meLoading(false)} isMobile={isMobile} />
             </div>
           ) : (
             <div
@@ -194,7 +227,7 @@ export default function PlayPage() {
                 onSave={user && !isLoading && !error ? () => saveState.openSaveModal('save') : undefined}
                 onLoad={user && !isLoading && !error ? () => saveState.openSaveModal('load') : undefined}
                 gameName={game?.name}
-                isFlash={game?.system === 'flash' || game?.system === 'j2me'}
+                isFlash={game?.system === 'flash'}
               />
               {game?.system !== 'j2me' && <PortraitOverlay />}
             </>
@@ -303,8 +336,8 @@ export default function PlayPage() {
           locale={saveState.locale}
           t={t}
           onClose={() => saveState.setShowSaveModal(false)}
-          onSave={saveState.handleSaveToSlot}
-          onLoad={saveState.handleLoadFromSlot}
+          onSave={game?.system === 'j2me' ? j2meSaveToSlot : saveState.handleSaveToSlot}
+          onLoad={game?.system === 'j2me' ? j2meLoadFromSlot : saveState.handleLoadFromSlot}
           onDelete={saveState.handleDeleteSlot}
         />
       )}

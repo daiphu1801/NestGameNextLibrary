@@ -82,7 +82,8 @@ export function usePlaySaveState(game: Game | null, user: any) {
     showSaveModal, setShowSaveModal,
     saveModalMode,
     saveSlots, savingSlot, saveStatus,
-    openSaveModal,
+    setSavingSlot, setSaveStatus,
+    openSaveModal, loadSlotInfo,
     handleSaveToSlot, handleLoadFromSlot, handleDeleteSlot,
     locale,
   };
