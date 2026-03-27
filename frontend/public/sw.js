@@ -39,8 +39,9 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
 
-  // Skip API requests and ROM proxies
+  // Skip API requests, ROM proxies, and J2ME emulator
   if (url.pathname.startsWith('/api/')) return;
+  if (url.pathname.startsWith('/j2me-emulator')) return;
 
   // Skip external image domains that cause COEP/CORP issues in Service Workers
   const externalDomains = [
@@ -49,7 +50,9 @@ self.addEventListener('fetch', (event) => {
     'assets-prd.ignimgs.com',
     'images.igdb.com',
     'r2.dev',
-    'r2.cloudflarestorage.com'
+    'r2.cloudflarestorage.com',
+    'leaningtech.com',
+    'cheerpj.com'
   ];
   if (externalDomains.some(domain => url.hostname.includes(domain))) {
     return;

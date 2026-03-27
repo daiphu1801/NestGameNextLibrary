@@ -85,7 +85,6 @@ export function J2mePlayer({ gameUrl }: J2mePlayerProps) {
           src={emulatorUrl}
           className="absolute inset-0 w-full h-full z-10 border-0"
           allow="autoplay; gamepad; cross-origin-isolated"
-          sandbox="allow-scripts allow-same-origin allow-popups"
           onLoad={handleIframeLoad}
           onError={handleIframeError}
           title="J2ME Game Emulator"
