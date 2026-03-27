@@ -76,23 +76,25 @@ export default function PlayPage() {
         </div>
       )}
 
-      {/* Header */}
-      <PlayHeader
-        game={game}
-        isFavorite={isFavorite}
-        isFullscreen={isFullscreen}
-        isLoading={isLoading}
-        error={error}
-        showControls={showControls}
-        isMobile={isMobile}
-        user={user}
-        t={t}
-        onBack={() => router.back()}
-        onFavoriteToggle={handleFavoriteToggle}
-        onToggleFullscreen={toggleFullscreen}
-        onOpenSave={() => saveState.openSaveModal('save')}
-        onOpenLoad={() => saveState.openSaveModal('load')}
-      />
+      {/* Header — hidden on mobile for J2ME to maximize game viewport */}
+      {!(isMobile && game?.system === 'j2me') && (
+        <PlayHeader
+          game={game}
+          isFavorite={isFavorite}
+          isFullscreen={isFullscreen}
+          isLoading={isLoading}
+          error={error}
+          showControls={showControls}
+          isMobile={isMobile}
+          user={user}
+          t={t}
+          onBack={() => router.back()}
+          onFavoriteToggle={handleFavoriteToggle}
+          onToggleFullscreen={toggleFullscreen}
+          onOpenSave={() => saveState.openSaveModal('save')}
+          onOpenLoad={() => saveState.openSaveModal('load')}
+        />
+      )}
 
       {/* Main 3-Column Layout */}
       <div className="flex-1 flex min-h-0 relative">

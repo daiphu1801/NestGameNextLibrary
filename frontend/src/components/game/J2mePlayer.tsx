@@ -34,7 +34,7 @@ export function J2mePlayer({ gameUrl, onLoaded, isMobile }: J2mePlayerProps) {
     const romFilename = gameUrl.split('/').pop() || 'game.jar';
     // Use relative path from j2me-emulator/jar/ → roms/
     const jarParam = `../../roms/${romFilename}`;
-    emulatorUrl = `${J2ME_EMULATOR_HOST}/run.html?jar=${encodeURIComponent(jarParam)}${isMobile ? '&mobile=1' : ''}`;
+    emulatorUrl = `${J2ME_EMULATOR_HOST}/run.html?jar=${encodeURIComponent(jarParam)}${isMobile ? '&mobile=1' : ''}&fractionScale=true`;
   }
 
   // Focus the iframe when loaded so keyboard events go to the emulator
@@ -93,9 +93,11 @@ export function J2mePlayer({ gameUrl, onLoaded, isMobile }: J2mePlayerProps) {
           ref={iframeRef}
           src={emulatorUrl}
           className="absolute inset-0 w-full h-full z-10 border-0"
+          style={{ willChange: 'transform' }}
           allow="autoplay; gamepad; cross-origin-isolated"
           // @ts-ignore — 'credentialless' is a valid HTML attribute but not yet in React's type definitions
           credentialless="true"
+          loading="eager"
           onLoad={handleIframeLoad}
           onError={handleIframeError}
           title="J2ME Game Emulator"

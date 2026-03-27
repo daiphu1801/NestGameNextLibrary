@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, Gamepad2, Crown, Sparkles, Dices, Trophy, BookOpen, Zap } from 'lucide-react';
+import { Home, Gamepad2, Crown, Sparkles, Dices, Trophy, BookOpen, Zap, Smartphone } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { cn } from '@/lib/utils';
 import React from 'react';
@@ -127,6 +127,14 @@ export function MobileMenu({ isOpen, onClose, pathname, showDisclaimer }: Mobile
                 onClick={onClose}
               >
                 <span className="text-orange-500">Flash Classics</span>
+              </MobileNavLink>
+              <MobileNavLink
+                href="/java"
+                icon={<Smartphone className="w-4 h-4 text-cyan-500" />}
+                active={pathname === '/java'}
+                onClick={onClose}
+              >
+                <span className="text-cyan-500">Java Classics</span>
               </MobileNavLink>
             </div>
           </div>
