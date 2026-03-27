@@ -21,10 +21,10 @@ export function J2mePlayer({ gameUrl }: J2mePlayerProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const { t } = useLanguage();
 
-  // Build the emulator URL with the midlet param
-  // IMPORTANT: Always use the local Next.js rewrite proxy to avoid COEP (Cross-Origin-Embedder-Policy) blocks.
-  // The proxy is defined in next.config.js and forwards /j2me-emulator/* → R2.
-  const J2ME_EMULATOR_HOST = '/j2me-emulator';
+  // Build the emulator URL pointing directly to R2-hosted emulator.
+  // We use the direct R2 URL because same-origin proxying causes cascading COEP/SW issues.
+  // COEP 'credentialless' on the parent page allows cross-origin iframes without credentials.
+  const J2ME_EMULATOR_HOST = 'https://pub-87204256ff0f4764bde4d1dd64f4c380.r2.dev/j2me-emulator';
 
   const emulatorUrl = gameUrl
     ? `${J2ME_EMULATOR_HOST}/index.html?midlet=${encodeURIComponent(gameUrl)}`
