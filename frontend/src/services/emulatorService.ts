@@ -251,9 +251,11 @@ class EmulatorService {
       return gamePath;
     }
 
-    // Relative path: try local API first
-    const cleanPath = gamePath.startsWith('/') ? gamePath.slice(1) : gamePath;
-    const localApiUrl = `/api/roms/${encodeURIComponent(cleanPath)}`;
+    // Decode first to prevent double-encoding (DB may store pre-encoded paths like "3D%20Block%20%5Bp1%5D.nes")
+    const decoded = decodeURIComponent(gamePath.startsWith('/') ? gamePath.slice(1) : gamePath);
+    const cleanPath = decoded;
+    // Encode each path segment individually (preserve '/' separators)
+    const localApiUrl = `/api/roms/${cleanPath.split('/').map(s => encodeURIComponent(s)).join('/')}`;
 
     try {
       const response = await fetch(localApiUrl, { method: 'HEAD' });
@@ -272,7 +274,9 @@ class EmulatorService {
     }
 
     const baseUrl = env.r2Url.endsWith('/') ? env.r2Url : `${env.r2Url}/`;
-    const r2Url = `${baseUrl}${cleanPath}`;
+    // Encode each path segment individually to preserve '/' separators
+    const encodedPath = cleanPath.split('/').map(s => encodeURIComponent(s)).join('/');
+    const r2Url = `${baseUrl}${encodedPath}`;
     this._isOfflineMode = false;
     return r2Url;
   }
