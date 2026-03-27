@@ -47,11 +47,14 @@ export function LeaderboardList({ games, isLoading, onGameClick }: LeaderboardLi
           {/* Game Image */}
           <div className="relative w-24 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-black/50">
             <img
-              src={game.imageUrl || game.image || `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.imageSnap || ''}.jpg`}
+              src={game.imageUrl || game.imageSnap || game.imageTitle || game.image || '/placeholder.png'}
               alt={game.name}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               onError={(e) => {
-                (e.target as HTMLImageElement).src = '/placeholder-game.png';
+                const img = e.target as HTMLImageElement;
+                if (game.imageSnap && img.src !== game.imageSnap) { img.src = game.imageSnap; }
+                else if (game.imageTitle && img.src !== game.imageTitle) { img.src = game.imageTitle; }
+                else { img.src = '/placeholder.png'; }
               }}
             />
           </div>

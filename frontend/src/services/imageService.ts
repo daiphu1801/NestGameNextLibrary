@@ -3,12 +3,20 @@ import { IMAGE_CDNS, PERFORMANCE_CONFIG } from '@/config/categories';
 class ImageService {
   private failedUrls = new Set<string>();
 
-  generateFallbackUrls(gameName: string, originalUrl?: string): string[] {
+  generateFallbackUrls(gameName: string, originalUrl?: string, extras?: { imageSnap?: string; imageTitle?: string }): string[] {
     const urls: Set<string> = new Set();
 
     // 1. Original valid URL
     if (originalUrl && !originalUrl.startsWith('blob:') && !originalUrl.includes('placeholder')) {
       urls.add(originalUrl);
+    }
+
+    // 1.5 Priority fallbacks: imageSnap and imageTitle from the game entity
+    if (extras?.imageSnap && !extras.imageSnap.startsWith('blob:')) {
+      urls.add(extras.imageSnap);
+    }
+    if (extras?.imageTitle && !extras.imageTitle.startsWith('blob:')) {
+      urls.add(extras.imageTitle);
     }
 
     // Common game name variations

@@ -17,7 +17,7 @@ interface FavoriteGameCardProps {
 export function FavoriteGameCard({ game, onClick, onRemove }: FavoriteGameCardProps) {
     const [imageUrl, setImageUrl] = useState(game.imageUrl || game.image || game.thumbnail || '/placeholder.png');
     const [fallbackUrls] = useState(() =>
-        imageService.generateFallbackUrls(game.name, game.image)
+        imageService.generateFallbackUrls(game.name, game.image, { imageSnap: game.imageSnap, imageTitle: game.imageTitle })
     );
     const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
     const [hasError, setHasError] = useState(false);

@@ -47,9 +47,15 @@ export default function GameOfTheMonthBanner() {
                 {/* Hero Background with Overlay */}
                 <div className="absolute inset-0 z-0">
                     <img
-                        src={game.imageSnap || game.imageUrl || "/placeholder.jpg"}
+                        src={game.imageSnap || game.imageUrl || game.imageTitle || '/placeholder.png'}
                         alt=""
                         className="w-full h-full object-cover scale-105 blur-sm opacity-40 group-hover:scale-100 group-hover:blur-none transition-all duration-1000"
+                        onError={(e) => {
+                            const img = e.target as HTMLImageElement;
+                            if (game.imageUrl && img.src !== game.imageUrl) { img.src = game.imageUrl; }
+                            else if (game.imageTitle && img.src !== game.imageTitle) { img.src = game.imageTitle; }
+                            else { img.src = '/placeholder.png'; }
+                        }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A] via-[#0F172A]/80 to-transparent z-10"></div>
                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#0F172A] to-transparent z-10"></div>
@@ -63,9 +69,15 @@ export default function GameOfTheMonthBanner() {
                         <div className="absolute -inset-4 bg-primary/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div className="relative w-48 h-64 md:w-56 md:h-72 rounded-xl overflow-hidden border-2 border-white/20 shadow-2xl rotate-2 group-hover:rotate-0 transition-transform duration-500">
                             <img
-                                src={game.imageUrl || game.image || "/placeholder.jpg"}
+                                src={game.imageUrl || game.imageSnap || game.imageTitle || game.image || '/placeholder.png'}
                                 alt={game.name}
                                 className="w-full h-full object-cover"
+                                onError={(e) => {
+                                    const img = e.target as HTMLImageElement;
+                                    if (game.imageSnap && img.src !== game.imageSnap) { img.src = game.imageSnap; }
+                                    else if (game.imageTitle && img.src !== game.imageTitle) { img.src = game.imageTitle; }
+                                    else { img.src = '/placeholder.png'; }
+                                }}
                             />
                             {/* Floating Stats */}
                             <div className="absolute top-2 right-2 px-2 py-1 bg-black/80 backdrop-blur-md rounded-lg border border-white/10">

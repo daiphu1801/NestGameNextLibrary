@@ -6,6 +6,7 @@ import { X, Play, Calendar, Globe, Tag, Star, Loader2 } from 'lucide-react';
 import { Game } from '@/types';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { GameReviewSection } from './GameReviewSection';
+import { imageService } from '@/services/imageService';
 
 interface GameDetailsModalProps {
     game: Game;
@@ -17,14 +18,30 @@ interface GameDetailsModalProps {
 export function GameDetailsModal({ game, isOpen, onClose, onPlayNow }: GameDetailsModalProps) {
     const { t } = useLanguage();
     const [imageUrl, setImageUrl] = useState('/placeholder.png');
+    const [fallbackUrls, setFallbackUrls] = useState<string[]>([]);
+    const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
     const [hasError, setHasError] = useState(false);
 
     useEffect(() => {
         if (isOpen && game) {
             setImageUrl(game.imageUrl || game.image || game.thumbnail || '/placeholder.png');
+            setFallbackUrls(imageService.generateFallbackUrls(game.name, game.image, { imageSnap: game.imageSnap, imageTitle: game.imageTitle }));
+            setCurrentFallbackIndex(0);
             setHasError(false);
         }
     }, [isOpen, game]);
+
+    const handleImageError = () => {
+        if (hasError) return;
+        const nextUrl = imageService.getNextFallbackUrl(fallbackUrls, currentFallbackIndex);
+        if (nextUrl) {
+            setImageUrl(nextUrl);
+            setCurrentFallbackIndex(prev => prev + 1);
+            imageService.markAsFailed(fallbackUrls[currentFallbackIndex]);
+        } else {
+            setHasError(true);
+        }
+    };
 
     if (!isOpen) return null;
 
@@ -57,7 +74,7 @@ export function GameDetailsModal({ game, isOpen, onClose, onPlayNow }: GameDetai
                             alt={game.name}
                             fill
                             className="object-cover"
-                            onError={() => setHasError(true)}
+                            onError={handleImageError}
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">

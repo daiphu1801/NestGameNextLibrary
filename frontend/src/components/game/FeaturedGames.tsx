@@ -102,10 +102,20 @@ interface FeaturedGameCardProps {
 
 function FeaturedGameCard({ game, onClick, index }: FeaturedGameCardProps) {
     const [imageUrl, setImageUrl] = useState(game.imageUrl || game.image || game.thumbnail || '/placeholder.png');
+    const [fallbackUrls] = useState(() =>
+        imageService.generateFallbackUrls(game.name, game.image, { imageSnap: game.imageSnap, imageTitle: game.imageTitle })
+    );
+    const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
     const [hasError, setHasError] = useState(false);
 
     const handleImageError = () => {
-        if (!hasError) {
+        if (hasError) return;
+        const nextUrl = imageService.getNextFallbackUrl(fallbackUrls, currentFallbackIndex);
+        if (nextUrl) {
+            setImageUrl(nextUrl);
+            setCurrentFallbackIndex(currentFallbackIndex + 1);
+            imageService.markAsFailed(fallbackUrls[currentFallbackIndex]);
+        } else {
             setHasError(true);
         }
     };
