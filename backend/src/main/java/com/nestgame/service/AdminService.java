@@ -662,13 +662,15 @@ public class AdminService {
                 if (fileName == null) continue;
 
                 if (existingFileNames.contains(fileName)) {
-                    // Update existing game's image URL if it's different
-                    Game existing = gameRepository.findByFileName(fileName).orElse(null);
-                    if (existing != null && jg.getImage() != null &&
-                       (existing.getImageUrl() == null || !existing.getImageUrl().equals(jg.getImage()))) {
-                        existing.setImageUrl(jg.getImage());
-                        gameRepository.save(existing);
-                        updated++;
+                    // Update existing game's image URL if it's different (only for J2ME games)
+                    if ("j2me".equals(jg.getSystem())) {
+                        Game existing = gameRepository.findByFileName(fileName).orElse(null);
+                        if (existing != null && jg.getImage() != null &&
+                           (existing.getImageUrl() == null || !existing.getImageUrl().equals(jg.getImage()))) {
+                            existing.setImageUrl(jg.getImage());
+                            gameRepository.save(existing);
+                            updated++;
+                        }
                     }
                     skipped++;
                     continue;
