@@ -19,7 +19,6 @@ public interface GameRepository extends JpaRepository<Game, Long>, JpaSpecificat
 
     List<Game> findByCategoryId(Long categoryId);
 
-    List<Game> findTop10ByOrderByRatingDesc();
 
     // Admin queries
     List<Game> findTop5ByOrderByPlayCountDesc();

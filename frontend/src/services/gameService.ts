@@ -165,7 +165,7 @@ class GameService {
 
           let endpoint = '/games';
           if (isMustPlay) {
-             endpoint = '/games/special/must-play'; // Special direct endpoint
+             endpoint = '/must-play'; // Special direct endpoint
              delete params.isMustPlay; // No need query param when using direct endpoint
           }
 

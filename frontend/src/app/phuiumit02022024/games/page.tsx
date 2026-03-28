@@ -363,10 +363,10 @@ function AdminGamesContent() {
                             </tr>
                         </thead>
                         <tbody>
-                            {loading ? (
-                                <tr><td colSpan={6} className="text-center py-10"><div className="w-6 h-6 border-2 border-[#3C50E0] border-t-transparent rounded-full animate-spin mx-auto" /></td></tr>
-                            ) : games.length === 0 ? (
+                            {games.length === 0 && !loading ? (
                                 <tr><td colSpan={6} className="text-center py-10 text-[#637381] text-sm">Không tìm thấy game</td></tr>
+                            ) : games.length === 0 && loading ? (
+                                <tr><td colSpan={6} className="text-center py-10"><div className="w-6 h-6 border-2 border-[#3C50E0] border-t-transparent rounded-full animate-spin mx-auto" /></td></tr>
                             ) : games.map((game) => (
                                 <tr key={game.id} className="transition-colors hover:bg-[#2E3A47]/50" style={{ borderBottom: '1px solid #2E3A47' }}>
                                     <td className="px-5 py-3.5">

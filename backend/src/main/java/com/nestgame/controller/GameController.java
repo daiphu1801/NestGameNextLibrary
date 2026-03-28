@@ -41,13 +41,7 @@ public class GameController {
         return ResponseEntity.ok(game);
     }
 
-    @GetMapping("/special/must-play")
-    public ResponseEntity<Page<GameDTO>> getMustPlayGames(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "12") int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("name").ascending());
-        return ResponseEntity.ok(gameService.getMustPlayGames(pageRequest));
-    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<GameDTO> getGameById(@PathVariable Long id) {
