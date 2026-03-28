@@ -30,40 +30,13 @@ const SYSTEMS = [
     { id: 'j2me', name: 'Java Mobile' }
 ];
 
-// --- Subcomponents ---
-function AdminGameImage({ game }: { game: any }) {
-    const urls = [
-        game.imageUrl,
-        game.imageSnap,
-        game.imageTitle,
-    ].filter(Boolean);
-
-    const [index, setIndex] = useState(0);
-
-    const currentUrl = index < urls.length ? urls[index] : null;
-
-    if (!currentUrl) {
-        return <div className="w-10 h-10 flex-shrink-0 rounded-md flex items-center justify-center text-[#637381] text-[10px] font-bold" style={{ background: '#1C2434', border: '1px solid #2E3A47' }}>N/A</div>;
-    }
-
-    return (
-        <img 
-            src={currentUrl} 
-            alt={game.name} 
-            className="w-10 h-10 flex-shrink-0 rounded-md object-cover" 
-            style={{ border: '1px solid #2E3A47', backgroundColor: '#1C2434' }} 
-            onError={() => setIndex(i => i + 1)}
-        />
-    );
-}
-
 // --------------------------------------------------------------------------------------------------------------------- Main Component ---------------------------------------------------------------------------------------------------------------------
 function AdminGamesContent() {
     const [games, setGames] = useState<any[]>([]);
     const [categories, setCategories] = useState<any[]>([]);
     const searchParams = useSearchParams();
     const router = useRouter();
-    
+
     // Sync filters from URL
     const search = searchParams.get('q') || '';
     const systemFilter = searchParams.get('system') || 'all';
@@ -92,10 +65,10 @@ function AdminGamesContent() {
         try {
             const isFeatured = featuredFilter === 'yes' ? true : featuredFilter === 'no' ? false : undefined;
             const data = await adminService.getGames(
-                page, 
-                SIZE, 
-                search || undefined, 
-                categoryFilter === 'all' ? undefined : categoryFilter, 
+                page,
+                SIZE,
+                search || undefined,
+                categoryFilter === 'all' ? undefined : categoryFilter,
                 systemFilter === 'all' ? undefined : systemFilter,
                 isFeatured,
                 regionFilter === 'all' ? undefined : regionFilter
@@ -297,7 +270,7 @@ function AdminGamesContent() {
                             <FolderOpen className="w-4 h-4" />
                             <span className="text-xs font-medium uppercase tracking-wider">Bộ lọc:</span>
                         </div>
-                        
+
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-wrap items-center gap-2 flex-1">
                             <div className="relative flex-1 min-w-[140px]">
                                 <select
@@ -361,7 +334,7 @@ function AdminGamesContent() {
                             </div>
 
                             {(search || systemFilter !== 'all' || categoryFilter !== 'all' || regionFilter !== 'all' || featuredFilter !== 'all') && (
-                                <button 
+                                <button
                                     onClick={clearFilters}
                                     className="flex items-center gap-1.5 px-3 py-2 rounded-md text-red-400 hover:text-white hover:bg-red-500/20 border border-red-500/20 transition-all cursor-pointer text-xs font-semibold"
                                     title="Xóa tất cả bộ lọc"
@@ -398,8 +371,12 @@ function AdminGamesContent() {
                                 <tr key={game.id} className="transition-colors hover:bg-[#2E3A47]/50" style={{ borderBottom: '1px solid #2E3A47' }}>
                                     <td className="px-5 py-3.5">
                                         <div className="flex items-center gap-3">
-                                            <AdminGameImage game={game} />
-                                            <span className="text-white text-sm font-medium line-clamp-1">{game.name}</span>
+                                            {game.imageUrl ? (
+                                                <img src={game.imageUrl} alt="" className="w-10 h-10 rounded-md object-cover" style={{ border: '1px solid #2E3A47' }} />
+                                            ) : (
+                                                <div className="w-10 h-10 rounded-md flex items-center justify-center text-[#637381] text-xs" style={{ background: '#1C2434' }}>N/A</div>
+                                            )}
+                                            <span className="text-white text-sm font-medium">{game.name}</span>
                                         </div>
                                     </td>
                                     <td className="px-5 py-3.5 text-[#A5B4CB] text-sm">{game.categoryName || '—'}</td>
