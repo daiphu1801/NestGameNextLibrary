@@ -23,6 +23,7 @@ interface GameDTO {
   createdAt?: string;
   updatedAt?: string;
   system?: string;
+  isMustPlay?: boolean;
 }
 
 class GameService {
@@ -52,6 +53,7 @@ class GameService {
       createdAt: dto.createdAt,
       updatedAt: dto.updatedAt,
       system: dto.system || this.detectSystemFromPath(dto.fileName || dto.path),
+      isMustPlay: dto.isMustPlay,
     };
   }
 
@@ -147,8 +149,9 @@ class GameService {
     sortBy?: string;
     sortDir?: string;
     isFeatured?: boolean;
+    isMustPlay?: boolean;
   } = {}): Promise<{ games: Game[]; totalPages: number; totalElements: number; currentPage: number }> {
-    const { page = 0, size = 25, system, category, search, sortBy = 'name', sortDir = 'asc', isFeatured } = options;
+    const { page = 0, size = 25, system, category, search, sortBy = 'name', sortDir = 'asc', isFeatured, isMustPlay } = options;
 
     try {
       if (this.useBackend) {
@@ -158,13 +161,20 @@ class GameService {
           if (category) params.category = category;
           if (search) params.search = search;
           if (isFeatured !== undefined) params.isFeatured = isFeatured;
+          if (isMustPlay !== undefined) params.isMustPlay = isMustPlay;
+
+          let endpoint = '/games';
+          if (isMustPlay) {
+             endpoint = '/games/special/must-play'; // Special direct endpoint
+             delete params.isMustPlay; // No need query param when using direct endpoint
+          }
 
           const response = await apiClient.get<{
             content: GameDTO[];
             totalElements: number;
             totalPages: number;
             number: number;
-          }>('/games', { params });
+          }>(endpoint, { params });
 
           const games = response.data.content.map(dto => this.mapGameDTO(dto));
           return {

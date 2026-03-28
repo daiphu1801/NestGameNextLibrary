@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "NES Game Library",
-    "subtitle": "Thư viện Game NES Kinh Điển",
+    "subtitle": "Thư viện Game Kinh Điển đa hệ máy",
     "description": "Chơi trực tiếp trên trình duyệt!"
   },
   "header": {
@@ -23,7 +23,7 @@
     "favorites": "Yêu thích",
     "featured": "Nổi Bật",
     "explore": "Khám phá",
-    "leaderboard": "Bảng xếp hạng",
+    "must-play": "Tuổi thơ",
     "random": "Ngẫu nhiên",
     "donate": "Ủng hộ",
     "docs": "Hướng dẫn",
@@ -85,8 +85,8 @@
     "titlePart1": "Chơi Game",
     "titlePart2": "Kinh Điển",
     "subtitle": "Không Cần Giả Lập.",
-    "badge": "Hơn {count}+ Game Online",
-    "description": "Tuyển tập những tựa game NES huyền thoại. Trải nghiệm lịch sử game ngay trên trình duyệt với tính năng lưu game và chơi ngay.",
+    "badge": "Hơn {count}+ Game Đa Hệ Máy",
+    "description": "Tuyển tập những tựa game tuổi thơ huyền thoại, từ NES cốt lõi đến SNES, GBA, Java, Flash... Trải nghiệm lịch sử game ngay trên trình duyệt với tính năng lưu game và chơi ngay.",
     "openSource": "Mã nguồn mở trên GitHub",
     "free": "Miễn Phí",
     "noInstall": "Tải Nhanh",
@@ -161,7 +161,7 @@
     "gamesCount": "Games",
     "playOnBrowser": "Chơi trên trình duyệt",
     "free100": "Miễn phí 100%",
-    "description": "Nền tảng chơi game NES kinh điển trực tuyến. Hơn 1700+ game miễn phí, không cần cài đặt.",
+    "description": "Nền tảng chơi game kinh điển đa hệ máy trực tuyến. Hàng ngàn game tuổi thơ miễn phí, không cần cài đặt.",
     "quickLinks": "Liên kết nhanh",
     "developer": "Nhà phát triển",
     "rights": "All rights reserved.",
@@ -270,7 +270,7 @@
     "viewAll": "Xem Tất Cả",
     "aboutTitle": "Về",
     "aboutTitleHighlight": "NestGame",
-    "aboutDesc": "NestGame là nền tảng giả lập NES trực tuyến, cho phép bạn chơi hơn 1700+ game kinh điển ngay trên trình duyệt. Được xây dựng với công nghệ hiện đại, NestGame mang đến trải nghiệm mượt mà, không cần cài đặt, hoàn toàn miễn phí.",
+    "aboutDesc": "NestGame là nền tảng game giả lập đa hệ máy trực tuyến, cho phép bạn chơi hàng ngàn game kinh điển tuổi thơ từ NES, SNES đến Flash, Java... ngay trên trình duyệt. Không cần cài đặt, hoàn toàn miễn phí.",
     "feature1Title": "Chơi Mọi Nơi",
     "feature1Desc": "Truy cập và chơi game từ bất kỳ thiết bị nào có trình duyệt",
     "feature2Title": "An Toàn & Bảo Mật",
@@ -289,7 +289,7 @@
     "step3Desc": "Sử dụng bàn phím hoặc tay cầm để điều khiển, lưu game bất cứ lúc nào",
     "ctaTitle": "Sẵn Sàng",
     "ctaHighlight": "Khám Phá?",
-    "ctaDesc": "Hơn 1700+ game NES kinh điển đang chờ bạn. Bắt đầu ngay hôm nay - hoàn toàn miễn phí!",
+    "ctaDesc": "Hàng ngàn game tuổi thơ kinh điển đa hệ máy đang chờ bạn. Bắt đầu ngay hôm nay - hoàn toàn miễn phí!",
     "ctaButton": "Bắt Đầu Chơi Ngay"
   },
   "mobile": {

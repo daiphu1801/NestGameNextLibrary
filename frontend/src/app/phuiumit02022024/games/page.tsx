@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     Plus, Pencil, Trash2, X, Star, ChevronLeft, ChevronRight,
-    Loader2, Download, Upload, FolderOpen, Search, ChevronDown, Wand2
+    Loader2, Download, Upload, FolderOpen, Search, ChevronDown, Wand2, Joystick
 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
 import { debounce } from '@/lib/utils';
@@ -53,6 +53,7 @@ function AdminGamesContent() {
     const [deleteTarget, setDeleteTarget] = useState<any>(null);
     const [togglingFeatured, setTogglingFeatured] = useState<number | null>(null);
     const [togglingGameOfMonth, setTogglingGameOfMonth] = useState<number | null>(null);
+    const [togglingMustPlay, setTogglingMustPlay] = useState<number | null>(null);
     const { showToast } = useToast();
     const SIZE = 15;
 
@@ -164,6 +165,16 @@ function AdminGamesContent() {
             showToast('success', 'Đã đặt làm Game của Tháng!');
         } catch (err: any) { showToast('error', err.message); }
         finally { setTogglingGameOfMonth(null); }
+    };
+
+    const handleToggleMustPlay = async (gameId: number) => {
+        setTogglingMustPlay(gameId);
+        try {
+            await adminService.toggleMustPlay(gameId);
+            setGames(prev => prev.map(g => g.id === gameId ? { ...g, isMustPlay: !g.isMustPlay } : g));
+            showToast('success', 'Đã cập nhật trạng thái Tuổi thơ!');
+        } catch (err: any) { showToast('error', err.message); }
+        finally { setTogglingMustPlay(null); }
     };
 
     const [reseeding, setReseeding] = useState(false);
@@ -386,6 +397,11 @@ function AdminGamesContent() {
                                                     Game của Tháng
                                                 </span>
                                             )}
+                                            {game.isMustPlay && (
+                                                <span className="text-[10px] bg-[#8B5CF6]/10 text-[#8B5CF6] px-2 py-0.5 rounded-md font-semibold border border-[#8B5CF6]/20">
+                                                    Tuổi thơ
+                                                </span>
+                                            )}
                                         </div>
                                     </td>
                                     <td className="px-5 py-3.5 text-right">
@@ -399,6 +415,13 @@ function AdminGamesContent() {
                                                     disabled={togglingGameOfMonth === game.id}
                                                 />
                                             )}
+                                            <ActionButton
+                                                icon={togglingMustPlay === game.id ? Loader2 : Joystick}
+                                                label={game.isMustPlay ? 'Gỡ Tuổi thơ' : 'Tuổi thơ'}
+                                                onClick={() => handleToggleMustPlay(game.id)}
+                                                variant={game.isMustPlay ? "warning" : "default"}
+                                                disabled={togglingMustPlay === game.id}
+                                            />
                                             <ActionButton icon={Pencil} label="Sửa" onClick={() => openEdit(game)} variant="primary" />
                                             <ActionButton icon={Trash2} label="Xóa" onClick={() => setDeleteTarget(game)} variant="danger" />
                                         </div>

@@ -194,6 +194,11 @@ public class AdminService {
         return gameRepository.findByIsFeaturedTrue(pageable).map(this::toGameDTO);
     }
 
+    @Transactional(readOnly = true)
+    public Page<GameDTO> getMustPlayGames(Pageable pageable) {
+        return gameRepository.findByIsMustPlayTrue(pageable).map(this::toGameDTO);
+    }
+
     @Transactional
     public GameDTO createGame(AdminGameRequest request) {
         Category cat = null;
@@ -353,6 +358,16 @@ public class AdminService {
         return toGameDTO(game);
     }
 
+    @Transactional
+    public GameDTO toggleMustPlay(Long gameId) {
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy game"));
+        game.setIsMustPlay(game.getIsMustPlay() == null ? true : !game.getIsMustPlay());
+        game = gameRepository.save(game);
+        log.info("Toggled must-play for game {} to {}", gameId, game.getIsMustPlay());
+        return toGameDTO(game);
+    }
+
     // ==================== GAME OF THE MONTH ====================
 
     @Transactional
@@ -473,6 +488,7 @@ public class AdminService {
                 .year(game.getYear())
                 .region(game.getRegion())
                 .isFeatured(game.getIsFeatured())
+                .isMustPlay(game.getIsMustPlay())
                 .isGameOfMonth(game.getIsGameOfMonth())
                 .gameOfMonthPeriod(game.getGameOfMonthPeriod())
                 .imageUrl(game.getImageUrl())

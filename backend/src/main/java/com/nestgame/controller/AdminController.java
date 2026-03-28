@@ -125,6 +125,17 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getFeaturedGames(pageRequest));
     }
 
+    @GetMapping("/games/must-play")
+    public ResponseEntity<Page<GameDTO>> getMustPlayGames(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(adminService.getMustPlayGames(pageRequest));
+    }
+
     @PostMapping("/games")
     public ResponseEntity<GameDTO> createGame(@Valid @RequestBody AdminGameRequest request) {
         return ResponseEntity.ok(adminService.createGame(request));
@@ -185,6 +196,11 @@ public class AdminController {
     @PutMapping("/games/{id}/featured")
     public ResponseEntity<GameDTO> toggleFeatured(@PathVariable Long id) {
         return ResponseEntity.ok(adminService.toggleFeatured(id));
+    }
+
+    @PutMapping("/games/{id}/must-play")
+    public ResponseEntity<GameDTO> toggleMustPlay(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.toggleMustPlay(id));
     }
 
     @PutMapping("/games/{id}/game-of-month")

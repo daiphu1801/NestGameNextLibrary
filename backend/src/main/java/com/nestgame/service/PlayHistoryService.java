@@ -95,6 +95,7 @@ public class PlayHistoryService {
                 .year(game.getYear())
                 .region(game.getRegion())
                 .isFeatured(game.getIsFeatured())
+                .isMustPlay(game.getIsMustPlay())
                 .imageUrl(game.getImageUrl())
                 .imageSnap(game.getImageSnap())
                 .imageTitle(game.getImageTitle())

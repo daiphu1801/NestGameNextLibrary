@@ -18,6 +18,7 @@ public record GameDTO(
                 Integer year,
                 String region,
                 Boolean isFeatured,
+                Boolean isMustPlay,
                 Boolean isGameOfMonth,
                 String gameOfMonthPeriod,
                 String imageUrl,

@@ -30,6 +30,10 @@ public interface GameRepository extends JpaRepository<Game, Long>, JpaSpecificat
 
     Page<Game> findByIsFeaturedTrue(Pageable pageable);
 
+    Page<Game> findByIsMustPlayTrue(Pageable pageable);
+    
+    List<Game> findByIsMustPlayTrue();
+
     Optional<Game> findByFileName(String fileName);
 
     Set<Game> findByFileNameIn(Set<String> fileNames);

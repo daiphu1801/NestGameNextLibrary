@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "NES Game Library",
-    "subtitle": "Classic NES Games Collection",
+    "subtitle": "Multi-Console Classic Games Collection",
     "description": "Play directly in your browser!"
   },
   "header": {
@@ -83,10 +83,10 @@
   "welcome": {
     "title": "Play the Classics.",
     "titlePart1": "Play Classic",
-    "titlePart2": "NES Games",
+    "titlePart2": "Retro Games",
     "subtitle": "No Console Required.",
-    "badge": "{count}+ Games Available Online",
-    "description": "A curated collection of legendary NES titles. Experience gaming history directly in your browser with save states and instant play.",
+    "badge": "Over {count}+ Multi-Console Games",
+    "description": "A curated collection of legendary childhood games, featuring our core NES titles along with SNES, GBA, Java, Flash and more. Experience gaming history directly in your browser with save states and instant play.",
     "openSource": "Open Source on GitHub",
     "free": "Free to Play",
     "noInstall": "Instant Load",
@@ -161,7 +161,7 @@
     "gamesCount": "Games",
     "playOnBrowser": "Play on browser",
     "free100": "100% Free",
-    "description": "Online platform for classic NES games. Over 1700+ free games, no installation required.",
+    "description": "Online platform for multi-console classic games. Thousands of free childhood games, no installation required.",
     "quickLinks": "Quick Links",
     "developer": "Developer",
     "rights": "All rights reserved.",
@@ -270,7 +270,7 @@
     "viewAll": "View All",
     "aboutTitle": "About",
     "aboutTitleHighlight": "NestGame",
-    "aboutDesc": "NestGame is an online NES emulator platform that lets you play over 1700+ classic games right in your browser. Built with modern technology, NestGame delivers a smooth experience with no installation required - completely free.",
+    "aboutDesc": "NestGame is a multi-console online gaming platform that lets you play thousands of childhood classics ranging from our core NES collection to SNES, Java, Flash, and more right in your browser. Built with modern technology, NestGame delivers a smooth experience with no installation required - completely free.",
     "feature1Title": "Play Anywhere",
     "feature1Desc": "Access and play games from any device with a browser",
     "feature2Title": "Safe & Secure",
@@ -289,7 +289,7 @@
     "step3Desc": "Use keyboard or gamepad to control, save your progress anytime",
     "ctaTitle": "Ready to",
     "ctaHighlight": "Explore?",
-    "ctaDesc": "Over 1700+ classic NES games are waiting for you. Start today - completely free!",
+    "ctaDesc": "Thousands of classic childhood games across multiple consoles are waiting for you. Start today - completely free!",
     "ctaButton": "Start Playing Now"
   },
   "mobile": {

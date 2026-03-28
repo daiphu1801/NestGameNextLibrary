@@ -162,6 +162,15 @@ export const adminService = {
         return apiRequest(`/games/featured?${params}`);
     },
 
+    async getMustPlayGames(page = 0, size = 20): Promise<PageResponse<any>> {
+        const params = new URLSearchParams({ page: String(page), size: String(size) });
+        return apiRequest(`/games/must-play?${params}`);
+    },
+
+    async toggleMustPlay(gameId: number): Promise<any> {
+        return apiRequest(`/games/${gameId}/must-play`, { method: 'PUT' });
+    },
+
     async getGameById(gameId: number): Promise<any> {
         return apiRequest(`/games/${gameId}`);
     },

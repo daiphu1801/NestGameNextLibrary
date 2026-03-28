@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Home, Gamepad2, Crown, Sparkles, ChevronDown, Dices, Trophy, BookOpen, Zap, Smartphone } from 'lucide-react';
+import { Home, Gamepad2, Crown, Sparkles, ChevronDown, Dices, BookOpen, Zap, Smartphone, Joystick } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { cn } from '@/lib/utils';
 import { WelcomePopup } from './WelcomePopup';
@@ -63,7 +63,7 @@ export function Navigation({ pathname, showWelcomePopup, dismissWelcome }: Navig
         <button
           className={cn(
             "px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap flex items-center gap-1",
-            (pathname === '/random' || pathname === '/leaderboard' || pathname === '/systems' || pathname === '/game-of-the-month' || pathname === '/java')
+            (pathname === '/random' || pathname === '/must-play' || pathname === '/systems' || pathname === '/game-of-the-month' || pathname === '/java')
               ? "text-primary bg-primary/10"
               : "text-muted-foreground hover:text-foreground hover:bg-white/5"
           )}
@@ -92,14 +92,14 @@ export function Navigation({ pathname, showWelcomePopup, dismissWelcome }: Navig
               </Link>
               <div className="h-px bg-white/5" />
               <Link
-                href="/leaderboard"
+                href="/must-play"
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all hover:bg-primary/10",
-                  pathname === '/leaderboard' ? "text-primary bg-primary/5" : "text-foreground"
+                  pathname === '/must-play' ? "text-primary bg-primary/5" : "text-foreground"
                 )}
               >
-                <Trophy className="w-4 h-4 text-yellow-500" />
-                <span>{t('nav.leaderboard') || 'Bảng xếp hạng'}</span>
+                <Joystick className="w-4 h-4 text-cyan-400" />
+                <span>{t('nav.must-play') || 'Must Play'}</span>
               </Link>
               <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />
               <Link

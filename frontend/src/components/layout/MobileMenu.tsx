@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, Gamepad2, Crown, Sparkles, Dices, Trophy, BookOpen, Zap, Smartphone } from 'lucide-react';
+import { Home, Gamepad2, Crown, Sparkles, Dices, BookOpen, Zap, Smartphone, Joystick } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { cn } from '@/lib/utils';
 import React from 'react';
@@ -97,12 +97,12 @@ export function MobileMenu({ isOpen, onClose, pathname, showDisclaimer }: Mobile
                 {t('nav.random') || 'Ngẫu nhiên'}
               </MobileNavLink>
               <MobileNavLink
-                href="/leaderboard"
-                icon={<Trophy className="w-4 h-4 text-yellow-500" />}
-                active={pathname === '/leaderboard'}
+                href="/must-play"
+                icon={<Joystick className="w-4 h-4 text-cyan-400" />}
+                active={pathname === '/must-play'}
                 onClick={onClose}
               >
-                {t('nav.leaderboard') || 'Bảng xếp hạng'}
+                {t('nav.must-play') || 'Must Play'}
               </MobileNavLink>
               <MobileNavLink
                 href="/systems"

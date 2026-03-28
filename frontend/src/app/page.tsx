@@ -7,12 +7,13 @@ import { FeaturedGames } from '@/components/game/FeaturedGames';
 import { FeatureItem } from '@/components/ui/FeatureItem';
 import { AboutCard } from '@/components/ui/AboutCard';
 import { StepCard } from '@/components/ui/StepCard';
-import { Sparkles, Zap, Save, Play, Gamepad2, ArrowRight, Shield, Globe, Users, Star } from 'lucide-react';
+import { Sparkles, Zap, Save, Play, Gamepad2, ArrowRight, Shield, Globe, Users, Star, Smartphone, Joystick } from 'lucide-react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { Game } from '@/types';
 import Link from 'next/link';
 import { NexusGridBackground } from '@/components/backgrounds';
+import { WelcomeScreen } from '@/components/layout/WelcomeScreen';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -40,6 +41,8 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen text-foreground selection:bg-primary/30 relative">
+      <WelcomeScreen />
+
       {/* Base background color */}
       <div className="fixed inset-0 bg-background -z-20" />
 
@@ -78,17 +81,36 @@ export default function LandingPage() {
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex items-center gap-4 flex-wrap">
-                <Link href="/library" className="btn-primary inline-flex items-center gap-2 group">
-                  <Play className="w-4 h-4" />
-                  {t('landing.exploreNow') || 'Trải Nghiệm Ngay'}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <Link href="/docs" className="btn-outline inline-flex items-center gap-2">
-                  <span className="flex items-center gap-2">
-                    {t('nav.docs') || 'Hướng Dẫn'}
-                  </span>
-                </Link>
+              <div className="flex flex-col gap-4">
+                {/* Main Action Group */}
+                <div className="flex items-center gap-4 flex-wrap">
+                  <Link href="/library" className="btn-primary inline-flex items-center gap-2 group">
+                    <Play className="w-4 h-4" />
+                    {t('landing.exploreNow') || 'Trải Nghiệm Ngay'}
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                  <Link href="/docs" className="btn-outline inline-flex items-center gap-2">
+                    <span className="flex items-center gap-2">
+                      {t('nav.docs') || 'Hướng Dẫn'}
+                    </span>
+                  </Link>
+                </div>
+
+                {/* Secondary Action Group / Consoles */}
+                <div className="flex items-center gap-3 flex-wrap mt-1">
+                  <Link href="/java" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider border border-primary/30 text-primary/80 hover:text-primary hover:border-primary hover:bg-primary/10 transition-all active:scale-95">
+                    <Smartphone className="w-4 h-4" />
+                    JAVA GAMES
+                  </Link>
+                  <Link href="/flash" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider border border-accent/30 text-accent/80 hover:text-accent hover:border-accent hover:bg-accent/10 transition-all active:scale-95">
+                    <Zap className="w-4 h-4" />
+                    FLASH GAMES
+                  </Link>
+                  <Link href="/must-play" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider border border-cyan-500/30 text-cyan-400/80 hover:text-cyan-400 hover:border-cyan-500 hover:bg-cyan-500/10 transition-all active:scale-95">
+                    <Joystick className="w-4 h-4" />
+                    GAME TUỔI THƠ
+                  </Link>
+                </div>
               </div>
 
               {/* Stats Cards */}

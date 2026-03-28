@@ -41,6 +41,10 @@ public class Game {
     @Column(name = "is_featured")
     private Boolean isFeatured;
 
+    @Column(name = "is_must_play")
+    @Builder.Default
+    private Boolean isMustPlay = false;
+
     @Column(name = "is_game_of_month")
     @Builder.Default
     private Boolean isGameOfMonth = false;

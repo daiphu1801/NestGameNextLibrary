@@ -104,6 +104,33 @@ const SYSTEMS: SystemOption[] = [
     shadow: 'shadow-[0_0_30px_rgba(234,179,8,0.4)]',
     disabled: true, comingSoon: true
   },
+  {
+    id: 'ps1', nameKey: 'system.ps1', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    subtitle: 'Classic 3D',
+    bgDesc: 'from-gray-600/20 to-gray-900/60',
+    activeColor: 'bg-gray-500/20 text-gray-300', activeBorder: 'border-gray-500/50',
+    lightActiveColor: 'bg-gray-100 text-gray-700', lightActiveBorder: 'border-gray-400',
+    shadow: 'shadow-[0_0_30px_rgba(156,163,175,0.4)]',
+    disabled: true, comingSoon: true
+  },
+  {
+    id: 'ps2', nameKey: 'system.ps2', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    subtitle: 'Legendary 3D',
+    bgDesc: 'from-blue-600/20 to-blue-950/60',
+    activeColor: 'bg-blue-500/20 text-blue-300', activeBorder: 'border-blue-500/50',
+    lightActiveColor: 'bg-blue-100 text-blue-700', lightActiveBorder: 'border-blue-400',
+    shadow: 'shadow-[0_0_30px_rgba(59,130,246,0.4)]',
+    disabled: true, comingSoon: true
+  },
+  {
+    id: 'psp', nameKey: 'system.psp', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    subtitle: 'Portable 3D',
+    bgDesc: 'from-sky-600/20 to-sky-950/60',
+    activeColor: 'bg-sky-500/20 text-sky-300', activeBorder: 'border-sky-500/50',
+    lightActiveColor: 'bg-sky-100 text-sky-700', lightActiveBorder: 'border-sky-400',
+    shadow: 'shadow-[0_0_30px_rgba(14,165,233,0.4)]',
+    disabled: true, comingSoon: true
+  },
 ];
 
 export function SystemFilter() {

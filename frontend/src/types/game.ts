@@ -22,6 +22,7 @@ export interface Game {
   playCount?: number;
   imageUrl?: string;
   categoryName?: string;
+  isMustPlay?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

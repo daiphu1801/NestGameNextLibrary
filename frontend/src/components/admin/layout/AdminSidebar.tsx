@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Gamepad2, FolderTree, MessageSquare, Star, Clock, Settings, Crown, Image as ImageIcon, ChevronLeft, X, Zap } from 'lucide-react';
+import { LayoutDashboard, Users, Gamepad2, FolderTree, MessageSquare, Star, Clock, Settings, Crown, Image as ImageIcon, ChevronLeft, X, Zap, Sparkles, Joystick } from 'lucide-react';
 
 export const NAV_ITEMS = [
     { href: '/phuiumit02022024', label: 'Dashboard', icon: LayoutDashboard },
@@ -8,6 +8,7 @@ export const NAV_ITEMS = [
     { href: '/phuiumit02022024/games', label: 'Games', icon: Gamepad2 },
     { href: '/phuiumit02022024/flash-upload', label: 'Flash Upload', icon: Zap },
     { href: '/phuiumit02022024/featured-games', label: 'Game nổi bật', icon: Crown },
+    { href: '/phuiumit02022024/must-play', label: 'Game Tuổi thơ', icon: Joystick },
     { href: '/phuiumit02022024/game-month', label: 'Game Tháng', icon: Crown },
     { href: '/phuiumit02022024/categories', label: 'Danh mục', icon: FolderTree },
     { href: '/phuiumit02022024/images', label: 'Ảnh Game', icon: ImageIcon },
