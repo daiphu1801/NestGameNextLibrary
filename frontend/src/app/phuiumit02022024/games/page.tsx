@@ -30,6 +30,33 @@ const SYSTEMS = [
     { id: 'j2me', name: 'Java Mobile' }
 ];
 
+// --- Subcomponents ---
+function AdminGameImage({ game }: { game: any }) {
+    const urls = [
+        game.imageUrl,
+        game.imageSnap,
+        game.imageTitle,
+    ].filter(Boolean);
+
+    const [index, setIndex] = useState(0);
+
+    const currentUrl = index < urls.length ? urls[index] : null;
+
+    if (!currentUrl) {
+        return <div className="w-10 h-10 flex-shrink-0 rounded-md flex items-center justify-center text-[#637381] text-[10px] font-bold" style={{ background: '#1C2434', border: '1px solid #2E3A47' }}>N/A</div>;
+    }
+
+    return (
+        <img 
+            src={currentUrl} 
+            alt={game.name} 
+            className="w-10 h-10 flex-shrink-0 rounded-md object-cover" 
+            style={{ border: '1px solid #2E3A47', backgroundColor: '#1C2434' }} 
+            onError={() => setIndex(i => i + 1)}
+        />
+    );
+}
+
 // --------------------------------------------------------------------------------------------------------------------- Main Component ---------------------------------------------------------------------------------------------------------------------
 function AdminGamesContent() {
     const [games, setGames] = useState<any[]>([]);
@@ -371,12 +398,8 @@ function AdminGamesContent() {
                                 <tr key={game.id} className="transition-colors hover:bg-[#2E3A47]/50" style={{ borderBottom: '1px solid #2E3A47' }}>
                                     <td className="px-5 py-3.5">
                                         <div className="flex items-center gap-3">
-                                            {game.imageUrl ? (
-                                                <img src={game.imageUrl} alt="" className="w-10 h-10 rounded-md object-cover" style={{ border: '1px solid #2E3A47' }} />
-                                            ) : (
-                                                <div className="w-10 h-10 rounded-md flex items-center justify-center text-[#637381] text-xs" style={{ background: '#1C2434' }}>N/A</div>
-                                            )}
-                                            <span className="text-white text-sm font-medium">{game.name}</span>
+                                            <AdminGameImage game={game} />
+                                            <span className="text-white text-sm font-medium line-clamp-1">{game.name}</span>
                                         </div>
                                     </td>
                                     <td className="px-5 py-3.5 text-[#A5B4CB] text-sm">{game.categoryName || '—'}</td>
