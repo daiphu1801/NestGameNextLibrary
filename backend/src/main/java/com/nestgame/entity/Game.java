@@ -41,6 +41,7 @@ public class Game {
     @Column(name = "is_featured")
     private Boolean isFeatured;
 
+    // Ensure DB is updated: ALTER TABLE games ADD COLUMN is_must_play BOOLEAN DEFAULT FALSE;
     @Column(name = "is_must_play")
     @Builder.Default
     private Boolean isMustPlay = false;
