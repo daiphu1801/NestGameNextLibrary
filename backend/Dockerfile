@@ -20,3 +20,5 @@ ENV SPRING_PROFILES_ACTIVE=prod
 # -Xmx350m: Max heap size 350MB (leaving ~150MB for OS/JVM overhead)
 #ENTRYPOINT ["java", "-Xmx350m", "-jar", "app.jar"]
 ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
+
+# Trigger GitHub Actions with clean UTF-8 encoding
