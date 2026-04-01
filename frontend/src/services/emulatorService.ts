@@ -374,12 +374,15 @@ class EmulatorService {
       let core = 'fceumm'; // default NES
       if (system === 'snes') core = 'snes9x';
       else if (system === 'gba' || system === 'gb' || system === 'gbc') core = 'mgba';
-      else if (system === 'genesis') core = 'genesis_plus_gx';
+      else if (system === 'genesis' || system === 'sms' || system === 'gamegear') core = 'genesis_plus_gx';
       else if (system === 'arcade') core = 'fbneo';
-      else if (system === 'ps1' || system === 'psx') core = 'pcsx_rearmed';
-      else if (system === 'ps2') core = 'play';
-      else if (system === 'psp') core = 'ppsspp';
-      else if (system === 'saturn') core = 'beetle_saturn';
+      else if (system === 'neogeo') core = 'fbalpha2012_neogeo';
+      else if (system === 'tg16') core = 'mednafen_pce_fast';
+      else if (system === 'ngpc') core = 'mednafen_ngp';
+      else if (system === 'atari2600') core = 'stella2014';
+      else if (system === 'sega32x') core = 'picodrive';
+      else if (system === 'vb') core = 'mednafen_vb';
+      else if (system === 'wswan') core = 'mednafen_wswan';
 
       if (this.currentLoadId !== loadId) {
         this.isLoading = false;

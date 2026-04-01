@@ -69,66 +69,111 @@ const SYSTEMS: SystemOption[] = [
     demo: true
   },
   {
-    id: 'gbc', nameKey: 'system.gbc', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    id: 'gbc', nameKey: 'system.gbc', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-80" />,
     subtitle: 'Color Handheld',
     bgDesc: 'from-pink-600/20 to-pink-950/60',
     activeColor: 'bg-pink-500/20 text-pink-300', activeBorder: 'border-pink-500/50',
     lightActiveColor: 'bg-pink-100 text-pink-700', lightActiveBorder: 'border-pink-400',
     shadow: 'shadow-[0_0_30px_rgba(236,72,153,0.4)]',
-    disabled: true, comingSoon: true
+    demo: true
   },
   {
-    id: 'genesis', nameKey: 'system.genesis', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    id: 'genesis', nameKey: 'system.genesis', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-80" />,
     subtitle: 'Blast Processing',
     bgDesc: 'from-indigo-600/20 to-indigo-950/60',
     activeColor: 'bg-indigo-500/20 text-indigo-300', activeBorder: 'border-indigo-500/50',
     lightActiveColor: 'bg-indigo-100 text-indigo-700', lightActiveBorder: 'border-indigo-400',
     shadow: 'shadow-[0_0_30px_rgba(99,102,241,0.4)]',
-    disabled: true, comingSoon: true
+    demo: true
   },
   {
-    id: 'arcade', nameKey: 'system.arcade', icon: <LayoutGrid className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    id: 'arcade', nameKey: 'system.arcade', icon: <LayoutGrid className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-80" />,
     subtitle: 'Coin-Op',
     bgDesc: 'from-orange-600/20 to-orange-950/60',
     activeColor: 'bg-orange-500/20 text-orange-300', activeBorder: 'border-orange-500/50',
     lightActiveColor: 'bg-orange-100 text-orange-700', lightActiveBorder: 'border-orange-400',
     shadow: 'shadow-[0_0_30px_rgba(249,115,22,0.4)]',
-    disabled: true, comingSoon: true
+    demo: true
   },
   {
-    id: 'neogeo', nameKey: 'system.neogeo', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    id: 'neogeo', nameKey: 'system.neogeo', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-80" />,
     subtitle: 'The 100 Mega Shock',
     bgDesc: 'from-yellow-600/20 to-yellow-950/60',
     activeColor: 'bg-yellow-500/20 text-yellow-300', activeBorder: 'border-yellow-500/50',
     lightActiveColor: 'bg-yellow-100 text-yellow-700', lightActiveBorder: 'border-yellow-400',
     shadow: 'shadow-[0_0_30px_rgba(234,179,8,0.4)]',
-    disabled: true, comingSoon: true
+    demo: true
   },
   {
-    id: 'ps1', nameKey: 'system.ps1', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
-    subtitle: 'Classic 3D',
-    bgDesc: 'from-gray-600/20 to-gray-900/60',
-    activeColor: 'bg-gray-500/20 text-gray-300', activeBorder: 'border-gray-500/50',
-    lightActiveColor: 'bg-gray-100 text-gray-700', lightActiveBorder: 'border-gray-400',
-    shadow: 'shadow-[0_0_30px_rgba(156,163,175,0.4)]',
-    disabled: true, comingSoon: true
-  },
-  {
-    id: 'ps2', nameKey: 'system.ps2', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
-    subtitle: 'Legendary 3D',
-    bgDesc: 'from-blue-600/20 to-blue-950/60',
-    activeColor: 'bg-blue-500/20 text-blue-300', activeBorder: 'border-blue-500/50',
-    lightActiveColor: 'bg-blue-100 text-blue-700', lightActiveBorder: 'border-blue-400',
-    shadow: 'shadow-[0_0_30px_rgba(59,130,246,0.4)]',
-    disabled: true, comingSoon: true
-  },
-  {
-    id: 'psp', nameKey: 'system.psp', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
-    subtitle: 'Portable 3D',
+    id: 'sms', nameKey: 'system.sms', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    subtitle: 'Master System',
     bgDesc: 'from-sky-600/20 to-sky-950/60',
     activeColor: 'bg-sky-500/20 text-sky-300', activeBorder: 'border-sky-500/50',
     lightActiveColor: 'bg-sky-100 text-sky-700', lightActiveBorder: 'border-sky-400',
     shadow: 'shadow-[0_0_30px_rgba(14,165,233,0.4)]',
+    disabled: true, comingSoon: true
+  },
+  {
+    id: 'gamegear', nameKey: 'system.gamegear', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    subtitle: 'Sega Portable',
+    bgDesc: 'from-cyan-600/20 to-cyan-950/60',
+    activeColor: 'bg-cyan-500/20 text-cyan-300', activeBorder: 'border-cyan-500/50',
+    lightActiveColor: 'bg-cyan-100 text-cyan-700', lightActiveBorder: 'border-cyan-400',
+    shadow: 'shadow-[0_0_30px_rgba(6,182,212,0.4)]',
+    disabled: true, comingSoon: true
+  },
+  {
+    id: 'tg16', nameKey: 'system.tg16', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    subtitle: 'PC Engine',
+    bgDesc: 'from-rose-600/20 to-rose-950/60',
+    activeColor: 'bg-rose-500/20 text-rose-300', activeBorder: 'border-rose-500/50',
+    lightActiveColor: 'bg-rose-100 text-rose-700', lightActiveBorder: 'border-rose-400',
+    shadow: 'shadow-[0_0_30px_rgba(244,63,94,0.4)]',
+    disabled: true, comingSoon: true
+  },
+  {
+    id: 'ngpc', nameKey: 'system.ngpc', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    subtitle: 'Pocket Color',
+    bgDesc: 'from-amber-600/20 to-amber-950/60',
+    activeColor: 'bg-amber-500/20 text-amber-300', activeBorder: 'border-amber-500/50',
+    lightActiveColor: 'bg-amber-100 text-amber-700', lightActiveBorder: 'border-amber-400',
+    shadow: 'shadow-[0_0_30px_rgba(245,158,11,0.4)]',
+    disabled: true, comingSoon: true
+  },
+  {
+    id: 'atari2600', nameKey: 'system.atari2600', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    subtitle: 'Classic Atari',
+    bgDesc: 'from-stone-600/20 to-stone-950/60',
+    activeColor: 'bg-stone-500/20 text-stone-300', activeBorder: 'border-stone-500/50',
+    lightActiveColor: 'bg-stone-100 text-stone-700', lightActiveBorder: 'border-stone-400',
+    shadow: 'shadow-[0_0_30px_rgba(168,162,158,0.4)]',
+    disabled: true, comingSoon: true
+  },
+  {
+    id: 'sega32x', nameKey: 'system.sega32x', icon: <MonitorPlay className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    subtitle: '32-bit Add-on',
+    bgDesc: 'from-violet-600/20 to-violet-950/60',
+    activeColor: 'bg-violet-500/20 text-violet-300', activeBorder: 'border-violet-500/50',
+    lightActiveColor: 'bg-violet-100 text-violet-700', lightActiveBorder: 'border-violet-400',
+    shadow: 'shadow-[0_0_30px_rgba(139,92,246,0.4)]',
+    disabled: true, comingSoon: true
+  },
+  {
+    id: 'vb', nameKey: 'system.vb', icon: <Gamepad2 className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    subtitle: 'Virtual 3D',
+    bgDesc: 'from-red-600/20 to-red-950/60',
+    activeColor: 'bg-red-500/20 text-red-300', activeBorder: 'border-red-500/50',
+    lightActiveColor: 'bg-red-100 text-red-700', lightActiveBorder: 'border-red-400',
+    shadow: 'shadow-[0_0_30px_rgba(239,68,68,0.4)]',
+    disabled: true, comingSoon: true
+  },
+  {
+    id: 'wswan', nameKey: 'system.wswan', icon: <Smartphone className="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50" />,
+    subtitle: 'WonderSwan',
+    bgDesc: 'from-teal-600/20 to-teal-950/60',
+    activeColor: 'bg-teal-500/20 text-teal-300', activeBorder: 'border-teal-500/50',
+    lightActiveColor: 'bg-teal-100 text-teal-700', lightActiveBorder: 'border-teal-400',
+    shadow: 'shadow-[0_0_30px_rgba(20,184,166,0.4)]',
     disabled: true, comingSoon: true
   },
 ];
