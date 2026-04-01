@@ -79,7 +79,7 @@ export function ControlsPanel({
 // ============================================
 export function ControlsGuideCompact({ system = 'nes', isZapper = false }: { system?: string, isZapper?: boolean }) {
   const { t } = useLanguage();
-  const isAdvancedSystem = ['snes', 'gba', 'genesis', 'arcade', 'ps1', 'psx', 'psp'].includes(system.toLowerCase());
+  const isAdvancedSystem = ['snes', 'gba', 'genesis', 'arcade', 'sega32x', 'neogeo'].includes(system.toLowerCase());
 
   if (system === 'j2me') {
     return (

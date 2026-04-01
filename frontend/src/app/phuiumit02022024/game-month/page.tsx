@@ -20,13 +20,24 @@ const ROM_FOLDERS = [
 ];
 
 const SYSTEMS = [
-    { id: 'ps1', name: 'PlayStation 1' },
-    { id: 'ps2', name: 'PlayStation 2' },
-    { id: 'psp', name: 'PSP' },
     { id: 'nes', name: 'NES' },
     { id: 'snes', name: 'SNES' },
     { id: 'gba', name: 'Game Boy Advance' },
+    { id: 'gb', name: 'Game Boy' },
+    { id: 'gbc', name: 'Game Boy Color' },
     { id: 'genesis', name: 'Sega Genesis' },
+    { id: 'arcade', name: 'Arcade' },
+    { id: 'neogeo', name: 'Neo Geo' },
+    { id: 'sms', name: 'Sega Master System' },
+    { id: 'gamegear', name: 'Sega Game Gear' },
+    { id: 'tg16', name: 'TurboGrafx-16' },
+    { id: 'ngpc', name: 'Neo Geo Pocket Color' },
+    { id: 'atari2600', name: 'Atari 2600' },
+    { id: 'sega32x', name: 'Sega 32X' },
+    { id: 'vb', name: 'Virtual Boy' },
+    { id: 'wswan', name: 'WonderSwan' },
+    { id: 'flash', name: 'Flash Game' },
+    { id: 'j2me', name: 'Java Mobile' },
 ];
 
 function fmtSize(bytes: number) {
@@ -97,7 +108,7 @@ function RomDropZone({ onUploaded }: { onUploaded: (fileName: string, path: stri
 
     const handleFile = async (file: File) => {
         const ext = file.name.split('.').pop()?.toLowerCase();
-        const supported = ['nes', 'sfc', 'smc', 'gba', 'md', 'gen', 'bin', 'zip', 'iso', 'img', 'pbp', 'cso', 'chd'];
+        const supported = ['nes', 'sfc', 'smc', 'gba', 'md', 'gen', 'bin', 'zip', 'iso', 'img', 'pbp', 'cso', 'chd', 'sms', 'gg', 'pce', 'ngc', 'ngp', 'a26', '32x', 'vb', 'ws', 'wsc'];
         if (!supported.includes(ext || '')) {
             setError('Định dạng file không được hỗ trợ!');
             return;
@@ -141,7 +152,7 @@ function RomDropZone({ onUploaded }: { onUploaded: (fileName: string, path: stri
                     borderColor: dragging ? '#3C50E0' : uploaded ? '#10B981' : '#2E3A47',
                 }}
             >
-                <input ref={inputRef} type="file" className="hidden" onChange={e => { const f = e.target.files?.[0]; if(f) handleFile(f); }} />
+                <input ref={inputRef} type="file" className="hidden" accept=".nes,.zip,.sfc,.smc,.gba,.md,.gen,.bin,.iso,.pbp,.cso,.chd,.sms,.gg,.pce,.ngc,.ngp,.a26,.32x,.vb,.ws,.wsc" onChange={e => { const f = e.target.files?.[0]; if(f) handleFile(f); }} />
 
                 {uploading ? (
                     <div className="flex flex-col items-center gap-3">
@@ -167,7 +178,7 @@ function RomDropZone({ onUploaded }: { onUploaded: (fileName: string, path: stri
                         </div>
                         <div>
                             <p className="text-white text-sm font-bold">Kéo thả ROM vào đây</p>
-                            <p className="text-[#637381] text-[11px] mt-1">Hỗ trợ .nes, .sfc, .gba, .zip, .iso, .pbp, .cso...</p>
+                            <p className="text-[#637381] text-[11px] mt-1">Hỗ trợ nhiều định dạng retro (.nes, .sfc, .gba, .zip,...)</p>
                         </div>
                     </div>
                 )}
@@ -262,7 +273,7 @@ export default function AdminGameMonthPage() {
     // Form state
     const emptyForm = {
         name: '',
-        system: 'ps1',
+        system: 'nes',
         categoryId: '',
         description: '',
         rating: 4.5,

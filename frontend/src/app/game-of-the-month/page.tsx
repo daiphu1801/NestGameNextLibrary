@@ -160,7 +160,7 @@ export default function GameOfTheMonthPage() {
 
                         {/* Call to Actions */}
                          <div className="pt-6 flex flex-col sm:flex-row items-center gap-6">
-                            {['ps1', 'psp', 'saturn'].includes(game.system?.toLowerCase() || '') ? (
+                            {['saturn', 'cd', 'iso'].includes(game.system?.toLowerCase() || '') ? (
                                <div className="w-full sm:w-auto flex flex-col gap-3">
                                    <Link
                                        href={`/games/${game.id}/play`}

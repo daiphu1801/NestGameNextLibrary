@@ -26,6 +26,14 @@ const SYSTEMS = [
     { id: 'gbc', name: 'Game Boy Color' },
     { id: 'arcade', name: 'Arcade' },
     { id: 'neogeo', name: 'Neo Geo' },
+    { id: 'sms', name: 'Sega Master System' },
+    { id: 'gamegear', name: 'Sega Game Gear' },
+    { id: 'tg16', name: 'TurboGrafx-16' },
+    { id: 'ngpc', name: 'Neo Geo Pocket Color' },
+    { id: 'atari2600', name: 'Atari 2600' },
+    { id: 'sega32x', name: 'Sega 32X' },
+    { id: 'vb', name: 'Virtual Boy' },
+    { id: 'wswan', name: 'WonderSwan' },
     { id: 'flash', name: 'Flash Game' },
     { id: 'j2me', name: 'Java Mobile' }
 ];
