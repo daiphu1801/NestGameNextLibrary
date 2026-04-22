@@ -13,7 +13,6 @@ import { usePerformance } from '@/components/providers/PerformanceProvider';
 import { Game } from '@/types';
 import Link from 'next/link';
 import { NexusGridBackground } from '@/components/backgrounds';
-import { WelcomeScreen } from '@/components/layout/WelcomeScreen';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -41,7 +40,6 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen text-foreground selection:bg-primary/30 relative">
-      <WelcomeScreen />
 
       {/* Base background color */}
       <div className="fixed inset-0 bg-background -z-20" />
